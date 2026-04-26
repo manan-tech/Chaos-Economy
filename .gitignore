@@ -100,6 +100,7 @@ multi_agent_checkpoints/
 unsloth_compiled_cache/
 *.bak
 train.log
+OpenEnv rreq.pptx
 *.safetensors
 *.pt
 *.pth
