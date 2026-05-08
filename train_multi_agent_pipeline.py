@@ -1029,7 +1029,7 @@ def train_unified_model(args):
                                     if pos.get("selected_strike") == my_strike:
                                         same_strike_count += 1
                         if same_strike_count >= 2:  # lowered from 3 for 4-trader setup
-                            coordination_bonus = 0.0  # ablation: coordination incentive disabled
+                            coordination_bonus = args.coordination_bonus
 
                 # Penalize strike herding across ALL phases
                 # If agent picks the same strike as the prompt example default (4),
@@ -1488,12 +1488,20 @@ def train_unified_model(args):
                     # ── Agent actions & reasoning ──
                     for aid, act in actions.items():
                         if aid.startswith("trader") or aid == "market_maker":
+                            if aid == "market_maker":
+                                direction_str = f"spread={act.get('atm_spread', 0.0):.3f}"
+                                strike_str = "N/A"
+                                qty_str = "N/A"
+                            else:
+                                direction_str = str(act.get("direction", "N/A"))
+                                strike_str = str(act.get("selected_strike", "N/A"))
+                                qty_str = str(act.get("quantity", "N/A"))
                             action_rows.append({
                                 "step": s, "agent_id": aid,
-                                "direction": act.get("direction", act.get("atm_spread", "N/A")),
-                                "strike": act.get("selected_strike", "N/A"),
-                                "quantity": act.get("quantity", "N/A"),
-                                "option_type": act.get("option_type", "N/A"),
+                                "direction": direction_str,
+                                "strike": strike_str,
+                                "quantity": qty_str,
+                                "option_type": str(act.get("option_type", "N/A")),
                                 "reasoning": str(act.get("reasoning", ""))[:200],
                                 "reward": round(float(rewards.get(aid, 0)), 4),
                             })
@@ -1679,6 +1687,12 @@ def main():
         help="Hard cap on prompt tokens to avoid sequence overflow spam and truncation noise.",
     )
     parser.add_argument("--max_steps", type=int, default=50, help="Maximum number of training steps.")
+    parser.add_argument(
+        "--coordination_bonus",
+        type=float,
+        default=0.2,
+        help="Bonus when 2+ traders share a strike during collusion/adaptation. Set to 0.0 for ablation.",
+    )
     parser.add_argument(
         "--wandb_project",
         type=str,
