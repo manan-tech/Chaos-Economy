@@ -1,7 +1,8 @@
 import copy
+import re
 import numpy as np
 from typing import Dict, Tuple, Any
-from collections import defaultdict 
+from collections import defaultdict
 
 from multi_agent.models import AgentRole, MultiAgentObservation, AgentState, MarketMakerAction, OversightAction
 from multi_agent.rewards import calculate_trader_reward, calculate_mm_reward, calculate_oversight_reward
@@ -39,6 +40,8 @@ class MultiAgentVSREnvironment:
         self.black_swan_gen = None
         self.marketplace = None
         self.messaging = None
+        self.signal_registry = []
+        self.reputation_scores = {}
 
     def reset(self, seed: int = 42) -> Dict[str, MultiAgentObservation]:
         """Reset the environment."""
@@ -46,6 +49,8 @@ class MultiAgentVSREnvironment:
         self.rng = np.random.RandomState(seed)
         self.trade_log = []
         self.intervention_log = []
+        self.signal_registry = []
+        self.reputation_scores = {f"trader_{i}": {"correct_predictions": 0, "total_predictions": 0} for i in range(4)}
         
         # Base simulation state
         variance = 0.04
@@ -439,10 +444,29 @@ class MultiAgentVSREnvironment:
 
         post_stability_score = self._build_market_state_summary()["market_stability_score"]
 
+        # Resolve pending signals (K=3 steps) — must happen before reward calculation
+        resolved_this_step = []
+        for sig in self.signal_registry:
+            if not sig["resolved"] and self.current_step - sig["step_sent"] >= 3:
+                sig["resolved"] = True
+                price_moved_up = self.vsr_state.spot_price > sig["base_spot"]
+                price_moved_down = self.vsr_state.spot_price < sig["base_spot"]
+                if (sig["direction"] == "bullish" and price_moved_up) or \
+                   (sig["direction"] == "bearish" and price_moved_down):
+                    sig["correct"] = True
+                    if sig["agent_id"] in self.reputation_scores:
+                        self.reputation_scores[sig["agent_id"]]["correct_predictions"] += 1
+                resolved_this_step.append(sig)
+
         # 5. Rewards
         for aid in trader_actions:
             direction = trader_actions[aid].get("direction", "hold") if aid in trader_actions else "hold"
-            rewards[aid] = calculate_trader_reward(self.agent_states[aid], prev_states[aid], aid, direction)
+            agent_resolved = [sig for sig in resolved_this_step if sig["agent_id"] == aid]
+            rewards[aid] = calculate_trader_reward(
+                self.agent_states[aid], prev_states[aid], aid, direction,
+                resolved_signals=agent_resolved,
+                training_phase=self.training_phase,
+            )
         rewards["market_maker"] = calculate_mm_reward(
             self.agent_states["market_maker"],
             prev_states["market_maker"],

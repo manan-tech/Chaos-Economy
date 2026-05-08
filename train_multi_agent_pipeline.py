@@ -362,10 +362,11 @@ def parse_json(text: str, role: str = "trader") -> tuple:
         if opt_type not in ["call", "put"]:
             opt_type = "call"
         raw_qty = safe_float(parsed.get("quantity"), 0.0)
+        raw_qty_before_clamp = raw_qty
         # Enforce minimum quantity when trading to prevent
         # zero-volume exploit
         if direction in ("buy", "sell") and raw_qty < 0.3:
-            raw_qty = 0.5  # force meaningful trade size
+            raw_qty = 0.5  # force meaningful trade size for order matching
         qty = max(0.0, raw_qty)
         result = {
             "selected_strike": safe_int(parsed.get("selected_strike", parsed.get("strike_idx")), 4),
@@ -382,7 +383,7 @@ def parse_json(text: str, role: str = "trader") -> tuple:
             result["sell_intel"] = parsed["sell_intel"]
         if isinstance(parsed.get("buy_intel"), str):
             result["buy_intel"] = parsed["buy_intel"]
-        return result, {"valid": len(parsed) > 0}
+        return result, {"valid": len(parsed) > 0, "raw_qty": raw_qty_before_clamp}
 
     elif role == "oversight":
         raw_flagged = parsed.get("flagged_agents") or []
@@ -1008,9 +1009,11 @@ def train_unified_model(args):
                 my_qty = action.get("quantity", 0.0)
                 is_active = my_direction in ("buy", "sell") and my_qty > 0
 
-                # Penalize buy/sell with zero quantity
+                # Penalize buy/sell with zero quantity — read raw pre-clamp value so parse_json
+                # corrections don't mask the exploit signal
+                raw_model_qty = parse_info.get("raw_qty", my_qty)
                 zero_qty_penalty = 0.0
-                if my_direction in ("buy", "sell") and my_qty < 0.1:
+                if my_direction in ("buy", "sell") and raw_model_qty < 0.1:
                     zero_qty_penalty = -1.0  # strong signal: don't game with empty trades
 
                 # Only award coordination bonus if agent ACTUALLY traded
@@ -1026,7 +1029,7 @@ def train_unified_model(args):
                                     if pos.get("selected_strike") == my_strike:
                                         same_strike_count += 1
                         if same_strike_count >= 2:  # lowered from 3 for 4-trader setup
-                            coordination_bonus = 0.3 * phase_scale
+                            coordination_bonus = 0.0  # ablation: coordination incentive disabled
 
                 # Penalize strike herding across ALL phases
                 # If agent picks the same strike as the prompt example default (4),

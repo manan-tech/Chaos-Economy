@@ -14,7 +14,14 @@ def squash_reward(raw_reward: float, limit: float = 5.0) -> float:
         return clamped
     return math.copysign(1.0 + math.log(abs(clamped)), clamped)
 
-def calculate_trader_reward(agent_state: AgentState, prev_state: AgentState, agent_id: str = "trader_0", direction: str = "hold") -> float:
+def calculate_trader_reward(
+    agent_state: AgentState,
+    prev_state: AgentState,
+    agent_id: str = "trader_0",
+    direction: str = "hold",
+    resolved_signals: list = None,
+    training_phase: str = "oversight"
+) -> float:
     """Calculate reward for a trader: Δ PnL + Δ Cash + Archetype Goals - risk penalties.
 
     The mark-to-market PnL delta alone is near-zero each step because
@@ -31,36 +38,52 @@ def calculate_trader_reward(agent_state: AgentState, prev_state: AgentState, age
     # 1. Total economic change = mark-to-market change + realized cash flow
     # Multiply by 10.0 to amplify small option premium signals
     total_economic_delta = (pnl_delta + cash_delta * 0.1) * 10.0
-    
-    # 2. Activity Bonus / Hold Penalty
-    # Moderate signal: enough to discourage always-hold but not so strong
-    # that it dominates PnL and causes blind overtrading
-    if direction in ["buy", "sell"]:
-        activity_bonus = 0.15
-    else:
-        activity_bonus = -0.05  # mild hold discouragement
-    
+
+    # 2. Hold Penalty (mild — pipeline adds the stronger phase-scaled activity bonus on top)
+    activity_bonus = -0.05 if direction == "hold" else 0.0
+
     # 3. Archetype-Specific Goals
     archetype_bonus = 0.0
     idx = int(agent_id.split("_")[1]) if "_" in agent_id else 0
     current_delta = abs(agent_state.portfolio_delta)
-    
-    if idx <= 2:
-        # Aggressive Traders: Rewarded for taking directional risk
+
+    if idx == 0:
+        # Aggressive: directional risk
         archetype_bonus = 0.1 if current_delta > 1.0 else 0.0
-    elif idx <= 5:
-        # Neutral Traders: Rewarded for staying delta-hedged
+    elif idx == 1:
+        # Neutral: stay delta-hedged
         archetype_bonus = 0.1 if current_delta < 0.5 else -0.1
-    else:
-        # Contrarian Traders: Rewarded for high negative gamma (selling volatility)
+    elif idx == 2:
+        # Contrarian: sell volatility (negative gamma)
         archetype_bonus = 0.1 if agent_state.portfolio_gamma < -0.05 else 0.0
-    
+    else:
+        # trader_3 (scripted) and any future traders: no archetype bonus
+        archetype_bonus = 0.0
+
     # 4. Inventory & Greek Risk Penalties
     total_contracts = sum(abs(pos.get("quantity", 0)) for pos in agent_state.positions)
     inventory_penalty = 1.0 if total_contracts > 50 else 0.0
     greeks_penalty = 1.0 if current_delta > 10.0 else 0.0
-    
-    raw_reward = total_economic_delta + activity_bonus + archetype_bonus - inventory_penalty - greeks_penalty
+
+    # 5. Signal Alpha Bonus (Only active in Phase III/IV: collusion/oversight)
+    signal_alpha_bonus = 0.0
+    if training_phase in ["collusion", "oversight"] and resolved_signals:
+        for sig in resolved_signals:
+            if sig["correct"]:
+                spread_multiplier = sig.get("spread_at_time", 0.04) * 10.0
+                has_position = False
+                for pos in agent_state.positions:
+                    if pos.get("selected_strike") == sig["strike"] and abs(pos.get("quantity", 0.0)) > 0:
+                        has_position = True
+                        break
+                if has_position:
+                    signal_alpha_bonus += 0.5 * spread_multiplier
+                else:
+                    signal_alpha_bonus -= 0.1
+            else:
+                signal_alpha_bonus -= 0.2
+
+    raw_reward = total_economic_delta + activity_bonus + archetype_bonus - inventory_penalty - greeks_penalty + signal_alpha_bonus
     return squash_reward(raw_reward)
 
 def calculate_mm_reward(agent_state: AgentState, prev_state: AgentState, 
