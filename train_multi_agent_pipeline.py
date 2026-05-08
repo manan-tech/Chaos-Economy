@@ -1395,7 +1395,7 @@ def train_unified_model(args):
             self._current_phase = None
 
         def on_log(self, args, state, control, logs=None, **kwargs):
-            if not logs or not HAS_WANDB or not wandb.run:
+            if not logs:
                 return
             step = state.global_step
             phase = get_training_phase(step, total_units=max(1, args.max_steps))
@@ -1407,16 +1407,31 @@ def train_unified_model(args):
                 if values:
                     reward_components[f"story/{key}_mean"] = float(np.mean(values))
                     reward_components[f"story/{key}_std"] = float(np.std(values))
-            
+
             for key in list(logs.keys()):
                 if "reward" in key.lower():
                     clean = key.replace("reward/", "story/").replace("_fn", "")
                     if f"story/{clean}_mean" not in reward_components:
                         reward_components[clean] = logs[key]
 
-            if reward_components:
-                reward_components["story/global_step"] = step
-                wandb.log(reward_components)
+            # Always print to console so train.log has metrics even without W&B
+            if reward_components or logs:
+                pnl   = reward_components.get("story/pnl_mean",      logs.get("reward", float("nan")))
+                risk  = reward_components.get("story/risk_mean",      float("nan"))
+                div   = reward_components.get("story/diversity_mean", float("nan"))
+                fmt   = reward_components.get("story/format_mean",    float("nan"))
+                total = logs.get("reward", float("nan"))
+                print(
+                    f"[step {step:>4d} | {phase:>10s}] "
+                    f"reward={total:.3f}  pnl={pnl:.3f}  risk={risk:.3f}  "
+                    f"diversity={div:.3f}  format={fmt:.3f}",
+                    flush=True,
+                )
+
+            if HAS_WANDB and wandb.run:
+                if reward_components:
+                    reward_components["story/global_step"] = step
+                    wandb.log(reward_components)
             REWARD_STATS.clear()
 
             # ── Determine and log current training phase ──
