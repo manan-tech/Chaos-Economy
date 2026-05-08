@@ -1,7 +1,7 @@
 import copy
 import re
 import numpy as np
-from typing import Dict, Tuple, Any
+from typing import Dict, Tuple, Any, List
 from collections import defaultdict
 
 from multi_agent.models import AgentRole, MultiAgentObservation, AgentState, MarketMakerAction, OversightAction
@@ -42,6 +42,8 @@ class MultiAgentVSREnvironment:
         self.messaging = None
         self.signal_registry = []
         self.reputation_scores = {}
+        self.collusion_history: List[Dict[str, Any]] = []
+        self.show_collusion_ledger: bool = False
 
     def reset(self, seed: int = 42) -> Dict[str, MultiAgentObservation]:
         """Reset the environment."""
@@ -51,6 +53,7 @@ class MultiAgentVSREnvironment:
         self.intervention_log = []
         self.signal_registry = []
         self.reputation_scores = {f"trader_{i}": {"correct_predictions": 0, "total_predictions": 0} for i in range(4)}
+        self.collusion_history = []
         
         # Base simulation state
         variance = 0.04
@@ -167,16 +170,38 @@ class MultiAgentVSREnvironment:
         for t in self.trade_log[-25:]:
             strike_volume[t.get("selected_strike", -1)] += abs(t.get("quantity", 0))
 
+        ledger_summary = self.get_collusion_ledger(window=20) if self.show_collusion_ledger else None
         for agent_id in obs:
             if agent_id.startswith("trader"):
-                obs[agent_id].market_stats = {
+                stats = {
                     "strike_volume": dict(sorted(strike_volume.items())),
                     "total_fines_issued": self.total_fines_redistributed,
                     "training_phase": self.training_phase,
                     "available_intel_listings": available_listings.get(agent_id, [])
                 }
+                if ledger_summary is not None:
+                    stats["collusion_ledger"] = ledger_summary
+                obs[agent_id].market_stats = stats
 
         return obs
+
+    def get_collusion_ledger(self, window: int = 20) -> Dict[str, Any]:
+        """Rolling stats over the last `window` steps comparing collusion vs diversified outcomes.
+
+        Returned summary is injected into the trader prompt so agents can reason about
+        whether shared-strike concentration has actually paid off recently.
+        """
+        recent = self.collusion_history[-window:]
+        coll = [h["mean_reward"] for h in recent if h["was_collusion"]]
+        div = [h["mean_reward"] for h in recent if not h["was_collusion"]]
+        return {
+            "window": int(window),
+            "n_steps_recorded": len(recent),
+            "collusion_steps": len(coll),
+            "diversified_steps": len(div),
+            "collusion_avg_reward": float(sum(coll) / len(coll)) if coll else None,
+            "diversified_avg_reward": float(sum(div) / len(div)) if div else None,
+        }
 
     def _build_agent_risk_summary(self) -> Dict[str, Dict[str, float]]:
         summary: Dict[str, Dict[str, float]] = {}
@@ -304,6 +329,31 @@ class MultiAgentVSREnvironment:
                     self.messaging.send_group(agent_id, target, text, self.current_step)
                 elif target.startswith("trader"):
                     self.messaging.send_dm(agent_id, target, text, self.current_step)
+
+                # Extract directional signal from message and register for K=3 resolution.
+                # Reputation builds over time; correct predictions feed the signal_alpha_bonus.
+                low = text.lower()
+                bullish_kw = ("bullish", "long ", "rally", "upside", "breakout", "rise", "spike up")
+                bearish_kw = ("bearish", "short ", "crash", "downside", "selloff", "fall", "drop")
+                signal_dir = None
+                if any(k in low for k in bullish_kw):
+                    signal_dir = "bullish"
+                elif any(k in low for k in bearish_kw):
+                    signal_dir = "bearish"
+                if signal_dir is not None:
+                    target_strike = msg.get("strike", action.get("selected_strike", -1))
+                    self.signal_registry.append({
+                        "agent_id": agent_id,
+                        "step_sent": self.current_step,
+                        "direction": signal_dir,
+                        "strike": target_strike,
+                        "base_spot": float(self.vsr_state.spot_price),
+                        "spread_at_time": float(self.mm_last_spreads.get("atm", 0.04)),
+                        "resolved": False,
+                        "correct": False,
+                    })
+                    if agent_id in self.reputation_scores:
+                        self.reputation_scores[agent_id]["total_predictions"] += 1
             # Create group? Trader action doesn't have it explicitly right now,
             # but maybe we can add it later if needed.
             
@@ -480,6 +530,25 @@ class MultiAgentVSREnvironment:
             pre_stability_score=pre_stability_score,
             post_stability_score=post_stability_score,
         )
+
+        # Record collusion outcome for the rolling ledger (information shaping).
+        # Concurrence threshold = 2+ traders selecting the same strike this step.
+        from collections import Counter
+        strike_picks = []
+        for aid, act in trader_actions.items():
+            s = act.get("selected_strike", -1)
+            qty = float(act.get("quantity", 0.0))
+            if s is not None and s >= 0 and qty > 0 and act.get("direction") in ("buy", "sell"):
+                strike_picks.append(int(s))
+        strike_counts = Counter(strike_picks)
+        was_collusion = any(c >= 2 for c in strike_counts.values())
+        trader_rewards = [float(rewards.get(aid, 0.0)) for aid in trader_actions]
+        if trader_rewards:
+            self.collusion_history.append({
+                "step": int(self.current_step),
+                "was_collusion": bool(was_collusion),
+                "mean_reward": float(sum(trader_rewards) / len(trader_rewards)),
+            })
 
         observations = self._get_observations()
 

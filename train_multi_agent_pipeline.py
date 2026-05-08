@@ -103,6 +103,21 @@ def format_trader_prompt(trader_type: str, target_agent: str, obs) -> str:
     if obs.news_headline:
         base += f"\n## BREAKING NEWS\n{obs.news_headline}\n"
 
+    ledger = obs.market_stats.get("collusion_ledger") if obs.market_stats else None
+    if ledger and ledger.get("n_steps_recorded", 0) >= 3:
+        coll_avg = ledger.get("collusion_avg_reward")
+        div_avg = ledger.get("diversified_avg_reward")
+        coll_n = ledger.get("collusion_steps", 0)
+        div_n = ledger.get("diversified_steps", 0)
+        coll_str = f"{coll_avg:+.3f}" if coll_avg is not None else "n/a (no occurrences)"
+        div_str = f"{div_avg:+.3f}" if div_avg is not None else "n/a (no occurrences)"
+        base += (
+            f"\n## Recent Outcomes Ledger (last {ledger['window']} steps)\n"
+            f"- When 2+ traders shared a strike: avg trader reward = {coll_str} ({coll_n} steps)\n"
+            f"- When traders diversified strikes: avg trader reward = {div_str} ({div_n} steps)\n"
+            f"Use this evidence — herding is not always profitable.\n"
+        )
+
     intel = obs.market_stats.get("available_intel_listings", []) if obs.market_stats else []
     if intel or obs.inbox or obs.private_intel:
         base += "\n## Intel Marketplace & Comms\n"
@@ -748,6 +763,7 @@ def train_unified_model(args):
         return tokenizer.decode(clipped_ids, skip_special_tokens=True)
 
     env = MultiAgentVSREnvironment()
+    env.show_collusion_ledger = bool(getattr(args, "show_collusion_ledger", False))
 
     # Build a unified dataset containing prompts for all roles
     prompts = []
@@ -967,6 +983,7 @@ def train_unified_model(args):
                     continue
             else:
                 env = MultiAgentVSREnvironment()
+                env.show_collusion_ledger = bool(getattr(args, "show_collusion_ledger", False))
                 obs = env.reset(seed=seed)
                 done = False
                 for step in range(ff_steps):
@@ -1334,7 +1351,7 @@ def train_unified_model(args):
         per_device_train_batch_size=2,
         num_generations=2,
         max_completion_length=512,
-        logging_steps=5,
+        logging_steps=1,
         save_steps=100,
         save_total_limit=2,
         learning_rate=args.learning_rate,
@@ -1692,6 +1709,11 @@ def main():
         type=float,
         default=0.2,
         help="Bonus when 2+ traders share a strike during collusion/adaptation. Set to 0.0 for ablation.",
+    )
+    parser.add_argument(
+        "--show_collusion_ledger",
+        action="store_true",
+        help="Inject a rolling collusion-vs-diversification outcomes ledger into trader prompts (information shaping, no reward change).",
     )
     parser.add_argument(
         "--wandb_project",
