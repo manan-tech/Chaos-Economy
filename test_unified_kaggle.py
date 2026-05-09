@@ -778,14 +778,20 @@ def run_multi_episode_evaluation(model, tokenizer, num_steps: int, num_episodes:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--lora_path", type=str, default="./multi_agent_checkpoints/unified_market_lora", help="Path to LoRA adapter")
-    parser.add_argument("--base_model", type=str, default="unsloth/Llama-3.2-1B-Instruct-bnb-4bit")
+    parser.add_argument("--base_model", type=str, default="meta-llama/Llama-3.2-1B-Instruct")
     parser.add_argument("--num_steps", type=int, default=50)
     parser.add_argument("--num_episodes", type=int, default=30)
     parser.add_argument("--seed", type=int, default=42, help="Base seed for evaluation episodes.")
     args = parser.parse_args()
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"Using device: {device}")
+    if device == "cuda":
+        print(f"Using device: {device} ({torch.cuda.get_device_name(0)})")
+        # Check for ROCm/AMD
+        if "AMD" in torch.cuda.get_device_name(0) or "ROCm" in torch.version.hip if hasattr(torch.version, "hip") else False:
+            print("Detected AMD GPU/ROCm. Using BF16 for optimal performance.")
+    else:
+        print(f"Using device: {device}")
 
     lora_path = Path(args.lora_path)
 
@@ -799,11 +805,17 @@ def main():
 
     print(f"\nLoading base model: {args.base_model}")
     tokenizer = AutoTokenizer.from_pretrained(args.base_model)
-    bnb_config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16 if device == "cuda" else torch.float32)
+    
+    # AMD MI300 has 192GB VRAM. We do NOT need 4-bit quantization.
+    # bitsandbytes NF4 is NVIDIA-only and extremely slow on ROCm fallback.
+    load_kwargs = {
+        "device_map": "auto",
+        "torch_dtype": torch.bfloat16 if device == "cuda" else torch.float32,
+    }
+    
     model = AutoModelForCausalLM.from_pretrained(
         args.base_model,
-        
-        quantization_config=bnb_config, device_map="auto" if device == "cuda" else None
+        **load_kwargs
     )
 
     print(f"Loading LoRA adapter: {lora_path}")
