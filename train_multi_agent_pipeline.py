@@ -670,28 +670,39 @@ def train_unified_model(args):
             lora_dropout=0,
         )
     else:
-        from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+        try:
+            from transformers import BitsAndBytesConfig
+            BNB_AVAILABLE = True
+        except Exception:
+            BNB_AVAILABLE = False
         from peft import get_peft_model, LoraConfig, TaskType
         
         print("Unsloth unavailable or incompatible, falling back to standard HuggingFace transformers + PEFT.")
         
+        is_rocm = getattr(torch.version, "hip", None) is not None
         if torch.backends.mps.is_available():
             device_map = "mps"
             model = AutoModelForCausalLM.from_pretrained(args.base_model, device_map=device_map, torch_dtype=torch.float16)
         elif torch.cuda.is_available():
             device_map = "auto"
-            quantization_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_use_double_quant=True,
-            )
-            model = AutoModelForCausalLM.from_pretrained(
-                args.base_model,
-                device_map=device_map,
-                torch_dtype=torch.float16,
-                quantization_config=quantization_config,
-            )
+            use_bnb = BNB_AVAILABLE and (not is_rocm)
+            if use_bnb:
+                quantization_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_use_double_quant=True,
+                )
+                model = AutoModelForCausalLM.from_pretrained(
+                    args.base_model,
+                    device_map=device_map,
+                    torch_dtype=torch.float16,
+                    quantization_config=quantization_config,
+                )
+            else:
+                print("[ROCm/BNB] bitsandbytes unavailable or ROCm detected; loading model without 4-bit quantization.")
+                model = AutoModelForCausalLM.from_pretrained(args.base_model, device_map=device_map, torch_dtype=torch.float16)
         else:
             device_map = "cpu"
             model = AutoModelForCausalLM.from_pretrained(args.base_model, device_map=device_map)
