@@ -73,6 +73,7 @@ This is not a training artifact. It is an emergent Nash equilibrium discovered t
 - [Test Suite](#test-suite)
 - [Why AMD MI300X](#why-amd-mi300x)
 - [Running the Pipeline](#running-the-pipeline)
+- [Tech Stack](#tech-stack)
 - [License](#license)
 - [Citation](#citation)
 
@@ -721,6 +722,56 @@ python eval.py --use_bedrock \
 
 > **Note:** Bedrock requires cross-region inference profile IDs (prefix `us.`) for newer Llama models. Direct on-demand is not supported for `meta.llama3-3-70b-instruct-v1:0` — use `us.meta.llama3-3-70b-instruct-v1:0`.
 
+### Serve — two inference backends
+
+`serve.py` supports two backends selectable via `--backend`:
+
+**`--backend vllm` (default) — trained LoRA via vLLM**
+
+Loads the trained LoRA adapter with continuous batching and LoRA hot-swap. Recommended for the trained model.
+
+```bash
+# Start server with trained LoRA
+python serve.py --lora_path ./checkpoints/unified_market_lora
+
+# Test
+curl -X POST http://localhost:8000/generate \
+     -H 'Content-Type: application/json' \
+     -d '{"prompt": "You are a momentum trader...", "max_tokens": 128}'
+curl http://localhost:8000/health
+```
+
+**`--backend ort` — base model via Hugging Face Optimum-AMD**
+
+Exports the model to ONNX (once, auto-cached) then loads it via `ORTModelForCausalLM` with the ROCm `CUDAExecutionProvider`. This is the Optimum-AMD inference path — no LoRA, base model only.
+
+```bash
+# Auto-exports to ONNX then starts ORT server on ROCm
+python serve.py --backend ort --onnx_dir ./onnx_export
+
+# Pre-export separately, then serve
+python serve.py --export_onnx --onnx_dir ./onnx_export
+python serve.py --backend ort --onnx_dir ./onnx_export
+```
+
+Both backends expose the same `/generate` and `/generate_batch` endpoints so `eval_serve.py` works against either without changes.
+
+Once the server is running, use `eval_serve.py` to evaluate through it (same metrics and W&B logging as `eval.py`):
+
+```bash
+# Terminal 1 — start server (vLLM with LoRA)
+python serve.py --lora_path ./checkpoints/unified_market_lora
+
+# Terminal 2 — evaluate through it
+python eval_serve.py \
+  --server_url http://localhost:8000 \
+  --num_episodes 10 --episode_length 250 \
+  --wandb_project "Chaos Economy" --run_name eval-vllm-lora
+
+# Smoke test
+python eval_serve.py --num_episodes 1 --episode_length 10
+```
+
 ### Debug (no GPU)
 
 ```bash
@@ -728,6 +779,21 @@ python debug_env.py       # one-episode trace, rewards + share updates
 pytest tests/ -v          # full test suite
 python analyze_rewards.py # reward signal breakdown
 ```
+
+---
+
+## Tech Stack
+
+| Layer | Library | Role |
+|---|---|---|
+| Training | `trl` (GRPO), `peft` (LoRA), `unsloth` | Reinforcement learning from agent rewards |
+| Inference | `transformers`, `torch` (ROCm BF16) | Episode rollouts during training |
+| Serving (LoRA) | `vllm` | HTTP inference server with LoRA hot-swap, continuous batching (`--backend vllm`) |
+| Serving (AMD) | `optimum-amd`, `optimum` | `ORTModelForCausalLM` + ROCm `CUDAExecutionProvider` — Optimum-AMD inference path (`--backend ort`) |
+| Export | `optimum` | ONNX export via `optimum.exporters.onnx`; required for ORT backend |
+| Simulation | `numpy`, `scipy` | Market dynamics (GBM, vol, order flow) |
+| Monitoring | `wandb` | Reward curves, diversity, format compliance per act |
+| API | `fastapi`, `uvicorn`, `pydantic` | `serve.py` HTTP layer |
 
 ---
 

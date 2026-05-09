@@ -17,3 +17,6 @@ datasets
 trl
 peft
 unsloth
+optimum
+optimum-amd
+vllm
