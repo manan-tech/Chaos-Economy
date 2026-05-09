@@ -12,7 +12,7 @@ pinned: false
 
 > **While most AI simulations model isolated agents or single-objective tasks, *The Chaos Economy* tackles something far more dangerous: Systemic Risk.** We simulate a high-fidelity multi-agent stock market where traders, a market maker, and a regulator engage in an evolving arms race of exploitation, collusion, and adaptive oversight — and watch a full financial crisis arc emerge entirely from 100 steps of reinforcement learning.
 
-**[Hugging Face Space](https://huggingface.co/spaces/MananBansal/Chaos-Economy)** · **[W&B Report]([https://wandb.ai/models-svkm-s-narsee-monjee-institute-of-management-studies/vsr-env-chaos-economy/reports/-Chaos-Economy--VmlldzoxNjY2NzUxMQ?accessToken=rj97shf6th8dt56ijps5p9d6wrap55arxmfuzn5ud9udxr28ywvoag5qvs07q6uz](https://wandb.ai/bansal-manan-2005-none/Chaos%20Economy/reports/The-Chaos-Economy--VmlldzoxNjgyNTAxNA))**
+**[Hugging Face Space](https://huggingface.co/spaces/MananBansal/Chaos-Economy)** · **[W&B Report](https://wandb.ai/bansal-manan-2005-none/Chaos%20Economy/reports/The-Chaos-Economy--VmlldzoxNjgyNTAxNA)**
 
 ---
 
