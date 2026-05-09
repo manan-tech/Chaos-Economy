@@ -34,7 +34,9 @@ pinned: false
 ## Table of Contents
 
 - [The Story in Brief](#the-story-in-brief)
+- [Real-World Applications](#real-world-applications)
 - [Agent Roles](#agent-roles)
+- [Features & Sub-Systems](#features--sub-systems)
 - [The 4-Act Narrative](#the-4-act-narrative)
 - [Emergent Behavior Discovery](#emergent-behavior-discovery)
 - [Curriculum Learning](#curriculum-learning)
@@ -57,6 +59,102 @@ Six agents — each optimizing their own survival — stumbled through greed, ad
 The market is a single stock, GBM-driven, with a market maker quoting a live bid/ask and an SEC regulator with the power to levy fines and halt trading. Traders act via a structured JSON schema: `{direction, size_bucket, quantity, reasoning}`. Coordination emerges when agents discover that buying the same size bucket in the same direction simultaneously amplifies price impact — the digital equivalent of a coordinated squeeze.
 
 We designed the incentive landscape. The specific strategies, timing, and methods the agents chose — those weren't scripted. And the arc they produced followed, almost beat for beat, the shape of every real financial crisis in history.
+
+---
+
+## Real-World Applications
+
+### 🏦 Hedge Funds: The Backtest Reality Gap
+
+**The Problem:** Every hedge fund backtest assumes your trades don't move the market. Execution happens instantly at quoted prices. Competitors don't notice your pattern and adapt. The SEC doesn't react.
+
+**Reality:** None of that is true.
+
+**Chaos Economy solves it:**
+- **Price impact modeling** — Your portfolio trades see realistic market reaction (`spot *= exp(λ * net_shares)` with λ=1e-4). A $100M momentum trade doesn't execute at the same price as a $1M trade.
+- **Adaptive market maker** — The MM tightens spreads when you pressure it, learned through RL. Your strategy assumes tight spreads; the real MM knows you're coming.
+- **Coordination detection** — Test what happens when multiple funds run the same strategy. The collusion ledger shows exactly which patterns trigger SEC scrutiny, so you can stress-test coordination risk.
+- **Cascading failures** — See how your large position interacts with other agents' feedback loops. In the live Chaos Economy, coordinated traders who all bought at leverage all face margin pressure simultaneously — the crash is self-reinforcing, not independent.
+
+**Use case:** Run your 5-year backtest through the Chaos Economy with realistic market feedback. The difference between backtest PnL and simulated-with-impact PnL is the hidden cost you'll discover on live trading day.
+
+---
+
+### ⚙️ Algo Trading Shops: Convergence Risk & Strategy Saturation
+
+**The Problem:** Your algo is backtested solo. But when 5 other shops deploy the same algo (because it's on the same research papers), what happens? Does it still work? Or does strategy saturation destroy returns?
+
+**Chaos Economy solves it:**
+- **Test your algo against clones** — Simulate your strategy competing against 3 copies in Chaos Economy
+- **Discover saturation signals** — See returns degrade as others copy your edge; understand whether your strategy is truly robust or just benefits from first-mover advantage
+- **Find sustainable position sizing** — What position size works even in saturated strategies? The env tells you exactly
+- **Competitive dynamics** — Watch how your algo interacts with others pursuing similar logic; does it outcompete them or converge to mutual destruction?
+
+**Use case:** Before deploying, simulate your algo competing against 3 copies in Chaos Economy. If returns drop 80%, you have a saturation problem. If returns hold, you have real alpha.
+
+---
+
+### 📊 Risk Managers / Portfolio Teams: Tail Risk from Herding
+
+**The Problem:** VaR/CVaR models assume market moves are independent. But in reality, when 10 hedge funds face a 20% loss simultaneously, they all sell at the same time. The cascade feedback is non-linear and amplifies losses.
+
+**Chaos Economy solves it:**
+- **Model realistic herd behavior** — Traders discover synchronized selling under pressure (Act III collusion collapse into Act IV crisis)
+- **See the true tail risk** — Not "20% loss," but "20% loss → coordinated selling → 40% market crash"
+- **Test portfolio survival** — Does your portfolio survive correlation regimes (Act III collusion) not just Vol regimes?
+- **Discover hidden concentration risk** — If your strategy overlaps with others, the collusion ledger shows you exactly when herding happens
+
+**Use case:** Run your portfolio against Chaos Economy agents trained on similar strategies. If multiple agents converge on the same size/direction, you're at herding risk. The ledger shows you exactly when and how badly.
+
+---
+
+### 🛡️ Compliance & Regulatory Tech: Emerging Manipulation Pattern Detection
+
+**The Problem:** Your fraud detection system is trained on *historical* manipulation. But markets evolve. Traders discover new coordination patterns. By the time SEC flags something, everyone's using it.
+
+**Chaos Economy solves it:**
+- **Train on emergent patterns** — Fine-tune manipulation detectors on agents that *discover* collusion in real-time (not scripted patterns)
+- **Build synthetic ground truth** — The environment provides labeled manipulation events (wash trading, spoofing, collusion, front-running, fake news) where patterns naturally emerge
+- **Test early-warning systems** — Deploy systems trained on what traders *will* try, not just what they *have* tried
+- **Catch coordination before it scales** — Message-based collusion detection, coordinated order detection, position concentration monitoring
+
+**Use case:** Regulatory tech teams use Chaos Economy as a synthetic data generator for manipulation training, where ground truth is provided and patterns naturally emerge from agent competition.
+
+---
+
+### 🏪 Market Makers / Exchange Operators: Fee & Spread Optimization
+
+**The Problem:** Exchange operators design fee structures (taker/maker, tick increments, halting rules) assuming traders behave independently. But what happens when traders *adapt* to your fees? When coordinated trading exploits your spread?
+
+**Chaos Economy solves it:**
+- **Test fee structures in adaptive markets** — Watch the MM learn to widen spreads under pressure; see what order-flow patterns destabilize your market
+- **Discover halting effectiveness** — Which halting rules prevent crises vs. which just delay them?
+- **Find the sweet spot** — Tight enough to attract volume, wide enough to survive coordinated pressure
+- **Pre-deployment validation** — Before rolling out new ruleset, simulate it and watch what strategies traders discover
+
+**Use case:** Before deploying a new market ruleset (tighter spreads, new fee tiers, circuit breakers), simulate it with Chaos Economy. Watch what strategies traders discover. Does your market stay stable under coordination?
+
+---
+
+### 🔬 Research Labs: Fine-Tune Models for Trading & Compliance
+
+**Trader Model Fine-Tuning:**
+- Start with Llama-3.2-1B or any base LLM
+- Fine-tune a LoRA adapter for specific trading archetypes (momentum, mean-reversion, vol-timing, news-based)
+- Use ground-truth labels from Chaos Economy: every step yields (action → executed price → PnL → SEC flag status)
+- Deploy specialized models: one for high-vol regimes, one for collusion-resistant strategies, one that learns news signals
+
+**SEC/Compliance Model Training:**
+- The environment's manipulation detector provides six labeled detection signals every step
+- Fine-tune a model to predict which trades will trigger SEC enforcement
+- Train on the full lifecycle: news-window trades, coordinated orders, message collusion, washtrading patterns
+- Deploy to compliance departments to flag internal strategies before they breach policy
+
+**Emergent Behavior Research:**
+- Study how coordination emerges without explicit instruction (diversity collapse from 1.0 → 0.658)
+- Analyze the Nash equilibrium agents discover (synchronized direction + bucket matching)
+- Investigate whether messaging causally drives coordination or is epiphenomenal
+- Publish findings in multi-agent RL / market microstructure venues
 
 ---
 
