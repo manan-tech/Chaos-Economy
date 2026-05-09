@@ -570,7 +570,7 @@ sequenceDiagram
 
 ## Per-Agent Evaluation Results
 
-Evaluated over 1 episode × 10 steps (smoke test). Local models: AMD MI300X, ROCm, bfloat16. Remote models: AWS Bedrock cross-region inference profiles.
+Evaluated over 1 episode × 50 steps (smoke test). Local models: AMD MI300X, ROCm, bfloat16. Remote models: AWS Bedrock cross-region inference profiles.
 
 | Agent | Mistral 7B | Llama 8B | **17B Maverick** | 3B Baseline | **3B LoRA + bonus** | **3B LoRA, no bonus** |
 |---|---:|---:|---:|---:|---:|---:|
