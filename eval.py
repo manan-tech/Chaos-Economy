@@ -192,12 +192,21 @@ def main():
                    config=vars(args))
 
     device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-    dtype = torch.bfloat16 if device == "cuda" else (torch.float16 if device == "mps" else torch.float32)
-    print(f"[Device] {device}  dtype={dtype}")
+    dtype = torch.bfloat16 if device in ("cuda", "mps") else torch.float32
+    if device == "cuda":
+        print(f"[Device] {device} — {torch.cuda.get_device_name(0)}  dtype={dtype}")
+    else:
+        print(f"[Device] {device}  dtype={dtype}")
+    if device == "cpu":
+        print("[WARNING] No GPU detected — running on CPU will be very slow.")
 
     print(f"[Model] Loading base: {args.base_model}")
     tokenizer = AutoTokenizer.from_pretrained(args.base_model)
-    model = AutoModelForCausalLM.from_pretrained(args.base_model, device_map="auto", torch_dtype=dtype)
+    # device_map="cuda:0" pins the whole model to one GPU — avoids split-device
+    # issues on ROCm where device_map="auto" can partially land on CPU.
+    load_device_map = "cuda:0" if device == "cuda" else ("mps" if device == "mps" else "cpu")
+    model = AutoModelForCausalLM.from_pretrained(args.base_model, device_map=load_device_map, torch_dtype=dtype)
+    print(f"[Model] Loaded — first param device: {next(model.parameters()).device}")
 
     if args.load_lora_path:
         from peft import PeftModel
