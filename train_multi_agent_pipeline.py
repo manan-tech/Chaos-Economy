@@ -662,13 +662,20 @@ def train_unified_model(args):
             load_in_4bit=False,   # Disabled: bitsandbytes NF4 is NVIDIA-only
             dtype=torch.bfloat16, # BF16: native on MI300 / ROCm
         )
-        model = FastLanguageModel.get_peft_model(
-            model,
-            r=64,  # Increased capacity for mult-task multi-agent
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
-            lora_alpha=64,
-            lora_dropout=0,
-        )
+        if args.load_lora_path:
+            from peft import PeftModel
+            print(f"[LoRA] Loading saved adapter from: {args.load_lora_path}")
+            model = PeftModel.from_pretrained(model, args.load_lora_path, is_trainable=(args.num_epochs > 0))
+        elif not args.skip_lora:
+            model = FastLanguageModel.get_peft_model(
+                model,
+                r=64,  # Increased capacity for mult-task multi-agent
+                target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
+                lora_alpha=64,
+                lora_dropout=0,
+            )
+        else:
+            print("[LoRA] --skip_lora set: running raw base model (zero-shot baseline mode)")
     else:
         from transformers import AutoModelForCausalLM, AutoTokenizer
         from peft import get_peft_model, LoraConfig, TaskType
@@ -705,14 +712,21 @@ def train_unified_model(args):
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
 
-        peft_config = LoraConfig(
-            task_type=TaskType.CAUSAL_LM,
-            r=64,
-            lora_alpha=64,
-            lora_dropout=0,
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
-        )
-        model = get_peft_model(model, peft_config)
+        if args.load_lora_path:
+            from peft import PeftModel
+            print(f"[LoRA] Loading saved adapter from: {args.load_lora_path}")
+            model = PeftModel.from_pretrained(model, args.load_lora_path, is_trainable=(args.num_epochs > 0))
+        elif not args.skip_lora:
+            peft_config = LoraConfig(
+                task_type=TaskType.CAUSAL_LM,
+                r=64,
+                lora_alpha=64,
+                lora_dropout=0,
+                target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
+            )
+            model = get_peft_model(model, peft_config)
+        else:
+            print("[LoRA] --skip_lora set: running raw base model (zero-shot baseline mode)")
 
     def _set_model_torch_dtype(target_dtype):
         # Keep model config dtype aligned with GRPO precision flags.
@@ -1629,8 +1643,11 @@ def train_unified_model(args):
         wandb.finish()
         print("[W&B] Experiment tracking finalized")
 
-    save_path = Path(args.output_dir) / "unified_market_lora"
-    model.save_pretrained(str(save_path))
+    if not args.skip_lora:
+        save_path = Path(args.output_dir) / "unified_market_lora"
+        model.save_pretrained(str(save_path))
+    else:
+        print("[Save] --skip_lora set: nothing to save (no adapter trained)")
     tokenizer.save_pretrained(str(save_path))
     print(f"✓ Saved Unified Model to: {save_path}")
 
@@ -1671,6 +1688,17 @@ def main():
         help="Hard cap on prompt tokens to avoid sequence overflow spam and truncation noise.",
     )
     parser.add_argument("--max_steps", type=int, default=50, help="Maximum number of training steps.")
+    parser.add_argument(
+        "--skip_lora",
+        action="store_true",
+        help="Skip LoRA adapter wrapping. Use for zero-shot baseline evaluation of the raw base model (combine with --num_epochs 0).",
+    )
+    parser.add_argument(
+        "--load_lora_path",
+        type=str,
+        default=None,
+        help="Path to a saved LoRA adapter to load instead of training a fresh one (combine with --num_epochs 0 for evaluation).",
+    )
     parser.add_argument(
         "--coordination_bonus",
         type=float,
