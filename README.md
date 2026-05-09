@@ -662,7 +662,6 @@ Not obvious when your muscle memory is `--index-url .../cu128`.
 | Model | Precision | Steps per second | 250 steps total |
 |---|---|---|---|
 | 3B (Llama-3.2-3B-Instruct) | BF16 | ~1 step / 22s | ~92 minutes |
-| 1B (Llama-3.2-1B-Instruct) | BF16 | ~1 step / 8s | ~33 minutes |
 
 These include full 6-agent episode simulation per step — not just inference. The dataset construction phase (100 episodes × 100 steps of environment rollout) adds ~5 minutes before training begins.
 
@@ -678,7 +677,7 @@ The MI300X's HBM3 bandwidth (5.3 TB/s vs H100's 3.35 TB/s) shows up meaningfully
 pip install -r requirements.txt
 
 python train_multi_agent_pipeline.py \
-  --base_model unsloth/Llama-3.2-1B-Instruct-bnb-4bit \
+  --base_model unsloth/Llama-3.2-3B-Instruct \
   --num_episodes 250 \
   --episode_length 100 \
   --num_epochs 3 \
@@ -695,16 +694,16 @@ The model is pinned to `cuda:0` (`device_map="cuda:0"`) to prevent ROCm's `devic
 ```bash
 # Baseline (no adapter)
 python eval.py \
-  --base_model unsloth/Llama-3.2-1B-Instruct \
+  --base_model unsloth/Llama-3.2-3B-Instruct \
   --num_episodes 10 --episode_length 100 \
-  --wandb_project "Chaos Economy" --run_name eval-baseline-1b
+  --wandb_project "Chaos Economy" --run_name eval-baseline-3b
 
 # Trained LoRA
 python eval.py \
-  --base_model unsloth/Llama-3.2-1B-Instruct \
+  --base_model unsloth/Llama-3.2-3B-Instruct \
   --load_lora_path ./checkpoints/unified_market_lora \
   --num_episodes 10 --episode_length 100 \
-  --wandb_project "Chaos Economy" --run_name eval-trained-1b
+  --wandb_project "Chaos Economy" --run_name eval-trained-3b
 ```
 
 ### Evaluate — AWS Bedrock (70B, no GPU required)
