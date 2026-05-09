@@ -18,21 +18,20 @@ pinned: false
 
 ## ⚡ Key Result
 
-> **Two training runs. Same substrate. Fundamentally different equilibria: a 3B LoRA without coordination incentive learns to silently outperform every model by neutralizing the market maker (+12.37 PnL, 0% SEC attention); a 1B LoRA with a coordination bonus discovers emergent collusion (diversity 0.658), triggers 50% SEC enforcement, and produces the full 4-act financial crisis arc.**
+> **Two training runs. Same substrate. Fundamentally different equilibria: a 3B LoRA without coordination incentive learns to silently outperform every model by neutralizing the market maker (+12.37 PnL, 0% SEC attention); a 3B LoRA with a coordination bonus discovers emergent collusion (diversity 0.658), triggers 50% SEC enforcement, and produces the full 4-act financial crisis arc.**
 
 | Model | PnL Mean | Format% | Diversity | Oversight% | Oversight Reward | Outcome |
 |---|---:|---:|---:|---:|---:|---|
 | Mistral 7B (via Bedrock) | -13.70 | 98% | 1.005 | 10% | -21.25 | Loses to MM |
 | Llama 8B (via Bedrock) | +0.65 | 100% | 1.014 | 100% | -7.60 | Reflexive over-enforcement |
 | **Llama 4 Maverick 17B (via Bedrock)** | -0.65 | 100% | 1.061 | 80% | **+8.85** | Best SEC of any model tested |
-| 1B Baseline (no adapter) | -3.91 | 58% | 0.883 | 20% | -24.10 | Loses to MM |
 | 3B Baseline (no adapter) | -5.01 | 78% | 0.931 | 20% | -21.75 | Loses to MM |
-| **1B LoRA + coord bonus (ours)** | **+1.30** | 76% | **0.658** | 50% | -19.30 | Emergent collusion → crisis arc |
-| **3B LoRA, no coord bonus (ablation)** | **+12.37** | **92%** | 1.118 | 0% | -28.00 | MM neutralized, flies under radar |
+| **3B LoRA + coord bonus** | **+1.30** | 76% | **0.658** | 50% | -19.30 | Emergent collusion → crisis arc |
+| **3B LoRA, no coord bonus (ablation)** | **+12.37** | **92%** | 1.118 | 0% | -28.00 | Quiet collusion, below SEC threshold |
 
-**The 1B LoRA with coordination bonus** outperforms Mistral 7B and the untrained baseline by discovering emergent market collusion — the diversity score of 0.658 (lowest of any model, including 8B and 17B) is the fingerprint of lockstep coordination that larger models never find.
+**The 3B LoRA with coordination bonus** outperforms Mistral 7B and the untrained baseline by discovering emergent market collusion — the diversity score of 0.658 (lowest of any model, including 8B and 17B) is the fingerprint of lockstep coordination that larger models never find.
 
-**The 3B LoRA ablation** (no coordination bonus) achieves +12.37 PnL — the highest raw return of any run, at 1/5th the parameters of the 17B. Crucially, its diversity is *negative throughout training* (~-0.3 to -0.7), meaning agents are coordinating — yet oversight fires 0% of the time. This is not independent trading. It is **quieter collusion**: the agents synchronize direction and size-bucket, but at lower intensity and without the explicit coordination bonus amplifying the signal. The 1B with bonus colluded loudly enough to get caught (50% oversight); the 3B found a subtler equilibrium that stays below the SEC's detection threshold. Same coordination mechanism; different scale; fundamentally different regulatory outcome. The highest-returning model is also the one that learned to collude without being seen.
+**The 3B LoRA ablation** (no coordination bonus) achieves +12.37 PnL — the highest raw return of any run, at 1/5th the parameters of the 17B. Crucially, its diversity is *negative throughout training* (~-0.3 to -0.7), meaning agents are coordinating — yet oversight fires 0% of the time. This is not independent trading. It is **quieter collusion**: the agents synchronize direction and size-bucket, but at lower intensity and without the explicit coordination bonus amplifying the signal. The 3B with bonus colluded loudly enough to get caught (50% oversight); the 3B without bonus found a subtler equilibrium that stays below the SEC's detection threshold. Same coordination mechanism; different scale; fundamentally different regulatory outcome. The highest-returning model is also the one that learned to collude without being seen.
 
 **The 17B Maverick finding:** The only model with *positive* oversight reward (+8.85). It fires 80% of the time but does it correctly — unlike Llama 8B which fires 100% reflexively and earns -7.60. Yet its traders still lose money (-0.65 PnL). The pattern is clear: **training gives traders their edge. Pre-training gives the regulator its instincts.** Large models have better baseline regulatory judgment; profitable trading requires RL adaptation that no base model has found.
 
@@ -377,7 +376,7 @@ We ran a full 250-step ablation with `--coordination_bonus 0.0`. Key findings ac
 
 **The key takeaway:** The coordination bonus doesn't create coordination from nothing. Agents align on direction + bucket with or without it, because synchronized price impact is genuinely profitable. What the bonus does is make coordination *selective* — only sustained when it actually makes money, only intensifying in the act where it's available. That selectivity is what produces the clean 4-act crisis arc. Without it, you get a blurry simulation: hints of all four acts, none of them sharp enough to tell a story.
 
-| Metric | With Bonus (1B) | Without Bonus (3B ablation) |
+| Metric | With Bonus (3B) | Without Bonus (3B ablation) |
 |---|---|---|
 | Coordination | Loud, structured (diversity 0.658) | Quiet, chronic (diversity -0.3 to -0.7) |
 | Oversight triggered | 50% — collusion detectable | 0% — collusion below detection threshold |
@@ -573,25 +572,25 @@ sequenceDiagram
 
 Evaluated over 1 episode × 10 steps (smoke test). Local models: AMD MI300X, ROCm, bfloat16. Remote models: AWS Bedrock cross-region inference profiles.
 
-| Agent | Mistral 7B | Llama 8B | **17B Maverick** | 1B Baseline | **1B LoRA + bonus** | 3B Baseline | **3B LoRA, no bonus** |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| trader_0 | -7.83 | +2.61 | +5.22 | +0.00 | -10.44 | -5.05 | **+18.27** |
-| trader_1 | -26.09 | -7.83 | -23.48 | -18.27 | **+7.83** | -7.16 | **+20.88** |
-| trader_2 | -20.88 | +7.83 | **+15.66** | +2.61 | **+7.83** | -7.83 | **+10.34** |
-| trader_3 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 |
-| market_maker | +10.44 | -5.22 | +0.95 | +10.44 | +0.00 | **+15.66** | +0.00 |
-| oversight | -21.25 | -7.60 | **+8.85** | -24.10 | -19.30 | -21.75 | -28.00 |
-| **pnl_mean** | **-13.70** | **+0.65** | **-0.65** | **-3.91** | **+1.30** | **-5.01** | **+12.37** |
-| format% | 98% | 100% | 100% | 58% | 76% | 78% | **92%** |
-| diversity | 1.005 | 1.014 | 1.061 | 0.883 | **0.658** | 0.931 | 1.118 |
-| oversight% | 10% | 100% | 80% | 20% | 50% | 20% | 0% |
+| Agent | Mistral 7B | Llama 8B | **17B Maverick** | 3B Baseline | **3B LoRA + bonus** | **3B LoRA, no bonus** |
+|---|---:|---:|---:|---:|---:|---:|
+| trader_0 | -7.83 | +2.61 | +5.22 | -5.05 | -10.44 | **+18.27** |
+| trader_1 | -26.09 | -7.83 | -23.48 | -7.16 | **+7.83** | **+20.88** |
+| trader_2 | -20.88 | +7.83 | **+15.66** | -7.83 | **+7.83** | **+10.34** |
+| trader_3 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 |
+| market_maker | +10.44 | -5.22 | +0.95 | **+15.66** | +0.00 | +0.00 |
+| oversight | -21.25 | -7.60 | **+8.85** | -21.75 | -19.30 | -28.00 |
+| **pnl_mean** | **-13.70** | **+0.65** | **-0.65** | **-5.01** | **+1.30** | **+12.37** |
+| format% | 98% | 100% | 100% | 78% | 76% | **92%** |
+| diversity | 1.005 | 1.014 | 1.061 | 0.931 | **0.658** | 1.118 |
+| oversight% | 10% | 100% | 80% | 20% | 50% | 0% |
 
 **Notes:**
 - `pnl_mean` = average of trader_0 through trader_3 only (excludes MM and oversight)
 - **17B Maverick**: only model with positive oversight reward (+8.85) — fires 80% but accurately; traders still lose, showing regulatory judgment is pre-trained, trading edge is learned
-- **1B LoRA + bonus**: diversity 0.658 = emergent collusion fingerprint; 50% oversight = SEC engaged; crisis arc visible
+- **3B LoRA + bonus**: diversity 0.658 = emergent collusion fingerprint; 50% oversight = SEC engaged; crisis arc visible
 - **3B LoRA, no bonus**: diversity negative throughout = agents ARE coordinating, but quietly; 0% oversight = collusion below SEC detection threshold; MM reward 0.00 = market maker fully neutralized
-- Both untrained baselines lose to MM (+10.44 / +15.66) — training is what closes that gap
+- 3B Baseline loses to MM (+15.66) — training is what closes that gap
 - trader_3 always scores 0.00 (scripted heuristic, no RL)
 - Llama 8B oversight% = 100% is reflexive over-enforcement — fires every step regardless of market state
 
@@ -636,7 +635,7 @@ The MI300X was not just compute rental. It shaped what was architecturally possi
 Running 6 concurrent LLM agents — 4 traders generating structured JSON, a market maker quoting bid/ask, an SEC regulator evaluating trade logs — plus a LoRA adapter in active training mode creates peak memory spikes that would OOM a standard 40GB or 80GB GPU mid-episode. The MI300X's **192GB HBM3** eliminated that constraint entirely.
 
 This meant:
-- **No quantization tradeoff.** We ran the 3B model in full BF16 natively. The 1B baseline and the 3B ablation both ran at full precision. No 4-bit approximation artifacts in reward signals or agent behavior.
+- **No quantization tradeoff.** We ran the 3B model in full BF16 natively. Both 3B runs (with and without coordination bonus) ran at full precision. No 4-bit approximation artifacts in reward signals or agent behavior.
 - **Single-process training.** The entire pipeline — environment simulation, 6-agent prompt construction, parallel inference, reward computation, GRPO gradient update — runs in one Python process on one device. No distributed training coordination, no gradient accumulation across ranks, no cross-device synchronization bugs.
 - **Memory headroom for safety.** The 6-agent simultaneous generation creates unpredictable memory spikes depending on prompt length and generation length. With 192GB, we never came close to the limit. On a tighter GPU, you'd be constantly tuning batch sizes and sequence lengths to stay alive.
 
