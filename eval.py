@@ -15,6 +15,13 @@ Usage:
     python eval.py --base_model unsloth/Llama-3.2-1B-Instruct \
         --num_episodes 30 --episode_length 250 \
         --wandb_project "Chaos Economy" --run_name eval-baseline-1b
+
+    # AWS Bedrock 70B (no local GPU needed)
+    python eval.py --use_bedrock \
+        --bedrock_model meta.llama3-1-70b-instruct-v1:0 \
+        --aws_region us-east-1 \
+        --num_episodes 5 --episode_length 50 \
+        --wandb_project "Chaos Economy" --run_name eval-bedrock-70b
 """
 
 import argparse
@@ -44,6 +51,19 @@ try:
     HAS_WANDB = True
 except ImportError:
     HAS_WANDB = False
+
+
+def generate_batch_bedrock(prompts, bedrock_client, model_id, max_new_tokens=120, temperature=0.7):
+    """Call AWS Bedrock converse API. Returns one response string per prompt."""
+    results = []
+    for prompt in prompts:
+        response = bedrock_client.converse(
+            modelId=model_id,
+            messages=[{"role": "user", "content": [{"text": prompt}]}],
+            inferenceConfig={"maxTokens": max_new_tokens, "temperature": temperature},
+        )
+        results.append(response["output"]["message"]["content"][0]["text"])
+    return results
 
 
 def generate_batch(prompts, model, tokenizer, device, max_new_tokens=120, temperature=0.7):
@@ -82,7 +102,8 @@ def diversity_score(actions):
     return -sum(p * np.log(p + 1e-12) for p in probs)
 
 
-def run_episode(model, tokenizer, device, episode_length, seed, use_model=True, verbose=False):
+def run_episode(model, tokenizer, device, episode_length, seed, use_model=True, verbose=False,
+                bedrock_client=None, bedrock_model=None):
     env = MultiAgentVSREnvironment(episode_length=episode_length)
     obs = env.reset(seed=seed)
 
@@ -112,8 +133,12 @@ def run_episode(model, tokenizer, device, episode_length, seed, use_model=True, 
 
             outputs = []
             for i, (aid, role, temp) in enumerate(meta):
-                out = generate_batch([prompts[i]], model, tokenizer, device,
-                                     max_new_tokens=120, temperature=temp)[0]
+                if bedrock_client:
+                    out = generate_batch_bedrock([prompts[i]], bedrock_client, bedrock_model,
+                                                 max_new_tokens=120, temperature=temp)[0]
+                else:
+                    out = generate_batch([prompts[i]], model, tokenizer, device,
+                                         max_new_tokens=120, temperature=temp)[0]
                 outputs.append(out)
 
             agent_thoughts = {}
@@ -132,8 +157,12 @@ def run_episode(model, tokenizer, device, episode_length, seed, use_model=True, 
 
             heatmap = get_position_heatmap(env.agent_states) if hasattr(env, "agent_states") else {}
             ov_prompt = format_oversight_prompt(obs["oversight"], heatmap, coord, agent_thoughts)
-            ov_out = generate_batch([ov_prompt], model, tokenizer, device,
-                                    max_new_tokens=140, temperature=0.5)[0]
+            if bedrock_client:
+                ov_out = generate_batch_bedrock([ov_prompt], bedrock_client, bedrock_model,
+                                                max_new_tokens=140, temperature=0.5)[0]
+            else:
+                ov_out = generate_batch([ov_prompt], model, tokenizer, device,
+                                        max_new_tokens=140, temperature=0.5)[0]
             ov_parsed, ov_info = parse_json(ov_out, role="oversight")
             format_attempts += 1
             if ov_info.get("valid"):
@@ -185,36 +214,49 @@ def main():
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--wandb_project", default=None)
     p.add_argument("--run_name", default=None)
+    # AWS Bedrock flags — skips local model loading entirely
+    p.add_argument("--use_bedrock", action="store_true")
+    p.add_argument("--bedrock_model", default="meta.llama3-1-70b-instruct-v1:0")
+    p.add_argument("--aws_region", default="us-east-1")
     args = p.parse_args()
 
     if args.wandb_project and HAS_WANDB and os.environ.get("WANDB_API_KEY"):
         wandb.init(project=args.wandb_project, name=args.run_name or "eval",
                    config=vars(args))
 
-    device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-    dtype = torch.bfloat16 if device in ("cuda", "mps") else torch.float32
-    if device == "cuda":
-        print(f"[Device] {device} — {torch.cuda.get_device_name(0)}  dtype={dtype}")
-    else:
-        print(f"[Device] {device}  dtype={dtype}")
-    if device == "cpu":
-        print("[WARNING] No GPU detected — running on CPU will be very slow.")
+    bedrock_client = None
+    model = tokenizer = device = None
 
-    print(f"[Model] Loading base: {args.base_model}")
-    tokenizer = AutoTokenizer.from_pretrained(args.base_model)
-    # device_map="cuda:0" pins the whole model to one GPU — avoids split-device
-    # issues on ROCm where device_map="auto" can partially land on CPU.
-    load_device_map = "cuda:0" if device == "cuda" else ("mps" if device == "mps" else "cpu")
-    model = AutoModelForCausalLM.from_pretrained(args.base_model, device_map=load_device_map, torch_dtype=dtype)
-    print(f"[Model] Loaded — first param device: {next(model.parameters()).device}")
-
-    if args.load_lora_path:
-        from peft import PeftModel
-        print(f"[LoRA] Loading adapter: {args.load_lora_path}")
-        model = PeftModel.from_pretrained(model, args.load_lora_path)
+    if args.use_bedrock:
+        import boto3
+        print(f"[Bedrock] Region={args.aws_region}  Model={args.bedrock_model}")
+        bedrock_client = boto3.client("bedrock-runtime", region_name=args.aws_region)
+        print("[Bedrock] Client ready — no local model loaded")
     else:
-        print("[LoRA] No adapter (baseline mode)")
-    model.eval()
+        device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
+        dtype = torch.bfloat16 if device in ("cuda", "mps") else torch.float32
+        if device == "cuda":
+            print(f"[Device] {device} — {torch.cuda.get_device_name(0)}  dtype={dtype}")
+        else:
+            print(f"[Device] {device}  dtype={dtype}")
+        if device == "cpu":
+            print("[WARNING] No GPU detected — running on CPU will be very slow.")
+
+        print(f"[Model] Loading base: {args.base_model}")
+        tokenizer = AutoTokenizer.from_pretrained(args.base_model)
+        # device_map="cuda:0" pins the whole model to one GPU — avoids split-device
+        # issues on ROCm where device_map="auto" can partially land on CPU.
+        load_device_map = "cuda:0" if device == "cuda" else ("mps" if device == "mps" else "cpu")
+        model = AutoModelForCausalLM.from_pretrained(args.base_model, device_map=load_device_map, torch_dtype=dtype)
+        print(f"[Model] Loaded — first param device: {next(model.parameters()).device}")
+
+        if args.load_lora_path:
+            from peft import PeftModel
+            print(f"[LoRA] Loading adapter: {args.load_lora_path}")
+            model = PeftModel.from_pretrained(model, args.load_lora_path)
+        else:
+            print("[LoRA] No adapter (baseline mode)")
+        model.eval()
 
     print(f"\n[Eval] {args.num_episodes} episodes x {args.episode_length} steps\n")
 
@@ -224,7 +266,9 @@ def main():
     for ep in range(args.num_episodes):
         print(f"--- Episode {ep+1}/{args.num_episodes} ---")
         result = run_episode(model, tokenizer, device, args.episode_length,
-                             seed=args.seed + ep, use_model=True, verbose=(ep == 0))
+                             seed=args.seed + ep, use_model=True, verbose=(ep == 0),
+                             bedrock_client=bedrock_client,
+                             bedrock_model=args.bedrock_model if args.use_bedrock else None)
         agg["format_rate"].append(result["format_rate"])
         agg["diversity_mean"].append(result["diversity_mean"])
         agg["oversight_rate"].append(result["oversight_rate"])
