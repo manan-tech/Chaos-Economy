@@ -654,58 +654,63 @@ def train_unified_model(args):
             print("[W&B] No WANDB_API_KEY found in environment — skipping experiment tracking")
 
     if use_unsloth:
-        # Force float16 — Unsloth's internal LoRA kernels use fp16 and will crash
-        # with a "Half vs BFloat16" error if we mix dtypes.
+        # Use BF16 — preferred for AMD MI300 / ROCm and modern NVIDIA GPUs.
+        # MI300 supports BF16 natively with far better throughput than FP16.
         model, tokenizer = FastLanguageModel.from_pretrained(
-            args.base_model, 
-            max_seq_length=2048, 
-            load_in_4bit=True,
-            dtype=torch.float16,
+            args.base_model,
+            max_seq_length=2048,
+            load_in_4bit=False,   # Disabled: bitsandbytes NF4 is NVIDIA-only
+            dtype=torch.bfloat16, # BF16: native on MI300 / ROCm
         )
         model = FastLanguageModel.get_peft_model(
-            model, 
+            model,
             r=64,  # Increased capacity for mult-task multi-agent
             target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
-            lora_alpha=64, 
+            lora_alpha=64,
             lora_dropout=0,
         )
     else:
-        from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+        from transformers import AutoModelForCausalLM, AutoTokenizer
         from peft import get_peft_model, LoraConfig, TaskType
-        
+
         print("Unsloth unavailable or incompatible, falling back to standard HuggingFace transformers + PEFT.")
-        
+
         if torch.backends.mps.is_available():
+            # Apple Silicon — MPS does not support BF16 well, use FP16
             device_map = "mps"
-            model = AutoModelForCausalLM.from_pretrained(args.base_model, device_map=device_map, torch_dtype=torch.float16)
-        elif torch.cuda.is_available():
-            device_map = "auto"
-            quantization_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_compute_dtype=torch.float16,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_use_double_quant=True,
-            )
             model = AutoModelForCausalLM.from_pretrained(
                 args.base_model,
                 device_map=device_map,
                 torch_dtype=torch.float16,
-                quantization_config=quantization_config,
+            )
+        elif torch.cuda.is_available():
+            # AMD ROCm (MI300) or NVIDIA — load in BF16, no quantization.
+            # MI300 has 192GB HBM3; a 3B model only needs ~6GB in BF16.
+            # bitsandbytes NF4 is NVIDIA CUDA-only and causes the 54s/iter
+            # bottleneck on ROCm via slow dequantization fallback kernels.
+            device_map = "auto"
+            print(f"[Device] GPU detected: {torch.cuda.get_device_name(0)}")
+            print("[Precision] Loading in BF16 (no 4-bit quantization) — optimal for AMD MI300 / ROCm")
+            model = AutoModelForCausalLM.from_pretrained(
+                args.base_model,
+                device_map=device_map,
+                torch_dtype=torch.bfloat16,
+                # attn_implementation="flash_attention_2",  # Uncomment if flash-attn ROCm is installed
             )
         else:
             device_map = "cpu"
             model = AutoModelForCausalLM.from_pretrained(args.base_model, device_map=device_map)
-            
+
         tokenizer = AutoTokenizer.from_pretrained(args.base_model)
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
-            
+
         peft_config = LoraConfig(
             task_type=TaskType.CAUSAL_LM,
             r=64,
             lora_alpha=64,
             lora_dropout=0,
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj"]
+            target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
         )
         model = get_peft_model(model, peft_config)
 
@@ -1636,7 +1641,7 @@ def train_unified_model(args):
 
 def main():
     parser = argparse.ArgumentParser(description="Train multi-agent system")
-    parser.add_argument("--base_model", default="unsloth/Llama-3.2-1B-Instruct-bnb-4bit")
+    parser.add_argument("--base_model", default="meta-llama/Llama-3.2-1B-Instruct")  # Non-quantized for AMD ROCm / BF16
     parser.add_argument("--num_episodes", type=int, default=64)
     parser.add_argument(
         "--dataset_episodes",
