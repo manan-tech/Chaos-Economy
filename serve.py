@@ -111,40 +111,94 @@ def _generate_ort(prompt: str, max_tokens: int, temperature: float) -> str:
 
 
 # ---------------------------------------------------------------------------
-# vLLM backend
+# vLLM backend (CUDA) / transformers fallback (ROCm)
 # ---------------------------------------------------------------------------
 
 _vllm_engine = None
 _lora_request = None
+_hf_model = None
+_hf_tokenizer = None
+_hf_device = None
 
 
 def _init_vllm_engine(base_model: str, lora_path: str | None, max_model_len: int) -> None:
-    global _vllm_engine, _lora_request
+    global _vllm_engine, _lora_request, _active_backend
+    global _hf_model, _hf_tokenizer, _hf_device
+
+    # Try vLLM first; fall back to transformers if CUDA .so files are missing (ROCm env)
     try:
         from vllm import LLM
         from vllm.lora.request import LoRARequest
-    except ImportError:
-        print("[serve] vllm not installed. Install: pip install vllm")
-        sys.exit(1)
 
-    engine_kwargs = dict(
-        model=base_model,
-        max_model_len=max_model_len,
-        dtype="bfloat16",
-        trust_remote_code=True,
+        engine_kwargs = dict(
+            model=base_model,
+            max_model_len=max_model_len,
+            dtype="bfloat16",
+            trust_remote_code=True,
+        )
+        if lora_path:
+            engine_kwargs["enable_lora"] = True
+            engine_kwargs["max_lora_rank"] = 16
+
+        print(f"[serve] Loading vLLM engine: {base_model} ...")
+        _vllm_engine = LLM(**engine_kwargs)
+
+        if lora_path:
+            _lora_request = LoRARequest("chaos_economy_lora", 1, lora_path)
+            print(f"[serve] LoRA adapter loaded from {lora_path}")
+        else:
+            print("[serve] vLLM — base model only (no LoRA adapter)")
+
+    except (ImportError, OSError) as e:
+        print(f"[serve] vLLM unavailable ({type(e).__name__}: {e})")
+        print("[serve] Falling back to transformers backend (ROCm-compatible)")
+        _active_backend = "transformers"
+        _init_hf_engine(base_model, lora_path)
+
+
+def _init_hf_engine(base_model: str, lora_path: str | None) -> None:
+    """Transformers backend — used automatically on ROCm when vLLM CUDA .so files are absent."""
+    global _hf_model, _hf_tokenizer, _hf_device
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
+    _hf_device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    dtype = torch.bfloat16 if _hf_device != "cpu" else torch.float32
+    print(f"[serve] Loading HF model: {base_model}  device={_hf_device}  dtype={dtype}")
+    _hf_tokenizer = AutoTokenizer.from_pretrained(base_model)
+    if _hf_tokenizer.pad_token is None:
+        _hf_tokenizer.pad_token = _hf_tokenizer.eos_token
+    _hf_model = AutoModelForCausalLM.from_pretrained(
+        base_model, device_map=_hf_device, torch_dtype=dtype
     )
     if lora_path:
-        engine_kwargs["enable_lora"] = True
-        engine_kwargs["max_lora_rank"] = 16
+        from peft import PeftModel
+        print(f"[serve] Loading LoRA adapter: {lora_path}")
+        _hf_model = PeftModel.from_pretrained(_hf_model, lora_path)
+    _hf_model.eval()
+    print(f"[serve] Transformers backend ready  device={_hf_device}")
 
-    print(f"[serve] Loading vLLM engine: {base_model} ...")
-    _vllm_engine = LLM(**engine_kwargs)
 
-    if lora_path:
-        _lora_request = LoRARequest("chaos_economy_lora", 1, lora_path)
-        print(f"[serve] LoRA adapter loaded from {lora_path}")
-    else:
-        print("[serve] vLLM — base model only (no LoRA adapter)")
+def _generate_hf(prompts: list[str], max_tokens: int, temperature: float) -> list[str]:
+    import torch
+    _hf_tokenizer.padding_side = "left"
+    inputs = _hf_tokenizer(
+        prompts, return_tensors="pt", padding=True, truncation=True, max_length=1500
+    ).to(_hf_device)
+    with torch.no_grad():
+        out = _hf_model.generate(
+            **inputs,
+            max_new_tokens=max_tokens,
+            do_sample=temperature > 0,
+            temperature=temperature if temperature > 0 else 1.0,
+            pad_token_id=_hf_tokenizer.pad_token_id,
+            repetition_penalty=1.1,
+        )
+    in_len = inputs["input_ids"].shape[1]
+    return [
+        _hf_tokenizer.decode(out[i][in_len:], skip_special_tokens=True).strip()
+        for i in range(len(prompts))
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -173,7 +227,7 @@ def health():
     return {
         "status": "ok",
         "backend": _active_backend,
-        "lora": _lora_request is not None,
+        "lora": _lora_request is not None or (_hf_model is not None and _lora_request is None),
     }
 
 
@@ -183,6 +237,12 @@ def generate(req: GenerateRequest):
         if _ort_model is None:
             raise HTTPException(status_code=503, detail="ORT engine not initialized")
         text = _generate_ort(req.prompt, req.max_tokens, req.temperature)
+        return GenerateResponse(text=text, tokens_generated=len(text.split()))
+
+    if _active_backend == "transformers":
+        if _hf_model is None:
+            raise HTTPException(status_code=503, detail="Transformers engine not initialized")
+        text = _generate_hf([req.prompt], req.max_tokens, req.temperature)[0]
         return GenerateResponse(text=text, tokens_generated=len(text.split()))
 
     # vLLM path
@@ -214,6 +274,13 @@ def generate_batch(requests: list[GenerateRequest]):
              "tokens_generated": 0}
             for r in requests
         ]
+
+    if _active_backend == "transformers":
+        if _hf_model is None:
+            raise HTTPException(status_code=503, detail="Transformers engine not initialized")
+        prompts = [r.prompt for r in requests]
+        texts = _generate_hf(prompts, requests[0].max_tokens, requests[0].temperature)
+        return [{"text": t, "tokens_generated": len(t.split())} for t in texts]
 
     if _vllm_engine is None:
         raise HTTPException(status_code=503, detail="vLLM engine not initialized")
