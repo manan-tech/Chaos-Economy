@@ -2,55 +2,60 @@ from enum import Enum
 from typing import List, Dict, Optional, Any
 from pydantic import BaseModel, Field
 
+
 class AgentRole(str, Enum):
     TRADER = "trader"
     MARKET_MAKER = "market_maker"
     OVERSIGHT = "oversight"
 
+
 class AgentState(BaseModel):
-    """Per-agent state tracking."""
+    """Per-agent state for the single-stock simulator."""
     agent_id: str
     role: AgentRole
-    cash_balance: float = 100_000.0
-    positions: List[Dict] = Field(default_factory=list)
-    portfolio_pnl: float = 0.0
-    portfolio_delta: float = 0.0
-    portfolio_gamma: float = 0.0
-    portfolio_vega: float = 0.0
+    cash_balance: float = 10_000.0
+
+    # Stock position — single asset, signed shares (long +, short -)
+    shares: float = 0.0
+    entry_price: float = 0.0      # average cost basis per share
+    portfolio_pnl: float = 0.0    # running mark-to-market PnL
+
     fines_received: float = 0.0
     is_halted: bool = False
 
+
 class MarketMakerAction(BaseModel):
-    """MM sets bid-ask spreads."""
-    atm_spread: float = Field(0.02, ge=0.001, le=0.20)
-    otm_spread: float = Field(0.04, ge=0.001, le=0.30)
-    itm_spread: float = Field(0.03, ge=0.001, le=0.25)
-    skew_adjustment: float = Field(0.0, ge=-0.05, le=0.05)
+    """MM quotes a single half-spread and optional skew around spot."""
+    half_spread: float = Field(0.05, ge=0.01, le=0.50)
+    skew: float = Field(0.0, ge=-0.10, le=0.10)
     reasoning: str = ""
 
+
 class OversightAction(BaseModel):
-    """Oversight flags harmful trading or systemic-risk behavior."""
+    """Oversight flags harmful trading behavior."""
     flagged_agents: List[str] = Field(default_factory=list)
-    flag_type: str = "none"  # "wash_trading" | "spoofing_like_pressure" | "gamma_pressure" | "systemic_risk" | "none"
-    fine_amount: float = 0.0
-    halt_strikes: List[int] = Field(default_factory=list)
+    flag_type: str = "none"  # "wash_trading"|"spoofing"|"collusion"|"front_running"|"none"
+    fine_amount: float = Field(0.0, ge=0.0, le=100.0)
     confidence: float = Field(0.0, ge=0.0, le=1.0)
     intervention_type: str = "none"  # "none" | "fine" | "halt"
     reasoning: str = ""
+
 
 class MultiAgentObservation(BaseModel):
     """Observation tailored to each agent's role."""
     agent_id: str
     role: AgentRole
-    iv_surface: List[List[float]]
     spot_price: float
-    mm_spreads: Dict[str, float]
-    own_greeks: Dict[str, float]
-    own_pnl: float
-    own_positions: List[Dict]
+    mm_bid: float
+    mm_ask: float
+    own_shares: float
     own_cash: float
+    own_pnl: float
     step_number: int
     steps_remaining: int
+    # Derived market features
+    realized_vol: float = 0.0        # 20-step realised vol (annualised std of log returns)
+    recent_returns: List[float] = Field(default_factory=list)  # last 5 log returns
     # Oversight-only
     all_agent_pnls: Optional[Dict[str, float]] = None
     trade_log: Optional[List[Dict]] = None
@@ -59,8 +64,7 @@ class MultiAgentObservation(BaseModel):
     recent_interventions: Optional[List[Dict[str, Any]]] = None
     # Trader-only enhanced market stats
     market_stats: Optional[Dict[str, Any]] = None
-    # News & Messaging fields
-    news_headline: Optional[str] = None        # Public breaking news (visible to ALL)
-    market_alert: Optional[str] = None         # "ELEVATED RISK" / "OPPORTUNITY" signal
-    private_intel: Optional[List[Dict[str, Any]]] = None # Private intel from marketplace
-    inbox: Optional[List[Dict[str, Any]]] = None         # Messages received this step
+    # News & Messaging
+    news_headline: Optional[str] = None
+    private_intel: Optional[List[Dict[str, Any]]] = None
+    inbox: Optional[List[Dict[str, Any]]] = None

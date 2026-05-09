@@ -1,7 +1,14 @@
-"""Market simulator for VSR-Env.
+"""Market simulator for the single-stock world.
 
-Implements realistic price dynamics using Geometric Brownian Motion
-and regime shifts for the arbitrage capture task.
+Spot price evolves as:
+
+    log S_{t+1} = log S_t + (mu - 0.5 * sigma^2) * dt
+                  + sigma * sqrt(dt) * Z
+                  + news_shock_t            (multiplicative residual)
+                  + lambda * net_order_flow (price impact)
+
+Variance follows a slow mean-reverting process so that the realised-vol
+metric used by archetype rewards (vol_timing) actually moves.
 """
 
 import numpy as np
@@ -12,162 +19,96 @@ from vsr_env.models import VSRState
 def advance_market(
     state: VSRState, rng: np.random.RandomState, dt: float = 1 / 252
 ) -> None:
-    """Advance market by one time step using Geometric Brownian Motion.
+    """Advance the stock spot one GBM step plus residual news shock.
 
-    Updates spot price using GBM: dS = μ*S*dt + σ*S*dW
-    Also updates variance using mean-reverting Ornstein-Uhlenbeck process.
-
-    Args:
-        state: Current VSRState (modified in place)
-        rng: Seeded numpy RandomState for reproducibility
-        dt: Time step (default 1/252 = one trading day)
-
-    Requirements: 21.1, 21.2, 21.6
+    Modifies `state` in place. Caller should additionally invoke
+    `apply_order_flow_impact` after the order matching step if order
+    flow influence on price is desired (kept separate for clarity).
     """
-    # Geometric Brownian Motion for spot price
-    mu = 0.0  # Risk-neutral drift
-    sigma = np.sqrt(state.variance)
+    mu = 0.0
+    sigma = float(np.sqrt(max(state.variance, 1e-8)))
 
-    # Generate random shock
-    dW = rng.normal(0, np.sqrt(dt))
+    dW = float(rng.normal(0, np.sqrt(dt)))
+    log_step = (mu - 0.5 * sigma * sigma) * dt + sigma * dW
 
-    # Price change: dS = μ*S*dt + σ*S*dW
-    dS = mu * state.spot_price * dt + sigma * state.spot_price * dW
-    state.spot_price += dS
+    # Apply residual news shock and decay it.
+    log_step += float(state.news_shock_remaining)
+    state.news_shock_remaining *= float(state.news_shock_decay)
 
-    # [B5 FIX] Widen clamps during black swan to preserve shock impact
+    state.spot_price = float(state.spot_price * np.exp(log_step))
+
+    # Regime-aware spot clamps — keep tighter in normal regimes so episodes
+    # stay in a realistic band; widen during black_swan to preserve shocks.
     if state.regime == "black_swan":
-        state.spot_price = np.clip(state.spot_price, 10.0, 300.0)
-        # [B6 FIX] Decay black_swan regime after one step
+        state.spot_price = float(np.clip(state.spot_price, 10.0, 300.0))
         state.regime = "high_vol"
     else:
-        # Clamp spot price to realistic range
-        state.spot_price = np.clip(state.spot_price, 50.0, 150.0)
+        state.spot_price = float(np.clip(state.spot_price, 30.0, 300.0))
 
-    # Mean-reverting variance dynamics (Ornstein-Uhlenbeck)
-    # dV = θ*(var_mean - variance)*dt + var_vol*dW
-    theta = 0.1  # Mean reversion speed
-    var_mean = 0.04  # Long-term variance (20% vol)
-    var_vol = 0.01  # Variance of variance
+    # Slow mean-reverting variance (Ornstein-Uhlenbeck).
+    theta = 0.1
+    var_mean = 0.04
+    var_vol = 0.01
+    dW_var = float(rng.normal(0, np.sqrt(dt)))
+    state.variance += theta * (var_mean - state.variance) * dt + var_vol * dW_var
 
-    dW_var = rng.normal(0, np.sqrt(dt))
-    dV = theta * (var_mean - state.variance) * dt + var_vol * dW_var
-    state.variance += dV
-
-    # Clamp variance to realistic range (10% to 40% vol)
-    # Widen during high_vol (post-black-swan recovery)
     if state.regime == "high_vol":
-        state.variance = np.clip(state.variance, 0.001, 0.40)
+        state.variance = float(np.clip(state.variance, 0.01, 0.40))
     else:
-        state.variance = np.clip(state.variance, 0.01, 0.16)
+        state.variance = float(np.clip(state.variance, 0.01, 0.16))
+
+
+def apply_news_shock(state: VSRState, log_shock: float) -> None:
+    """Inject a multiplicative news shock that decays over subsequent steps.
+
+    `log_shock` is in log-return space (e.g. +0.01 ≈ +1% one-step bump).
+    The shock is added to `news_shock_remaining`, applied at the next
+    `advance_market` call, and decayed each step thereafter.
+    """
+    state.news_shock_remaining = float(state.news_shock_remaining) + float(log_shock)
+
+
+def apply_order_flow_impact(
+    state: VSRState, net_shares: float, lam: float = 1e-4
+) -> None:
+    """Nudge spot by a small permanent component proportional to net flow.
+
+    `net_shares` is the signed net of all trader buys minus sells in the
+    just-matched step. `lam` is the per-share log-price impact (default
+    1e-4 → 100 net shares = ~1% move). Stored on state for diagnostics.
+    """
+    state.last_net_order_flow = float(net_shares)
+    if lam == 0.0 or net_shares == 0.0:
+        return
+    state.spot_price = float(state.spot_price * np.exp(lam * net_shares))
+    state.spot_price = float(np.clip(state.spot_price, 10.0, 300.0))
 
 
 def trigger_regime_shift(state: VSRState, rng: np.random.RandomState) -> None:
-    """Trigger regime shift by modifying volatility parameters.
-
-    Simulates market stress events where volatility spikes or crashes.
-    Randomly chooses between vol_spike and vol_crash scenarios.
-
-    Args:
-        state: Current VSRState (modified in place)
-        rng: Seeded numpy RandomState for reproducibility
-
-    Requirements: 21.4
-    """
+    """Random vol_spike or vol_crash regime shift (used by scripted curriculum)."""
     shift_type = rng.choice(["vol_spike", "vol_crash"])
-
     if shift_type == "vol_spike":
-        # Volatility increases 20-40%
-        multiplier = rng.uniform(1.2, 1.4)
-        state.variance *= multiplier
+        state.variance *= float(rng.uniform(1.2, 1.4))
         state.regime = "high_vol"
     else:
-        # Volatility decreases 20-30%
-        multiplier = rng.uniform(0.7, 0.8)
-        state.variance *= multiplier
+        state.variance *= float(rng.uniform(0.7, 0.8))
         state.regime = "low_vol"
-
-    # Ensure variance stays in valid range
-    state.variance = np.clip(state.variance, 0.01, 0.16)
+    state.variance = float(np.clip(state.variance, 0.01, 0.40))
 
 
 def trigger_dual_shock(state: VSRState, rng: np.random.RandomState) -> None:
-    """Trigger a dual market shock for the vega-gamma stress task.
-
-    Drops the spot price heavily (-15% to -20%) and simultaneously
-    spikes variance massively (* 3.0 to * 5.0).
-
-    Args:
-        state: Current VSRState (modified in place)
-        rng: Seeded numpy RandomState for reproducibility
-    """
-    drop_factor = rng.uniform(0.80, 0.85)
-    spike_factor = rng.uniform(3.0, 5.0)
-
-    state.spot_price *= drop_factor
-    state.variance *= spike_factor
-
-    # Cap limits beyond normal
-    state.spot_price = np.clip(state.spot_price, 30.0, 150.0)
-    state.variance = np.clip(state.variance, 0.01, 0.40)
+    """Crash event: drop spot 15-20% and spike variance 3-5x."""
+    state.spot_price *= float(rng.uniform(0.80, 0.85))
+    state.variance *= float(rng.uniform(3.0, 5.0))
+    state.spot_price = float(np.clip(state.spot_price, 30.0, 300.0))
+    state.variance = float(np.clip(state.variance, 0.01, 0.40))
     state.regime = "crash"
 
 
-def trigger_vol_crush(state: VSRState, rng: np.random.RandomState) -> None:
-    """Trigger a volatility crush event for earnings scenarios.
-
-    Reduces variance by 30-50% (multiply by 0.5-0.7).
-    Used in the earnings_vol_crush task.
-
-    Args:
-        state: Current VSRState (modified in place)
-        rng: Seeded numpy RandomState for reproducibility
-
-    Requirements: 5.2
-    """
-    # Vol crush: reduce variance by 30-50%
-    multiplier = rng.uniform(0.5, 0.7)
-    state.variance *= multiplier
-    state.regime = "post_earnings"
-
-    # Ensure variance stays in valid range
-    state.variance = np.clip(state.variance, 0.01, 0.16)
-
-
-def inject_oscillation(
-    state: VSRState, rng: np.random.RandomState, magnitude: float = 0.025
-) -> None:
-    """Inject spot price oscillation for gamma scalping.
-
-    Forces larger price swings by adding deterministic oscillation
-    on top of the GBM movement.
-
-    Args:
-        state: Current VSRState (modified in place)
-        rng: Seeded numpy RandomState for reproducibility
-        magnitude: Oscillation magnitude as fraction (default 2.5%)
-
-    Requirements: 6.2
-    """
-    # Add oscillation: ±2-3% spot move
-    oscillation = rng.choice([-1, 1]) * magnitude * state.spot_price
-    state.spot_price += oscillation
-
-    # Clamp spot price to realistic range
-    state.spot_price = np.clip(state.spot_price, 50.0, 150.0)
-
 def apply_black_swan(state: VSRState, spot_impact: float, variance_impact: float) -> None:
-    """Apply Black Swan event to market state.
-    
-    Args:
-        state: Current VSRState (modified in place)
-        spot_impact: Multiplier for spot price
-        variance_impact: Multiplier for variance
-    """
-    state.spot_price *= spot_impact
-    state.variance *= variance_impact
-    
-    # Wider clamps to allow massive shocks
-    state.spot_price = np.clip(state.spot_price, 10.0, 300.0)
-    state.variance = np.clip(state.variance, 0.001, 1.0)
+    """Apply a black swan event with explicit spot/variance multipliers."""
+    state.spot_price = float(state.spot_price * spot_impact)
+    state.variance = float(state.variance * variance_impact)
+    state.spot_price = float(np.clip(state.spot_price, 10.0, 300.0))
+    state.variance = float(np.clip(state.variance, 0.001, 1.0))
     state.regime = "black_swan"

@@ -1,95 +1,78 @@
-from typing import Dict, Any
-from multi_agent.models import MarketMakerAction
-import numpy as np
+"""Single-asset order matching engine for the stock trading simulator.
+
+The market maker quotes a single half-spread around spot. Traders fill at:
+  - buy  → execution_price = spot * (1 + half_spread + skew)
+  - sell → execution_price = spot * (1 - half_spread + skew)
+
+`net_order_flow` (signed shares) is returned so the environment can apply
+`apply_order_flow_impact` to nudge the spot price.
+"""
+
+from typing import Dict, Tuple
+
 
 class OrderMatchingEngine:
-    """Matches trader orders with Market Maker spreads."""
-    
     def __init__(self):
         self.total_volume = 0
-        
+
     def match_orders(
-        self, 
-        trader_actions: Dict[str, dict], 
-        mm_action: MarketMakerAction, 
-        spot_price: float, 
-        option_engine: Any,
-        variance: float
-    ) -> Dict[str, dict]:
+        self,
+        trader_actions: Dict[str, dict],
+        mm_half_spread: float,
+        mm_skew: float,
+        spot_price: float,
+    ) -> Tuple[Dict[str, dict], float]:
+        """Fill trader orders against the MM's single bid/ask.
+
+        Args:
+            trader_actions: {agent_id: action_dict} with keys direction, size_bucket, quantity.
+            mm_half_spread: Half the bid-ask spread (positive float).
+            mm_skew: Signed skew applied to both legs (+skew lifts ask, lowers bid).
+            spot_price: Current stock spot.
+
+        Returns:
+            (executed_trades, net_order_flow)
+            executed_trades: dict of filled trade details per agent.
+            net_order_flow: signed sum of filled shares (buys positive, sells negative).
         """
-        Takes trader actions and applies bid-ask spread to execution prices.
-        Returns the executed trades containing execution details.
-        """
-        executed_trades = {}
-        batch_volume = 0
-        
-        sigma = np.sqrt(variance)
-        
+        executed_trades: Dict[str, dict] = {}
+        net_order_flow = 0.0
+
+        hs = max(0.001, float(mm_half_spread))
+        skew = float(mm_skew)
+
+        ask = spot_price * (1.0 + hs + skew)
+        bid = spot_price * (1.0 - hs + skew)
+        ask = max(bid + 0.01, ask)  # sanity: ask > bid
+
         for agent_id, action_dict in trader_actions.items():
-            if action_dict.get("direction") not in ["buy", "sell"]:
+            direction = action_dict.get("direction")
+            if direction not in ("buy", "sell"):
                 continue
-                
-            quantity = action_dict.get("quantity", 0)
+
+            quantity = int(action_dict.get("quantity", 0))
             if quantity <= 0:
                 continue
-            
-            strike_idx = action_dict.get("selected_strike", 0)
-            maturity_idx = action_dict.get("selected_maturity", 0)
-            option_type = action_dict.get("option_type", "call")
-            
-            if strike_idx >= len(option_engine.STRIKES) or maturity_idx >= len(option_engine.MATURITIES):
-                continue
-                
-            K = option_engine.STRIKES[strike_idx]
-            T = option_engine.MATURITIES[maturity_idx]
-            
-            # Compute theoretical price
-            theo_price = option_engine.bs_price(
-                spot_price, np.array([K]), np.array([T]), np.array([sigma]), option_type=option_type
-            )[0]
-            
-            # Determine moneyness
-            moneyness = spot_price / K
-            if option_type == "call":
-                if moneyness > 1.05:
-                    spread = mm_action.itm_spread
-                    bucket = "itm"
-                elif moneyness < 0.95:
-                    spread = mm_action.otm_spread
-                    bucket = "otm"
-                else:
-                    spread = mm_action.atm_spread
-                    bucket = "atm"
-            else: # put
-                if moneyness < 0.95:
-                    spread = mm_action.itm_spread
-                    bucket = "itm"
-                elif moneyness > 1.05:
-                    spread = mm_action.otm_spread
-                    bucket = "otm"
-                else:
-                    spread = mm_action.atm_spread
-                    bucket = "atm"
-            
-            # Apply spread based on direction
-            # If trader buys, they pay MORE than theo price
-            # If trader sells, they receive LESS than theo price
-            direction = action_dict["direction"]
+
             if direction == "buy":
-                execution_price = theo_price + (spread / 2.0)
+                fill_price = ask
+                signed_qty = quantity
             else:
-                execution_price = max(0.01, theo_price - (spread / 2.0))
-                
-            executed_trade = dict(action_dict)
-            executed_trade["execution_price"] = float(execution_price)
-            executed_trade["theo_price"] = float(theo_price)
-            executed_trade["spread_applied"] = float(spread)
-            executed_trade["moneyness_bucket"] = bucket
-            executed_trade["volume"] = float(quantity)
-            executed_trade["notional"] = float(execution_price * quantity)
-            
-            batch_volume += quantity
-            executed_trades[agent_id] = executed_trade
-                
-        self.total_volume += batch_volume
-        return executed_trades
+                fill_price = bid
+                signed_qty = -quantity
+
+            executed = dict(action_dict)
+            executed["execution_price"] = float(fill_price)
+            executed["spot_at_fill"] = float(spot_price)
+            executed["half_spread_applied"] = float(hs)
+            executed["volume"] = float(quantity)
+            executed["notional"] = float(fill_price * quantity)
+            executed["cash_impact"] = -float(fill_price * signed_qty)
+
+            executed_trades[agent_id] = executed
+            net_order_flow += signed_qty
+
+        self.total_volume += sum(
+            abs(t["volume"]) for t in executed_trades.values()
+        )
+        return executed_trades, float(net_order_flow)

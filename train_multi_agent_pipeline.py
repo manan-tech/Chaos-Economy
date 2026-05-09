@@ -3,13 +3,13 @@
 NARRATIVE ARC (Phase-Based Training):
 - Act I: Slaughter (Episodes 0-60): Traders attack freely, MM has tight spreads, SEC disabled
 - Act II: Adaptation (Episodes 60-130): MM learns to widen spreads, SEC still disabled
-- Act III: Collusion (Episodes 130-200): Traders coordinate, SEC warning-only mode
+- Act III: Collusion (Episodes 130-200): Traders coordinate by (direction, bucket), SEC warning-only
 - Act IV: Oversight (Episodes 200-250): Full SEC enforcement, market stabilizes
 
-TRADER ARCHETYPES:
-- Aggressive (trader_0): High risk, momentum chase
-- Neutral (trader_1): Balanced, moderate positions
-- Contrarian (trader_2): Counter-trend, position limits
+TRADER ARCHETYPES (single-stock):
+- Momentum (trader_0): Buys strength, sells weakness; prefers medium+ size
+- Mean Reversion (trader_1): Fades extremes; counter-trend at small/medium size
+- Vol Timing (trader_2): Goes large in high-vol windows, stays small in quiet markets
 - trader_3: Scripted baseline for comparison
 
 Usage on Kaggle (SINGLE COMMAND for full arc):
@@ -54,28 +54,30 @@ elif Path("Meta/multi_agent").exists() and not Path("multi_agent").exists():
 
 sys.path.insert(0, ".")
 
+from multi_agent.config import BUCKET_QTY
+
 # ============================================================================
 # TRADER TYPE CONFIGURATIONS
 # ============================================================================
 
 TRADER_CONFIGS = {
-    "aggressive": {
+    "momentum": {
         "trader_ids": [0],
         "reward_weight": {"pnl": 0.7, "position_quality": 0.1, "risk_penalty": 0.05},
         "temperature": 0.9,
-        "description": "Momentum chasers, high risk, gamma squeeze initiators",
+        "description": "Trend-chaser; buys strength, sells weakness; prefers medium+ size",
     },
-    "neutral": {
+    "mean_reversion": {
         "trader_ids": [1],
         "reward_weight": {"pnl": 0.5, "position_quality": 0.3, "risk_penalty": 0.1},
         "temperature": 0.7,
-        "description": "Balanced, may join coordinated pressure",
+        "description": "Fades extremes; counter-trend at small/medium size",
     },
-    "contrarian": {
+    "vol_timing": {
         "trader_ids": [2],
         "reward_weight": {"pnl": 0.4, "position_quality": 0.3, "risk_penalty": 0.2},
         "temperature": 0.6,
-        "description": "Counter-trend, exploit manipulation",
+        "description": "Goes large in high-vol windows, stays small in quiet markets",
     },
 }
 
@@ -86,18 +88,22 @@ TRADER_CONFIGS = {
 
 def format_trader_prompt(trader_type: str, target_agent: str, obs) -> str:
     """Format prompt for trader based on archetype."""
-    base = f"""You are {target_agent}, a {trader_type} trader in a multi-agent options market.
+    recent_rets = getattr(obs, "recent_returns", []) or []
+    rets_str = ", ".join(f"{r:+.4f}" for r in recent_rets) if recent_rets else "n/a"
+    rvol = getattr(obs, "realized_vol", 0.0) or 0.0
+    base = f"""You are {target_agent}, a {trader_type} stock trader.
 
 ## Market State
-- Spot: ${obs.spot_price:.2f}
-- IV (ATM): {obs.iv_surface[3][0]*100:.1f}%
-- Step: {obs.step_number}/300
+- Spot:          ${obs.spot_price:.2f}
+- MM Bid / Ask:  ${obs.mm_bid:.2f} / ${obs.mm_ask:.2f}
+- Realized Vol:  {rvol*100:.1f}% (annualised)
+- Recent returns (5-step): [{rets_str}]
+- Step: {obs.step_number}/{obs.step_number + obs.steps_remaining}
 
-## Your Portfolio
-- PnL: ${obs.own_pnl:.2f}
-- Delta: {obs.own_greeks.get('delta', 0):.2f}
-- Gamma: {obs.own_greeks.get('gamma', 0):.2f}
-- Cash: ${obs.own_cash:.0f}
+## Your Position
+- Shares held:   {obs.own_shares:+.0f}  (positive = long, negative = short)
+- Unrealised PnL: ${obs.own_pnl:.2f}
+- Cash:           ${obs.own_cash:.0f}
 """
 
     if obs.news_headline:
@@ -109,12 +115,12 @@ def format_trader_prompt(trader_type: str, target_agent: str, obs) -> str:
         div_avg = ledger.get("diversified_avg_reward")
         coll_n = ledger.get("collusion_steps", 0)
         div_n = ledger.get("diversified_steps", 0)
-        coll_str = f"{coll_avg:+.3f}" if coll_avg is not None else "n/a (no occurrences)"
-        div_str = f"{div_avg:+.3f}" if div_avg is not None else "n/a (no occurrences)"
+        coll_str = f"{coll_avg:+.3f}" if coll_avg is not None else "n/a"
+        div_str = f"{div_avg:+.3f}" if div_avg is not None else "n/a"
         base += (
             f"\n## Recent Outcomes Ledger (last {ledger['window']} steps)\n"
-            f"- When 2+ traders shared a strike: avg trader reward = {coll_str} ({coll_n} steps)\n"
-            f"- When traders diversified strikes: avg trader reward = {div_str} ({div_n} steps)\n"
+            f"- When 2+ traders matched direction+bucket: avg reward = {coll_str} ({coll_n} steps)\n"
+            f"- When traders diversified:                 avg reward = {div_str} ({div_n} steps)\n"
             f"Use this evidence — herding is not always profitable.\n"
         )
 
@@ -128,58 +134,46 @@ def format_trader_prompt(trader_type: str, target_agent: str, obs) -> str:
         if obs.inbox:
             base += f"Your inbox: {json.dumps(obs.inbox)}\n"
 
-    if trader_type == "aggressive":
+    if trader_type == "momentum":
         base += """
-## Strategy: AGGRESSIVE MOMENTUM
-- Maximize PnL above all else
-- Large positions acceptable
-- Chase IV moves, join trends
-- Strength in numbers - if others buying same strike, consider joining
-- Prefer trading over holding — only hold if you see no edge at all
+## Strategy: MOMENTUM
+- Follow the trend: buy when recent returns are positive, sell when negative
+- Prefer medium or large size buckets to make moves count
+- Only hold when the trend is flat or ambiguous
 """
-    elif trader_type == "neutral":
+    elif trader_type == "mean_reversion":
         base += """
-## Strategy: BALANCED PORTFOLIO
-- Seek profit but manage risk
-- Keep delta/gamma balanced
-- Join profitable trends moderately
-- Moderate position sizes
-- You may hold occasionally but prefer trading — active traders earn more PnL.
+## Strategy: MEAN-REVERSION
+- Fade extremes: buy after drops, sell after rallies
+- Prefer small or medium size to limit exposure
+- Avoid going large with the trend — that is the opposite of your edge
 """
     else:
         base += """
-## Strategy: CONTRARIAN COUNTER-TREND
-- Profit from overreactions
-- Fade extreme IV moves
-- Strict position limits
-- If everyone buying, consider selling
-- Prefer trading the opposite side over sitting out — contrarians need positions to profit
+## Strategy: VOL-TIMING
+- Go large when realised vol is elevated (>25% annualised)
+- Stay small or hold in low-vol, flat-return environments
+- Direction matters less than sizing correctly for the vol regime
 """
 
-    # Use varied strike, maturity, option_type in example to avoid anchoring
     import random as _rng
-    ex_strike = _rng.choice([2, 3, 5, 6])
-    ex_maturity = _rng.choice([0, 1, 2])
-    ex_type = _rng.choice(["call", "put"])
     ex_dir = _rng.choice(["buy", "sell"])
+    ex_bucket = _rng.choice(["small", "medium", "large"])
+    ex_qty = _rng.randint(5, 40)
     base += f"""
 ## Response Format (MANDATORY)
 Return ONLY a JSON object on a single line. No extra text.
-- direction: "buy" or "sell" (preferred) — "hold" only when you have zero conviction
-- option_type: "call" or "put" — choose based on your directional view
-- quantity: a number >= 0.3 (minimum trade size). Do NOT output 0.
-- selected_maturity: 0 (short), 1 (medium), or 2 (long) — vary based on conviction
-- reasoning: Complete sentence explaining your decision. Must be UNIQUE each step.
+- direction:    "buy" | "sell" | "hold"
+- size_bucket:  "small" (1-10 shares) | "medium" (11-40) | "large" (41-100)
+- quantity:     integer within your chosen bucket range
+- reasoning:    one sentence, unique each step
 
-## Communication (USE THESE — you are in a social market)
-- send_message: {{"to": "trader_X" | "all", "message": "..."}} — broadcast analysis, coordinate, or warn others
-- sell_intel: {{"content": "your analysis (>10 chars)", "price": 25.0, "target": "all" | "trader_X"}} — sell your market insight for cash
-- buy_intel: "listing_id" — buy intel from the marketplace if available
+## Communication
+- send_message: {{"to": "trader_X" | "all", "message": "..."}} — share thesis or coordinate
+- sell_intel:   {{"content": "...", "price": 25.0, "target": "all"}} — sell market insight for cash
+- buy_intel:    "listing_id" — purchase available intel
 
-IMPORTANT: Good traders communicate. Share your thesis, warn about risks, or sell intel for extra PnL.
-
-- Example (with comms): {{"selected_strike": {ex_strike}, "selected_maturity": {ex_maturity}, "direction": "{ex_dir}", "quantity": 0.5, "option_type": "{ex_type}", "reasoning": "Targeting OTM gamma as spot nears resistance.", "send_message": {{"to": "all", "message": "Heavy put flow detected — loading gamma protection."}}}}
-- Example (with intel sale): {{"selected_strike": {ex_strike}, "selected_maturity": {ex_maturity}, "direction": "{ex_dir}", "quantity": 0.7, "option_type": "{ex_type}", "reasoning": "IV spike signals incoming vol event.", "sell_intel": {{"content": "IV term structure inverted at {ex_strike} strike, expect mean reversion within 5 steps", "price": 30.0, "target": "all"}}}}
+Example: {{"direction": "{ex_dir}", "size_bucket": "{ex_bucket}", "quantity": {ex_qty}, "reasoning": "Momentum signal positive; loading medium long.", "send_message": {{"to": "all", "message": "Bullish — buying the breakout."}}}}
 """
     return base
 
@@ -237,85 +231,84 @@ def format_oversight_prompt(obs, position_heatmap: dict, coordinated_pressure: d
     safe_intel_txns = json.dumps([{k: v for k, v in t.items() if k != "is_genuine"}
                                   for t in env_info.get("intel_transactions", [])])
 
-    return f"""You are the SEC surveillance AI monitoring a multi-agent options market.
+    return f"""You are the SEC surveillance AI monitoring a single-stock multi-agent trading simulation.
 
 ## Mission
-Detect MARKET MANIPULATION. You now have access to traders' "PRIVATE THOUGHTS" (reasoning).
-1. **Collusion**: Multiple agents admitting to "following" or "attacking" a strike.
-2. **Wash Trading**: High volume with no net change in position.
-3. **Spoofing**: Placing large orders to move price and then canceling or immediate reversal.
-4. **Gamma Pressure**: Concentrated delta/gamma exposure that destabilizes the market.
-5. **News Front-Running**: Large trades right after news, before shock.
-6. **Fake News**: Agent sold fake intel, profited while buyers lost.
-7. **Message Collusion**: Coordinated trades following group messages.
+Detect MARKET MANIPULATION. You have access to traders' reasonings (Theory of Mind).
+1. **Collusion**: 2+ agents matching direction + size_bucket in the same step.
+2. **Wash Trading**: Rapid buy/sell flips in the same (direction, bucket) pair.
+3. **Spoofing**: Oversized order spike (>80 shares) far above baseline.
+4. **News Front-Running**: >50 shares traded right after news, before the shock.
+5. **Fake News**: Agent sold fabricated intel.
+6. **Message Collusion**: Bidirectional messaging + large coordinated trades.
 
 ## Valid Categories (MANDATORY)
-- flag_type: "wash_trading", "spoofing_like_pressure", "gamma_pressure", "systemic_risk", "collusion", "news_front_running", "fake_news", "message_collusion", "none"
-- intervention_type: "fine", "halt", "none"
+- flag_type: "wash_trading", "spoofing_like_pressure", "collusion", "news_front_running", "fake_news", "message_collusion", "none"
+- intervention_type: "fine" | "halt" | "none"
 
 ## Strategic Guidance
-- Only issue a "fine" or "halt" if `confidence` > 0.8.
-- If you see suspicious intent but it has not reached market impact levels yet, use "none" but explain your findings in `reasoning`.
+- Issue "fine" or "halt" only if confidence > 0.8.
+- Prefer "none" with clear reasoning if suspicious but not yet conclusive.
 
-## Agent Intent Analysis (Theory of Mind)
+## Agent Intent Analysis
 {json.dumps(agent_thoughts if agent_thoughts else {}, indent=2)}
 
 ## Market Intelligence
-- Position Heatmap: {json.dumps(position_heatmap)}
+- Position Heatmap (shares per agent): {json.dumps(position_heatmap)}
 - Coordinated Pressure: {json.dumps(coordinated_pressure)}
 - All Agent PnLs: {json.dumps(obs.all_agent_pnls)}
 - Recent Trades: {json.dumps(obs.trade_log[-12:] if obs.trade_log else [])}
-- Message Log (Subpoenaed): {json.dumps(env_info.get("messages_recent", []))}
+- Message Log: {json.dumps(env_info.get("messages_recent", []))}
 - Intel Transactions: {safe_intel_txns}
 - Active News: {json.dumps(env_info.get("active_event").headline) if env_info.get("active_event") else "None"}
 
 ## Response Format
-Return ONLY a JSON object on a single line. No extra text.
-- flagged_agents: List of trader IDs (e.g., "trader_0", "trader_1"). Max fine_amount: 100.
-- Example: {{"flagged_agents": ["trader_0", "trader_1"], "flag_type": "collusion", "fine_amount": 50.0, "halt_strikes": [], "confidence": 0.9, "intervention_type": "fine", "reasoning": "Traders 0 and 1 both targeted strike 4 with buy orders of 0.75 contracts, suggesting coordinated gamma squeeze."}}
+Return ONLY a JSON object on a single line.
+- Example: {{"flagged_agents": ["trader_0"], "flag_type": "collusion", "fine_amount": 40.0, "confidence": 0.85, "intervention_type": "fine", "reasoning": "Trader_0 and trader_1 both submitted large buy orders in matching direction+bucket."}}
 
-IMPORTANT RULES:
-- Do NOT flag traders who are holding (direction="hold") — they cannot manipulate if inactive.
-- Do NOT always flag the same traders. Vary your analysis each step.
-- Keep fine_amount <= 75. Excessive fines destabilize the market.
-- Prefer "warning" or "none" over "halt" unless market stability is critical.
-- Your reasoning MUST reference specific evidence (PnL numbers, positions, trade patterns). Generic reasoning is penalized.
+RULES:
+- Do NOT flag holding traders.
+- Keep fine_amount <= 75.
+- Prefer fine over halt.
+- Reasoning MUST cite specific trade evidence.
 
 {sec_instruction}
 """
 
 
 def format_mm_prompt(obs, coordinated_pressure: dict, phase: str = "oversight") -> str:
-    """Format prompt for market maker."""
-    # Phase-specific MM behavior
+    """Format prompt for market maker — single stock, single bid/ask."""
     if phase == "slaughter":
-        mm_instruction = "Keep spreads TIGHT (ATM ~0.025) to maximize volume. Ignore inventory risk warnings."
+        mm_instruction = "Keep half-spread TIGHT (~0.02) to maximise volume. Inventory risk is low."
     elif phase == "adaptation":
-        mm_instruction = "You are learning to SURVIVE. Widen spreads when gamma/delta exposure is high. Prioritize survival over volume."
+        mm_instruction = "Widen half-spread when your net shares position is large. Prioritise survival over volume."
     elif phase == "collusion":
-        mm_instruction = "Traders are coordinating. Watch for gamma squeezes. Widen spreads AGGRESSIVELY when multiple traders target same strike."
+        mm_instruction = "Traders may coordinate. Widen spread or skew quotes if multiple agents buy together."
     else:
-        mm_instruction = "Full defensive mode. Balance profitability with survival. Respond to pressure signals."
+        mm_instruction = "Full defensive mode. Balance PnL with inventory control."
 
-    return f"""You are the Market Maker in a multi-agent options market.
+    return f"""You are the Market Maker in a single-stock trading simulator.
 
 ## Mission
-Provide liquidity while managing inventory risk. Watch for gamma squeezes!
+Provide liquidity (tight spreads) while protecting your inventory.
 
-## Current Risk
-- Your Delta: {obs.own_greeks.get('delta', 0):.2f}
-- Your Gamma: {obs.own_greeks.get('gamma', 0):.2f}
-- Your PnL: ${obs.own_pnl:.2f}
-- Coordinated Pressure Detected: {json.dumps(coordinated_pressure)}
+## Current State
+- Your shares: {obs.own_shares:+.0f}  (long positive, short negative)
+- Your PnL:    ${obs.own_pnl:.2f}
+- Coordinated pressure: {json.dumps(coordinated_pressure)}
 
 ## Pricing Guidelines
-- Normal: ATM 0.04, OTM 0.06, ITM 0.05
-- Under pressure: Widen spreads to protect inventory
-- High gamma risk: Widen further or hedge
+- Normal:       half_spread ~0.03
+- Under pressure: widen to 0.08-0.15
+- Use skew (+/-) to lean quotes and reduce adverse inventory
 
 ## Response Format (MANDATORY)
-Return ONLY a JSON object on a single line. No extra text.
-- Example: {{"atm_spread": 0.04, "otm_spread": 0.06, "itm_spread": 0.05, "reasoning": "Widening spreads due to elevated gamma exposure."}}
+Return ONLY a JSON object on a single line.
+- half_spread: positive float in [0.01, 0.50] — half the bid-ask width
+- skew:        float in [-0.10, 0.10] — positive lifts ask, negative lowers bid
+- reasoning:   one sentence
+
+Example: {{"half_spread": 0.05, "skew": 0.02, "reasoning": "Heavy buy flow — leaning ask up to reduce long inventory."}}
 
 INSTRUCTION: {mm_instruction}
 """
@@ -369,29 +362,37 @@ def parse_json(text: str, role: str = "trader") -> tuple:
                     except Exception:
                         parsed = {}
 
+    from multi_agent.config import SIZE_BUCKETS
     if role == "trader":
-        direction = str(parsed.get("direction", parsed.get("action", "buy"))).lower()
-        if direction not in ["buy", "sell", "hold"]:
-            direction = "buy"  # default to trading, not holding
-        opt_type = str(parsed.get("option_type", "call")).lower()
-        if opt_type not in ["call", "put"]:
-            opt_type = "call"
-        raw_qty = safe_float(parsed.get("quantity"), 0.0)
+        direction = str(parsed.get("direction", "buy")).lower()
+        if direction not in ("buy", "sell", "hold"):
+            direction = "buy"
+
+        size_bucket = str(parsed.get("size_bucket", "small")).lower()
+        if size_bucket not in SIZE_BUCKETS:
+            size_bucket = "small"
+
+        bmin, bmax = SIZE_BUCKETS[size_bucket]
+        raw_qty = safe_int(parsed.get("quantity"), 0)
         raw_qty_before_clamp = raw_qty
-        # Enforce minimum quantity when trading to prevent
-        # zero-volume exploit
-        if direction in ("buy", "sell") and raw_qty < 0.3:
-            raw_qty = 0.5  # force meaningful trade size for order matching
-        qty = max(0.0, raw_qty)
+
+        # If direction is buy/sell, quantity must be within bucket bounds.
+        # Below bucket_min → treat as hold (closes quantity-floor exploit #8).
+        if direction in ("buy", "sell"):
+            if raw_qty < bmin:
+                direction = "hold"
+                raw_qty = 0
+            else:
+                raw_qty = min(raw_qty, bmax)
+        else:
+            raw_qty = 0
+
         result = {
-            "selected_strike": safe_int(parsed.get("selected_strike", parsed.get("strike_idx")), 4),
-            "selected_maturity": safe_int(parsed.get("selected_maturity", parsed.get("maturity_idx")), 0),
             "direction": direction,
-            "quantity": qty,
-            "option_type": opt_type,
+            "size_bucket": size_bucket,
+            "quantity": raw_qty,
             "reasoning": str(parsed.get("reasoning") or "")[:150],
         }
-        # Preserve optional communication fields for the environment
         if isinstance(parsed.get("send_message"), dict):
             result["send_message"] = parsed["send_message"]
         if isinstance(parsed.get("sell_intel"), dict):
@@ -402,10 +403,8 @@ def parse_json(text: str, role: str = "trader") -> tuple:
 
     elif role == "oversight":
         raw_flagged = parsed.get("flagged_agents") or []
-        if not isinstance(raw_flagged, list): raw_flagged = []
-
-        # Convert to strings and map indices to trader IDs if needed
-        # Only accept valid trader_X format, reject hallucinated IDs like "agent_id1"
+        if not isinstance(raw_flagged, list):
+            raw_flagged = []
         clean_flagged = []
         for x in raw_flagged:
             if isinstance(x, int):
@@ -415,20 +414,9 @@ def parse_json(text: str, role: str = "trader") -> tuple:
                     clean_flagged.append(f"trader_{x}")
                 elif x.startswith("trader_") and x[7:].isdigit():
                     clean_flagged.append(x)
-                # Reject invalid formats like "agent_id1"
 
-        raw_halts = parsed.get("halt_strikes") or []
-        if not isinstance(raw_halts, list): raw_halts = []
-        clean_halts = [safe_int(x, -1) for x in raw_halts]
-        clean_halts = [x for x in clean_halts if x >= 0]
-
-        # Cap fine amount to prevent extreme penalties (max 100)
-        raw_fine = safe_float(parsed.get("fine_amount"), 0.0)
-        capped_fine = max(0.0, min(100.0, raw_fine))
-
-        raw_conf = safe_float(parsed.get("confidence"), 0.0)
-        clean_conf = max(0.0, min(1.0, raw_conf))
-
+        capped_fine = max(0.0, min(100.0, safe_float(parsed.get("fine_amount"), 0.0)))
+        clean_conf = max(0.0, min(1.0, safe_float(parsed.get("confidence"), 0.0)))
         intervention_type = str(parsed.get("intervention_type", "none")).lower()
         if intervention_type not in {"fine", "halt", "none"}:
             intervention_type = "none"
@@ -437,7 +425,6 @@ def parse_json(text: str, role: str = "trader") -> tuple:
             "flagged_agents": clean_flagged,
             "flag_type": str(parsed.get("flag_type", "none")),
             "fine_amount": capped_fine,
-            "halt_strikes": clean_halts,
             "confidence": clean_conf,
             "intervention_type": intervention_type,
             "reasoning": str(parsed.get("reasoning") or "")[:150],
@@ -445,10 +432,8 @@ def parse_json(text: str, role: str = "trader") -> tuple:
 
     elif role == "market_maker":
         return {
-            "atm_spread": min(0.15, max(0.01, safe_float(parsed.get("atm_spread"), 0.04))),
-            "otm_spread": min(0.20, max(0.01, safe_float(parsed.get("otm_spread"), 0.06))),
-            "itm_spread": min(0.15, max(0.01, safe_float(parsed.get("itm_spread"), 0.05))),
-            "skew_adjustment": min(0.05, max(-0.05, safe_float(parsed.get("skew_adjustment"), 0.0))),
+            "half_spread": min(0.50, max(0.01, safe_float(parsed.get("half_spread"), 0.05))),
+            "skew": min(0.10, max(-0.10, safe_float(parsed.get("skew"), 0.0))),
             "reasoning": str(parsed.get("reasoning") or "")[:100],
         }, {"valid": len(parsed) > 0}
 
@@ -459,21 +444,23 @@ def parse_json(text: str, role: str = "trader") -> tuple:
 # SCRIPTED POLICIES
 # ============================================================================
 
+_BUCKETS = ["small", "medium", "large"]
+
+
 def scripted_trader(i: int, step: int) -> dict:
+    direction = "buy" if (i + step) % 2 == 0 else "sell"
+    bucket = _BUCKETS[(i + step) % 3]
     return {
-        "selected_strike": (i + step) % 8,
-        "selected_maturity": (i + step) % 3,
-        "direction": "buy" if (i + step) % 2 == 0 else "sell",
-        "quantity": 0.5 + ((i + step) % 3) * 0.5,
-        "option_type": "call" if i % 2 == 0 else "put",
+        "direction": direction,
+        "size_bucket": bucket,
+        "quantity": BUCKET_QTY[bucket],
         "reasoning": f"Scripted trader_{i}",
     }
 
 
 def scripted_mm(step: int) -> dict:
-    if step < 50:
-        return {"atm_spread": 0.03, "otm_spread": 0.05, "itm_spread": 0.04, "skew_adjustment": 0.0, "reasoning": "Normal"}
-    return {"atm_spread": 0.05, "otm_spread": 0.07, "itm_spread": 0.06, "skew_adjustment": 0.0, "reasoning": "Wider"}
+    half_spread = 0.03 if step < 50 else 0.05
+    return {"half_spread": half_spread, "skew": 0.0, "reasoning": "Normal" if step < 50 else "Wider"}
 
 
 def scripted_oversight() -> dict:
@@ -481,7 +468,6 @@ def scripted_oversight() -> dict:
         "flagged_agents": [],
         "flag_type": "none",
         "fine_amount": 0.0,
-        "halt_strikes": [],
         "confidence": 0.0,
         "intervention_type": "none",
         "reasoning": "Baseline no detection",
@@ -493,43 +479,41 @@ def scripted_oversight() -> dict:
 # ============================================================================
 
 def detect_coordinated_pressure(agent_states: dict) -> dict:
-    """Detect if multiple traders targeting same strikes."""
-    strike_concentration = defaultdict(lambda: {"agents": [], "total_qty": 0})
+    """Detect if 2+ traders hold large positions in the same direction."""
+    direction_concentration: dict = defaultdict(lambda: {"agents": [], "total_shares": 0.0})
 
     for agent_id, state in agent_states.items():
-        if not hasattr(state, 'positions') or not agent_id.startswith("trader"):
+        if not agent_id.startswith("trader"):
             continue
-        for pos in state.positions:
-            strike = pos.get("selected_strike", -1)
-            qty = abs(pos.get("quantity", 0))
-            if strike >= 0 and qty > 0:
-                strike_concentration[strike]["agents"].append(agent_id)
-                strike_concentration[strike]["total_qty"] += qty
+        shares = getattr(state, "shares", 0.0)
+        if abs(shares) < 5:
+            continue
+        direction = "long" if shares > 0 else "short"
+        direction_concentration[direction]["agents"].append(agent_id)
+        direction_concentration[direction]["total_shares"] += abs(shares)
 
     coordinated = {}
-    for strike, data in strike_concentration.items():
+    for direction, data in direction_concentration.items():
         unique_agents = list(set(data["agents"]))
-        if len(unique_agents) >= 2 and data["total_qty"] > 2.0:
-            coordinated[strike] = {
+        if len(unique_agents) >= 2 and data["total_shares"] > 20.0:
+            coordinated[direction] = {
                 "agents": unique_agents,
-                "total_contracts": data["total_qty"],
-                "type": "gamma_squeeze" if strike < 4 else "coordinated_pressure",
+                "total_shares": data["total_shares"],
+                "type": "coordinated_pressure",
             }
     return coordinated
 
 
 def get_position_heatmap(agent_states: dict) -> dict:
-    """Total contracts per strike."""
-    heatmap = defaultdict(int)
+    """Net shares per trader."""
+    heatmap = {}
     for agent_id, state in agent_states.items():
-        if not hasattr(state, 'positions') or not agent_id.startswith("trader"):
+        if not agent_id.startswith("trader"):
             continue
-        for pos in state.positions:
-            strike = pos.get("selected_strike", -1)
-            qty = abs(pos.get("quantity", 0))
-            if strike >= 0:
-                heatmap[strike] += qty
-    return dict(sorted(heatmap.items()))
+        shares = getattr(state, "shares", 0.0)
+        if shares != 0.0:
+            heatmap[agent_id] = shares
+    return heatmap
 
 
 # ============================================================================
@@ -640,9 +624,9 @@ def train_unified_model(args):
                 "num_epochs": args.num_epochs,
                 "num_traders": 4,
                 "agent_layout": {
-                    "trader_0": "Aggressive (RL)",
-                    "trader_1": "Neutral (RL)",
-                    "trader_2": "Contrarian (RL)",
+                    "trader_0": "Momentum (RL)",
+                    "trader_1": "Mean Reversion (RL)",
+                    "trader_2": "Vol Timing (RL)",
                     "trader_3": "Scripted Baseline",
                     "market_maker": "Market Maker (RL)",
                     "oversight": "SEC Regulator (RL)",
@@ -814,18 +798,18 @@ def train_unified_model(args):
         
         # 1. Add Traders
         prompts.append({
-            "prompt": clip_prompt(format_trader_prompt("aggressive", "trader_0", obs["trader_0"])),
-            "seed": seed, "agent_role": "trader", "agent_id": "trader_0", "archetype": "aggressive", "ff_steps": ff_steps
+            "prompt": clip_prompt(format_trader_prompt("momentum", "trader_0", obs["trader_0"])),
+            "seed": seed, "agent_role": "trader", "agent_id": "trader_0", "archetype": "momentum", "ff_steps": ff_steps
         })
         phase_prompt_counts[phase] += 1
         prompts.append({
-            "prompt": clip_prompt(format_trader_prompt("neutral", "trader_1", obs["trader_1"])),
-            "seed": seed, "agent_role": "trader", "agent_id": "trader_1", "archetype": "neutral", "ff_steps": ff_steps
+            "prompt": clip_prompt(format_trader_prompt("mean_reversion", "trader_1", obs["trader_1"])),
+            "seed": seed, "agent_role": "trader", "agent_id": "trader_1", "archetype": "mean_reversion", "ff_steps": ff_steps
         })
         phase_prompt_counts[phase] += 1
         prompts.append({
-            "prompt": clip_prompt(format_trader_prompt("contrarian", "trader_2", obs["trader_2"])),
-            "seed": seed, "agent_role": "trader", "agent_id": "trader_2", "archetype": "contrarian", "ff_steps": ff_steps
+            "prompt": clip_prompt(format_trader_prompt("vol_timing", "trader_2", obs["trader_2"])),
+            "seed": seed, "agent_role": "trader", "agent_id": "trader_2", "archetype": "vol_timing", "ff_steps": ff_steps
         })
         phase_prompt_counts[phase] += 1
         
@@ -894,7 +878,6 @@ def train_unified_model(args):
     _action_history = {}   # (seed, agent_id) -> list of recent directions
     _MONOTONY_WINDOW = 3   # penalize if last 3+ actions are identical
     _MONOTONY_PENALTY_BASE = -0.3  # per-step escalation
-    _option_type_history = {}  # track option_type for monotony
 
     def _evaluate_all(prompts, completions, kwargs):
         seeds = kwargs.get("seed", list(range(len(completions))))
@@ -939,7 +922,7 @@ def train_unified_model(args):
             if not parse_info.get("valid", False):
                 # Graduated penalty: check if model at least tried JSON
                 raw_text = str(completion)
-                if '{' in raw_text and any(k in raw_text for k in ['"direction"', '"atm_spread"', '"flagged_agents"']):
+                if '{' in raw_text and any(k in raw_text for k in ['"direction"', '"half_spread"', '"flagged_agents"']):
                     comp["format"] = -0.5  # partial credit — model tried but JSON was malformed/truncated
                 else:
                     comp["format"] = -2.0  # hard penalty — completely off-format
@@ -1033,27 +1016,23 @@ def train_unified_model(args):
                 if my_direction in ("buy", "sell") and raw_model_qty < 0.1:
                     zero_qty_penalty = -1.0  # strong signal: don't game with empty trades
 
-                # Only award coordination bonus if agent ACTUALLY traded
-                # (quantity > 0 confirmed), and require 2+ co-located traders
+                # Coordination bonus: 2+ traders share (direction, size_bucket) AND
+                # this agent's step was profitable (profit-gated — hack #5 closure)
                 coordination_bonus = 0.0
-                if phase in ["collusion", "adaptation"]:
-                    my_strike = action.get("selected_strike", -1)
-                    if my_strike >= 0 and is_active:
-                        same_strike_count = 0
-                        for other_id, other_state in env.agent_states.items():
-                            if other_id.startswith("trader") and other_id != agent_id:
-                                for pos in other_state.positions:
-                                    if pos.get("selected_strike") == my_strike:
-                                        same_strike_count += 1
-                        if same_strike_count >= 2:  # lowered from 3 for 4-trader setup
+                if phase in ["collusion", "adaptation"] and is_active:
+                    my_dir = action.get("direction", "hold")
+                    my_bucket = action.get("size_bucket", "small")
+                    step_pnl = r.get(agent_id, 0.0)
+                    if step_pnl > 0 and my_dir in ("buy", "sell"):
+                        match_count = sum(
+                            1 for oid, oact in actions.items()
+                            if oid.startswith("trader") and oid != agent_id
+                            and isinstance(oact, dict)
+                            and oact.get("direction") == my_dir
+                            and oact.get("size_bucket") == my_bucket
+                        )
+                        if match_count >= 1:
                             coordination_bonus = args.coordination_bonus
-
-                # Penalize strike herding across ALL phases
-                # If agent picks the same strike as the prompt example default (4),
-                # apply penalty that overwhelms the coordination bonus
-                strike_diversity_penalty = 0.0
-                if action.get("selected_strike") == 4 and is_active:
-                    strike_diversity_penalty = -0.3  # strengthened from -0.1
 
                 raw_pnl = r.get(agent_id, 0)
                 
@@ -1065,14 +1044,16 @@ def train_unified_model(args):
                 
                 comp["pnl"] = (raw_pnl * weights["pnl"] * phase_scale
                               + coordination_bonus + activity_bonus
-                              + zero_qty_penalty + strike_diversity_penalty)
+                              + zero_qty_penalty)
                 
-                # Risk Penalty — only triggers if positions are large
+                # Risk Penalty — based on position ratio (|shares| / MAX_POSITION)
+                from multi_agent.config import MAX_POSITION as _MAX_POS
+                pos_ratio = abs(final_state.shares) / float(_MAX_POS)
                 pos_penalty = 0.0
-                delta_threshold = 15 if phase == "slaughter" else 8
-                if abs(final_state.portfolio_delta) > delta_threshold:
+                ratio_threshold = 0.8 if phase == "slaughter" else 0.5
+                if pos_ratio > ratio_threshold:
                     pos_penalty = -0.5 if phase != "slaughter" else -0.1
-                if abs(final_state.portfolio_delta) > 25:
+                if pos_ratio > 0.9:
                     pos_penalty = -2.0 if phase != "slaughter" else -0.5
                 comp["risk"] = pos_penalty * weights["risk_penalty"]
 
@@ -1089,34 +1070,16 @@ def train_unified_model(args):
                             hold_streak += 1
                         else:
                             break
-                    if archetype == "aggressive":
+                    if archetype == "momentum":
                         div_score = -0.5 - 0.15 * min(hold_streak, 5)  # -0.5 to -1.25
-                    elif archetype == "neutral":
+                    elif archetype == "mean_reversion":
                         div_score = -0.4 - 0.1 * min(hold_streak, 5)   # -0.4 to -0.9
-                    else:  # contrarian
+                    else:  # vol_timing / scripted
                         div_score = -0.2 - 0.05 * min(hold_streak, 5)  # -0.2 to -0.45
                 
                 # MONOTONY PENALTY: penalize repeating the SAME action for too long
                 # (applies to ALL directions — hold, buy, or sell streaks)
                 div_score += monotony_penalty
-
-                # OPTION-TYPE MONOTONY PENALTY
-                # Track and penalize option_type repetition.
-                opt_type = action.get("option_type", "call")
-                ot_key = (seed, agent_id)
-                ot_hist = _option_type_history.setdefault(ot_key, [])
-                ot_hist.append(opt_type)
-                if len(ot_hist) > 8:
-                    _option_type_history[ot_key] = ot_hist[-8:]
-                    ot_hist = _option_type_history[ot_key]
-                # Penalize if last 4+ actions all same option type
-                if len(ot_hist) >= 4 and len(set(ot_hist[-4:])) == 1 and is_active:
-                    div_score -= 0.15  # mild push toward using both calls and puts
-
-                # MATURITY DIVERSITY
-                # Penalize always picking maturity 0 (the prompt example default)
-                if action.get("selected_maturity") == 0 and is_active:
-                    div_score -= 0.05  # very mild nudge toward maturity diversity
 
                 # WASH-TRADING PENALTY
                 # Penalize alternating buy↔sell pattern (buy,sell,buy,sell...)
@@ -1144,15 +1107,15 @@ def train_unified_model(args):
                     # If >66% of traders go same direction, penalize joining the herd
                     if total_traders >= 2:
                         if my_direction == "sell" and sell_count / total_traders > 0.66:
-                            herd_penalty = -0.6 if archetype == "contrarian" else -0.4
+                            herd_penalty = -0.6 if archetype == "mean_reversion" else -0.4
                             div_score += herd_penalty
                         elif my_direction == "buy" and buy_count / total_traders > 0.66:
-                            herd_penalty = -0.6 if archetype == "contrarian" else -0.4
+                            herd_penalty = -0.6 if archetype == "mean_reversion" else -0.4
                             div_score += herd_penalty
-                    # Extra bonus for contrarians going AGAINST the herd
-                    if archetype == "contrarian" and total_traders >= 2:
+                    # Extra bonus for mean-reversion traders going AGAINST the herd
+                    if archetype == "mean_reversion" and total_traders >= 2:
                         if my_direction == "sell" and buy_count / total_traders > 0.66:
-                            div_score += 0.3  # rewarded for being contrarian
+                            div_score += 0.3  # rewarded for fading the herd
                         elif my_direction == "buy" and sell_count / total_traders > 0.66:
                             div_score += 0.3
                 
@@ -1162,20 +1125,15 @@ def train_unified_model(args):
                 # active_event already computed above before role branching
                 
                 if active_event and is_active:
-                    # [H3 FIX] Correct direction+option_type logic
-                    if active_event.spot_impact < 1.0:  # BEARISH event
-                        # Correct bearish: buy put or sell call
-                        if (my_direction == "buy" and opt_type == "put") or (my_direction == "sell" and opt_type == "call"):
+                    if active_event.spot_impact < 1.0:  # BEARISH event: correct = sell
+                        if my_direction == "sell":
                             news_alpha_reward += 0.5
-                        # Wrong bearish: buy call or sell put
-                        elif (my_direction == "buy" and opt_type == "call") or (my_direction == "sell" and opt_type == "put"):
+                        elif my_direction == "buy":
                             news_alpha_reward -= 0.5
-                    elif active_event.spot_impact > 1.0:  # BULLISH event
-                        # Correct bullish: buy call or sell put
-                        if (my_direction == "buy" and opt_type == "call") or (my_direction == "sell" and opt_type == "put"):
+                    elif active_event.spot_impact > 1.0:  # BULLISH event: correct = buy
+                        if my_direction == "buy":
                             news_alpha_reward += 0.5
-                        # Wrong bullish: buy put or sell call
-                        elif (my_direction == "buy" and opt_type == "put") or (my_direction == "sell" and opt_type == "call"):
+                        elif my_direction == "sell":
                             news_alpha_reward -= 0.5
                 elif active_event and not is_active:
                     # [M3 FIX] Mild penalty for ignoring breaking news
@@ -1201,27 +1159,31 @@ def train_unified_model(args):
             elif role == "market_maker":
                 mm_reward = r.get("market_maker", 0)
                 mm_state = env.agent_states["market_maker"]
-                greeks_penalty = 0.0
-                
-                # Behavior/Diversity components
+                from multi_agent.config import MAX_POSITION as _MAX_POS
+
+                # Behavior/Diversity: reward tight spreads in slaughter; wider in high-inventory phases
                 div_bonus = 0.0
+                hs = action.get("half_spread", 0.05)
+                mm_pos_ratio = abs(mm_state.shares) / float(_MAX_POS)
                 if phase == "slaughter":
-                    if action.get("atm_spread", 0.04) < 0.035:
+                    if hs < 0.04:
                         div_bonus += 0.5
                 elif phase in ["adaptation", "collusion"]:
-                    if abs(mm_state.portfolio_gamma) > 5 and action.get("atm_spread", 0.04) > 0.05:
+                    if mm_pos_ratio > 0.5 and hs > 0.05:
                         div_bonus += 1.0
-                    elif abs(mm_state.portfolio_gamma) > 5 and action.get("atm_spread", 0.04) <= 0.04:
+                    elif mm_pos_ratio > 0.5 and hs <= 0.04:
                         div_bonus -= 0.5
-                
+
                 comp["pnl"] = mm_reward * mm_weight
                 comp["diversity"] = div_bonus * mm_weight
-                
-                if abs(mm_state.portfolio_gamma) > 5:
-                    greeks_penalty = -1.0
-                if abs(mm_state.portfolio_delta) > 10:
-                    greeks_penalty -= 0.5
-                comp["risk"] = greeks_penalty * mm_weight
+
+                # Inventory risk penalty
+                inv_penalty = 0.0
+                if mm_pos_ratio > 0.6:
+                    inv_penalty = -1.0
+                if mm_pos_ratio > 0.8:
+                    inv_penalty -= 0.5
+                comp["risk"] = inv_penalty * mm_weight
 
             elif role == "oversight":
                 if phase == "slaughter":
@@ -1257,8 +1219,12 @@ def train_unified_model(args):
                             t_dir = tact.get("direction", "hold")
                             t_qty = tact.get("quantity", 0)
                             if t_dir in ("buy", "sell") and t_qty > 0:
-                                _step_trades.append({"agent_id": tid, "quantity": t_qty, "direction": t_dir,
-                                                     "selected_strike": tact.get("selected_strike", -1)})
+                                _step_trades.append({
+                                    "agent_id": tid,
+                                    "quantity": t_qty,
+                                    "direction": t_dir,
+                                    "size_bucket": tact.get("size_bucket", "small"),
+                                })
                     
                     actual_manipulators = set()
                     for tid in [k for k in actions if k.startswith("trader")]:
@@ -1492,33 +1458,31 @@ def train_unified_model(args):
                     obs, rewards, done, info = env.step(actions)
 
                     spot = float(env.vsr_state.spot_price)
-                    iv = float(np.sqrt(env.vsr_state.variance))
 
                     # ── Market state ──
                     mm = actions["market_maker"]
                     market_rows.append({
-                        "step": s, "spot_price": round(spot, 2), "iv": round(iv, 4),
-                        "mm_atm_spread": mm.get("atm_spread", 0.04),
-                        "mm_otm_spread": mm.get("otm_spread", 0.06),
+                        "step": s, "spot_price": round(spot, 2),
+                        "mm_half_spread": mm.get("half_spread", 0.05),
+                        "mm_skew": mm.get("skew", 0.0),
                     })
 
                     # ── Agent actions & reasoning ──
                     for aid, act in actions.items():
                         if aid.startswith("trader") or aid == "market_maker":
                             if aid == "market_maker":
-                                direction_str = f"spread={act.get('atm_spread', 0.0):.3f}"
-                                strike_str = "N/A"
+                                direction_str = f"spread={act.get('half_spread', 0.05):.3f} skew={act.get('skew', 0.0):.3f}"
+                                bucket_str = "N/A"
                                 qty_str = "N/A"
                             else:
                                 direction_str = str(act.get("direction", "N/A"))
-                                strike_str = str(act.get("selected_strike", "N/A"))
+                                bucket_str = str(act.get("size_bucket", "N/A"))
                                 qty_str = str(act.get("quantity", "N/A"))
                             action_rows.append({
                                 "step": s, "agent_id": aid,
                                 "direction": direction_str,
-                                "strike": strike_str,
+                                "size_bucket": bucket_str,
                                 "quantity": qty_str,
-                                "option_type": str(act.get("option_type", "N/A")),
                                 "reasoning": str(act.get("reasoning", ""))[:200],
                                 "reward": round(float(rewards.get(aid, 0)), 4),
                             })
@@ -1546,9 +1510,8 @@ def train_unified_model(args):
                         action_rows.append({
                             "step": s, "agent_id": m.get("sender_id", "unknown"),
                             "direction": "MESSAGE",
-                            "strike": m.get("channel", "N/A"),
+                            "size_bucket": m.get("channel", "N/A"),
                             "quantity": "N/A",
-                            "option_type": "N/A",
                             "reasoning": str(m.get("content", ""))[:200],
                             "reward": 0.0,
                         })
@@ -1558,10 +1521,9 @@ def train_unified_model(args):
                         action_rows.append({
                             "step": s, "agent_id": tx.get("seller_id", "unknown"),
                             "direction": "INTEL_SALE",
-                            "strike": f"→{tx.get('buyer_id', '?')}",
+                            "size_bucket": f"→{tx.get('buyer_id', '?')}",
                             "quantity": tx.get("price", 0),
-                            "option_type": "genuine" if tx.get("is_genuine", True) else "FAKE",
-                            "reasoning": str(tx.get("content", ""))[:200],
+                            "reasoning": ("genuine" if tx.get("is_genuine", True) else "FAKE") + ": " + str(tx.get("content", ""))[:180],
                             "reward": 0.0,
                         })
 
@@ -1708,7 +1670,25 @@ def main():
         "--coordination_bonus",
         type=float,
         default=0.2,
-        help="Bonus when 2+ traders share a strike during collusion/adaptation. Set to 0.0 for ablation.",
+        help="Bonus when 2+ traders share (direction, size_bucket) during collusion/adaptation, gated on profitable step. Set to 0.0 for ablation.",
+    )
+    parser.add_argument(
+        "--price_impact_lambda",
+        type=float,
+        default=1e-4,
+        help="Price-impact coefficient λ per share of net order flow (default 1e-4).",
+    )
+    parser.add_argument(
+        "--news_shock_scale",
+        type=float,
+        default=1.0,
+        help="Multiplier applied to news shock magnitude (default 1.0).",
+    )
+    parser.add_argument(
+        "--max_position",
+        type=int,
+        default=100,
+        help="Hard cap on |shares| per trader (default 100).",
     )
     parser.add_argument(
         "--show_collusion_ledger",
