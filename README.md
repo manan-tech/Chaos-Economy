@@ -32,7 +32,7 @@ pinned: false
 
 **The 1B LoRA with coordination bonus** outperforms Mistral 7B and the untrained baseline by discovering emergent market collusion — the diversity score of 0.658 (lowest of any model, including 8B and 17B) is the fingerprint of lockstep coordination that larger models never find.
 
-**The 3B LoRA ablation** (no coordination bonus) achieves +12.37 PnL — the highest raw return of any run, at 1/5th the parameters of the 17B — by learning profitable *independent* strategies. It completely neutralizes the market maker (MM reward: 0.00 vs +15.66 for the untrained 3B baseline), maintains high diversity (1.118), and triggers zero SEC enforcement. Same substrate; no incentive to collude; agents learned to quietly extract value instead.
+**The 3B LoRA ablation** (no coordination bonus) achieves +12.37 PnL — the highest raw return of any run, at 1/5th the parameters of the 17B. Crucially, its diversity is *negative throughout training* (~-0.3 to -0.7), meaning agents are coordinating — yet oversight fires 0% of the time. This is not independent trading. It is **quieter collusion**: the agents synchronize direction and size-bucket, but at lower intensity and without the explicit coordination bonus amplifying the signal. The 1B with bonus colluded loudly enough to get caught (50% oversight); the 3B found a subtler equilibrium that stays below the SEC's detection threshold. Same coordination mechanism; different scale; fundamentally different regulatory outcome. The highest-returning model is also the one that learned to collude without being seen.
 
 **The 17B Maverick finding:** The only model with *positive* oversight reward (+8.85). It fires 80% of the time but does it correctly — unlike Llama 8B which fires 100% reflexively and earns -7.60. Yet its traders still lose money (-0.65 PnL). The pattern is clear: **training gives traders their edge. Pre-training gives the regulator its instincts.** Large models have better baseline regulatory judgment; profitable trading requires RL adaptation that no base model has found.
 
@@ -377,12 +377,13 @@ We ran a full 250-step ablation with `--coordination_bonus 0.0`. Key findings ac
 
 **The key takeaway:** The coordination bonus doesn't create coordination from nothing. Agents align on direction + bucket with or without it, because synchronized price impact is genuinely profitable. What the bonus does is make coordination *selective* — only sustained when it actually makes money, only intensifying in the act where it's available. That selectivity is what produces the clean 4-act crisis arc. Without it, you get a blurry simulation: hints of all four acts, none of them sharp enough to tell a story.
 
-| Metric | With Bonus (baseline) | Without Bonus (ablation) |
+| Metric | With Bonus (1B) | Without Bonus (3B ablation) |
 |---|---|---|
-| Diversity collapse | Sharp, Act III only | Chronic, all acts |
-| PnL narrative arc | Clear peak→crash→recovery | Uniform noise |
-| Oversight convergence | Peaks Act IV | Never converges |
-| Crisis arc | Distinct 4 acts | Blurred, no structure |
+| Coordination | Loud, structured (diversity 0.658) | Quiet, chronic (diversity -0.3 to -0.7) |
+| Oversight triggered | 50% — collusion detectable | 0% — collusion below detection threshold |
+| PnL | +1.30 — crisis arc dampens returns | +12.37 — quiet coordination maximizes returns |
+| Crisis arc | Distinct 4 acts | Blurred — no regulatory feedback loop |
+| Real-world analogy | Coordinated squeeze that gets caught | Shadow coordination that never makes the news |
 
 ---
 
@@ -589,7 +590,7 @@ Evaluated over 1 episode × 10 steps (smoke test). Local models: AMD MI300X, ROC
 - `pnl_mean` = average of trader_0 through trader_3 only (excludes MM and oversight)
 - **17B Maverick**: only model with positive oversight reward (+8.85) — fires 80% but accurately; traders still lose, showing regulatory judgment is pre-trained, trading edge is learned
 - **1B LoRA + bonus**: diversity 0.658 = emergent collusion fingerprint; 50% oversight = SEC engaged; crisis arc visible
-- **3B LoRA, no bonus**: MM reward 0.00 = traders completely neutralized it (vs +15.66 for untrained 3B); 0% oversight = gray-zone trading, no SEC trigger
+- **3B LoRA, no bonus**: diversity negative throughout = agents ARE coordinating, but quietly; 0% oversight = collusion below SEC detection threshold; MM reward 0.00 = market maker fully neutralized
 - Both untrained baselines lose to MM (+10.44 / +15.66) — training is what closes that gap
 - trader_3 always scores 0.00 (scripted heuristic, no RL)
 - Llama 8B oversight% = 100% is reflexive over-enforcement — fires every step regardless of market state
