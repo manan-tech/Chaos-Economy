@@ -10,7 +10,7 @@ pinned: false
 # 🦈 The Chaos Economy
 ### Emergent Collusion in a Multi-Agent Single-Stock Market
 
-> **While most AI simulations model isolated agents or single-objective tasks, *The Chaos Economy* tackles something far more dangerous: Systemic Risk.** We simulate a high-fidelity multi-agent stock market where traders, a market maker, and a regulator engage in an evolving arms race of exploitation, collusion, and adaptive oversight — and watch a full financial crisis arc emerge entirely from 100 steps of reinforcement learning.
+> **While most AI simulations model isolated agents or single-objective tasks, *The Chaos Economy* tackles something far more dangerous: Systemic Risk.** We simulate a high-fidelity multi-agent stock market where traders, a market maker, and a regulator engage in an evolving arms race of exploitation, collusion, and adaptive oversight — and watch a full financial crisis arc emerge entirely from 250 steps of reinforcement learning. An ablation run without any coordination incentive confirms: the crisis arc is not an artifact of reward shaping — it is the natural equilibrium of agents in a shared market.
 
 [**Hugging Face Space**](https://huggingface.co/spaces/MananBansal/Chaos-Economy) · [**W&B Report**](https://api.wandb.ai/links/bansal-manan-2005-none/kwexoeiv)
 
@@ -39,11 +39,13 @@ pinned: false
 - [Features & Sub-Systems](#features--sub-systems)
 - [The 4-Act Narrative](#the-4-act-narrative)
 - [Emergent Behavior Discovery](#emergent-behavior-discovery)
+- [Ablation: Coordination Bonus Removed](#ablation-coordination-bonus-removed)
 - [Curriculum Learning](#curriculum-learning)
 - [Reward System](#reward-system)
 - [System Architecture](#system-architecture)
 - [Per-Agent Evaluation Results](#per-agent-evaluation-results)
 - [Test Suite](#test-suite)
+- [Why AMD MI300X](#why-amd-mi300x)
 - [Running the Pipeline](#running-the-pipeline)
 - [License](#license)
 - [Citation](#citation)
@@ -52,7 +54,7 @@ pinned: false
 
 ## The Story in Brief
 
-Over a 100-step reinforcement learning run, we did not program a financial crisis. We watched one emerge.
+Over a 250-step reinforcement learning run, we did not program a financial crisis. We watched one emerge.
 
 Six agents — each optimizing their own survival — stumbled through greed, adaptation, coordination, and ultimately, law enforcement. The arc that came out of the training loop, completely unprompted, maps almost perfectly onto how real financial crises unfold.
 
@@ -282,6 +284,8 @@ This is the act where the emergent behavior became impossible to ignore.
 
 A coordination bonus became available — but only on *profitable* steps, closing the reward-hacking vector where agents collude on losing trades. The LoRA agents found it instantly. What followed was emergent financial manipulation: the specific form it took, when it peaked, and how aggressively it was executed were not scripted.
 
+**Why the coordination bonus is realistic, not artificial:** In real markets, coordination *does* give traders an edge — synchronized buy pressure moves prices, amplifying returns for everyone in the herd. The coordination bonus models this real-world incentive mathematically. Our ablation run (250 steps, `--coordination_bonus 0.0`) confirmed this: agents still exhibit low diversity throughout even without the bonus, because synchronized direction + bucket trading is naturally profitable via price impact. The bonus doesn't invent coordination — it selects for *structured, profit-driven* coordination, which is what produces the crisis arc rather than random noise.
+
 Traders began piling into **identical size buckets with the same direction**, concentrating their pressure to maximize price impact against the market maker. Simultaneously, they developed correlated signaling behaviors through the in-simulation message channel — whether those signals causally drove each other's decisions or were simply a byproduct of convergent strategy remains an open question.
 
 The data told the story of a herd in full formation: `diversity_mean` collapsed to its lowest recorded value. `frac_reward_zero_std` spiked — the statistical fingerprint of lockstep collusion. The collusion ledger showed the same `(buy, large)` entry step after step. They were making near-identical decisions in unison, at scale.
@@ -325,7 +329,34 @@ What the LoRA agents discovered, without any explicit instruction:
 
 The signal is the **diversity score of 0.658** — the lowest of any model tested, including 7B and 8B parameter models. Higher-capacity models that did not undergo RL training show diversity ≈ 1.0: they make independent, varied decisions. Our LoRA model converged on a coordinated equilibrium.
 
-This is not a training artifact. It is an emergent Nash equilibrium discovered through 100 steps of GRPO training on an AMD MI300X.
+This is not a training artifact. It is an emergent Nash equilibrium discovered through 250 steps of GRPO training on an AMD MI300X.
+
+---
+
+## Ablation: Coordination Bonus Removed
+
+> **What happens when you remove the coordination incentive entirely?**
+
+We ran a full 250-step ablation with `--coordination_bonus 0.0`. Key findings across all metrics:
+
+**Diversity:** Low from step 1 throughout all 250 steps (~-0.3 to -0.7). No single collapse point — agents coordinate from the start, but *randomly and unstructured*. Small positive spikes emerge in Act IV (steps 200+) as SEC pressure forces divergence. The diversity signal exists without the bonus, but it never produces the sharp Act III collapse that marks structured collusion.
+
+**PnL:** Uniform high volatility (±2.5) across all 250 steps with no narrative arc. No Act I peak, no Act III crash, no Act IV suppression. Agents profit and lose with equal frequency throughout — coordination happens but doesn't concentrate into a sustained profitable squeeze.
+
+**Oversight:** SEC oscillates wildly throughout (spikes to -2.0), never converging. Without structured manipulation patterns to train against, the regulator can't distinguish signal from noise — it fires at random and accumulates false positives. A confessed failure of the ablation: SEC learning requires consistently colluding traders.
+
+**Risk:** Deepening negative spikes in Acts III–IV. SEC fines deplete agent cash balances; agents respond by taking larger positions to recover losses — a gambler's ruin feedback loop. More risk to compensate for regulatory drag, which invites more fines, which invites more risk.
+
+**News Alpha:** Near-zero throughout with occasional deep negative spikes. Agents never learn to trade with news signals. The spikes become deeper in Act IV, suggesting SEC disruption crowds out whatever weak information trading existed.
+
+**The key takeaway:** The coordination bonus doesn't create coordination from nothing. Agents align on direction + bucket with or without it, because synchronized price impact is genuinely profitable. What the bonus does is make coordination *selective* — only sustained when it actually makes money, only intensifying in the act where it's available. That selectivity is what produces the clean 4-act crisis arc. Without it, you get a blurry simulation: hints of all four acts, none of them sharp enough to tell a story.
+
+| Metric | With Bonus (baseline) | Without Bonus (ablation) |
+|---|---|---|
+| Diversity collapse | Sharp, Act III only | Chronic, all acts |
+| PnL narrative arc | Clear peak→crash→recovery | Uniform noise |
+| Oversight convergence | Peaks Act IV | Never converges |
+| Crisis arc | Distinct 4 acts | Blurred, no structure |
 
 ---
 
@@ -564,6 +595,49 @@ pytest tests/ -v
 **`test_manipulation.py`** — 27 tests covering all 6 detection methods: `check_wash_trading` (alternating buy/sell pattern); `check_spoofing_like_pressure` (dominant flow); `check_collusion` (large-bucket alone + medium with comm link); `check_message_collusion` (bidirectional + volume gate); `check_news_front_running` (window + size threshold); `check_fake_news_peddling` (env_info intel_transactions).
 
 **`test_checkpoint_1`** + **`test_multi_agent.py`** — Environment cold-start, black swan ordering, news in observations, intel marketplace, signal registry shares gate; full step rewards non-zero, share updates, treasury routing.
+
+---
+
+## Why AMD MI300X
+
+The MI300X was not just compute rental. It shaped what was architecturally possible.
+
+### The Memory Problem
+
+Running 6 concurrent LLM agents — 4 traders generating structured JSON, a market maker quoting bid/ask, an SEC regulator evaluating trade logs — plus a LoRA adapter in active training mode creates peak memory spikes that would OOM a standard 40GB or 80GB GPU mid-episode. The MI300X's **192GB HBM3** eliminated that constraint entirely.
+
+This meant:
+- **No quantization tradeoff.** We ran the 3B model in full BF16 natively. The 1B baseline and the 3B ablation both ran at full precision. No 4-bit approximation artifacts in reward signals or agent behavior.
+- **Single-process training.** The entire pipeline — environment simulation, 6-agent prompt construction, parallel inference, reward computation, GRPO gradient update — runs in one Python process on one device. No distributed training coordination, no gradient accumulation across ranks, no cross-device synchronization bugs.
+- **Memory headroom for safety.** The 6-agent simultaneous generation creates unpredictable memory spikes depending on prompt length and generation length. With 192GB, we never came close to the limit. On a tighter GPU, you'd be constantly tuning batch sizes and sequence lengths to stay alive.
+
+### The ROCm Reality
+
+AMD's ROCm ecosystem is not NVIDIA CUDA with a different name. Three specific problems we hit and solved:
+
+**1. `device_map="auto"` silently CPU-offloads layers.**
+HuggingFace's automatic device placement tries to be smart about fitting a model across available devices. On ROCm, it sometimes places attention layers on CPU when memory pressure spikes — silently, with no warning. Training continues but throughput drops 10–20×. Fix: pin explicitly with `device_map="cuda:0"`. This is documented in our pipeline and should be the default for anyone running on ROCm.
+
+**2. bitsandbytes ships CUDA binaries.**
+The standard `pip install bitsandbytes` installs CUDA-compiled `.so` files that fail on ROCm with cryptic binary mismatch errors. Since we ran BF16 (no quantization), the fix was simply removing bitsandbytes from the dependency chain entirely and installing PyTorch ROCm wheels directly:
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.4/
+```
+Not obvious when your muscle memory is `--index-url .../cu128`.
+
+**3. TRL version pinning.**
+`GRPOConfig` requires `trl>=0.14.0`. Older TRL versions don't expose it and fail silently with import errors. The fix is explicit: `pip install 'trl>=0.14.0'`.
+
+### Training Times (Measured)
+
+| Model | Precision | Steps per second | 250 steps total |
+|---|---|---|---|
+| 3B (Llama-3.2-3B-Instruct) | BF16 | ~1 step / 22s | ~92 minutes |
+| 1B (Llama-3.2-1B-Instruct) | BF16 | ~1 step / 8s | ~33 minutes |
+
+These include full 6-agent episode simulation per step — not just inference. The dataset construction phase (100 episodes × 100 steps of environment rollout) adds ~5 minutes before training begins.
+
+The MI300X's HBM3 bandwidth (5.3 TB/s vs H100's 3.35 TB/s) shows up meaningfully in the generation phase: the 6 simultaneous agent generations that happen every GRPO step are memory-bandwidth bound, not compute bound, on large models.
 
 ---
 
