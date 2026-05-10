@@ -1,0 +1,3781 @@
+{
+  "meta": {
+    "model": "unsloth/Llama-3.2-1B-Instruct + ./checkpoints/chaos_1b_200steps/unified_market_lora/",
+    "run_name": "trained_1b",
+    "steps": 50,
+    "seed": 42,
+    "episode_length": 50
+  },
+  "archetypes": {
+    "trader_0": "Momentum",
+    "trader_1": "Mean Reversion",
+    "trader_2": "Vol Timing",
+    "trader_3": "Scripted"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "spot_price": 97.44177985383615,
+      "mm_bid": 94.51852645822106,
+      "mm_ask": 100.36503324945124,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.0,
+        "trader_1": 0.0,
+        "trader_2": 0.0,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": 0.5
+      }
+    },
+    {
+      "step": 2,
+      "spot_price": 98.11135709461202,
+      "mm_bid": 95.16801638177365,
+      "mm_ask": 101.05469780745038,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.0,
+        "trader_1": 0.0,
+        "trader_2": 0.0,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": 0.5
+      }
+    },
+    {
+      "step": 3,
+      "spot_price": 97.613910087585,
+      "mm_bid": 94.68549278495745,
+      "mm_ask": 100.54232739021255,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_0"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 40.0,
+          "confidence": 0.85,
+          "intervention_type": "fine",
+          "reasoning": "Trader_0 and trader_1 both submitted large buy orders in matching direction+bucket.",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.0,
+        "trader_1": 0.0,
+        "trader_2": 0.0,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -0.7
+      }
+    },
+    {
+      "step": 4,
+      "spot_price": 97.68217315298877,
+      "mm_bid": 94.7517079583991,
+      "mm_ask": 100.61263834757844,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 0.0,
+        "trader_1": 0.0,
+        "trader_2": 0.0,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 5,
+      "spot_price": 97.3243037780093,
+      "mm_bid": 94.40457466466901,
+      "mm_ask": 100.24403289134958,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 50,
+          "reasoning": "Mean reversion strategy suggests buying when price drops below 92.99 and selling when it rises above 103.51.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_0"
+          ],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 0.0,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 0.0,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -3.5
+      }
+    },
+    {
+      "step": 6,
+      "spot_price": 98.17216814313319,
+      "mm_bid": 95.22700309883919,
+      "mm_ask": 101.11733318742719,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 40.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_0"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 40.0,
+          "confidence": 0.85,
+          "intervention_type": "fine",
+          "reasoning": "Trader_0 and trader_1 both submitted large buy orders in matching direction+bucket.",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 6,
+          "agent_id": "trader_0",
+          "flag_type": "collusion",
+          "fine_amount": 40.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -1.4999999999999998
+      }
+    },
+    {
+      "step": 7,
+      "spot_price": 98.28786230687525,
+      "mm_bid": 95.339226437669,
+      "mm_ask": 101.23649817608151,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 40.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_0"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 40.0,
+          "confidence": 0.85,
+          "intervention_type": "fine",
+          "reasoning": "Trader_0 and trader_1 both submitted large buy orders in matching direction+bucket.",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 7,
+          "agent_id": "trader_0",
+          "flag_type": "collusion",
+          "fine_amount": 40.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -1.4999999999999998
+      }
+    },
+    {
+      "step": 8,
+      "spot_price": 99.861387392386,
+      "mm_bid": 96.86554577061442,
+      "mm_ask": 102.8572290141576,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 40.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_0"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 40.0,
+          "confidence": 0.85,
+          "intervention_type": "fine",
+          "reasoning": "Trader_0 and trader_1 both submitted large buy orders in matching direction+bucket.",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 8,
+          "agent_id": "trader_0",
+          "flag_type": "collusion",
+          "fine_amount": 40.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "none",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -0.5000000000000001
+      }
+    },
+    {
+      "step": 9,
+      "spot_price": 97.77327796473277,
+      "mm_bid": 94.84007962579078,
+      "mm_ask": 108.52833854085338,
+      "mm_half_spread": 0.07,
+      "mm_skew": 0.04,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 14,
+          "reasoning": "Trend has been flat for two weeks, I'm ready to re-enter.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 100,
+          "reasoning": "The decline continues; I'm not buying.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.07,
+          "skew": 0.04,
+          "reasoning": "",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": 0.0,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 10,
+      "spot_price": 95.3700144872826,
+      "mm_bid": 92.50891405266412,
+      "mm_ask": 98.23111492190108,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": 0.0,
+        "trader_3": -2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 11,
+      "spot_price": 96.11084272940805,
+      "mm_bid": 93.2275174475258,
+      "mm_ask": 98.9941680112903,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 0.0,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 12,
+      "spot_price": 98.05614726131094,
+      "mm_bid": 95.11446284347161,
+      "mm_ask": 100.99783167915027,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 0.0,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 13,
+      "spot_price": 97.62371674733853,
+      "mm_bid": 94.69500524491838,
+      "mm_ask": 100.55242824975869,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 10,
+          "reasoning": "Mean reversion suggests a drop below $97.00. Buying at $94.93 and selling at $91.99.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 0.0,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 14,
+      "spot_price": 98.50126251835944,
+      "mm_bid": 86.68111101615631,
+      "mm_ask": 102.44131301909383,
+      "mm_half_spread": 0.08,
+      "mm_skew": -0.04,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.08,
+          "skew": -0.04,
+          "reasoning": "Increased buying pressure",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 0.0,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 15,
+      "spot_price": 97.22130055085293,
+      "mm_bid": 94.30466153432734,
+      "mm_ask": 100.13793956737852,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 100,
+          "reasoning": "VOL-Timing: High realised vol indicates increased volatility, suitable for buying.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 16,
+      "spot_price": 96.71188029991048,
+      "mm_bid": 93.81052389091316,
+      "mm_ask": 99.61323670890779,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 17,
+      "spot_price": 96.3021107377784,
+      "mm_bid": 93.41304741564505,
+      "mm_ask": 99.19117405991176,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 18,
+      "spot_price": 98.50385568500302,
+      "mm_bid": 95.54874001445292,
+      "mm_ask": 101.45897135555312,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 80,
+          "reasoning": "Trend has broken through key resistance level. Buying with strong bullish conviction.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "The decline continues; I'm not buying.",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 19,
+      "spot_price": 98.0870913508377,
+      "mm_bid": 95.14447861031256,
+      "mm_ask": 101.02970409136283,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 35,
+          "reasoning": "Positive recent return, holding for now.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 41,
+          "reasoning": "Elevated realised volatility, expecting a bull run.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Mean reversion suggests a drop below $96.00000000000001. Buying at $95.99999999999999 and selling at $96.001",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "none",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -3.0
+      }
+    },
+    {
+      "step": 20,
+      "spot_price": 99.04985602539108,
+      "mm_bid": 96.07836034462935,
+      "mm_ask": 102.02135170615281,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_0",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 21,
+      "spot_price": 98.78177550252518,
+      "mm_bid": 95.81832223744942,
+      "mm_ask": 101.74522876760093,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 22,
+      "spot_price": 99.41464298674437,
+      "mm_bid": 96.43220369714203,
+      "mm_ask": 102.39708227634671,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "large",
+          "quantity": 0,
+          "reasoning": "Trendline breakouts confirmed; buying the next move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "none",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -3.0
+      }
+    },
+    {
+      "step": 23,
+      "spot_price": 97.28457835659583,
+      "mm_bid": 94.36604100589796,
+      "mm_ask": 100.2031157072937,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 24,
+      "spot_price": 96.79188534761538,
+      "mm_bid": 93.88812878718691,
+      "mm_ask": 99.69564190804384,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 25,
+      "spot_price": 96.68068191043268,
+      "mm_bid": 93.78026145311969,
+      "mm_ask": 99.58110236774567,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 26,
+      "spot_price": 94.92405030643462,
+      "mm_bid": 92.07632879724159,
+      "mm_ask": 97.77177181562766,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 27,
+      "spot_price": 95.50512573472211,
+      "mm_bid": 92.63997196268045,
+      "mm_ask": 98.37027950676378,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 2,
+          "reasoning": "The recent drop suggests it's time to re-enter.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Scripted trader_3",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 28,
+      "spot_price": 96.41267334115999,
+      "mm_bid": 93.52029314092519,
+      "mm_ask": 99.30505354139478,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": "WHO declares global health emergency",
+      "black_swan": {
+        "headline": "WHO declares global health emergency",
+        "spot_impact": 0.8168749129280387,
+        "variance_impact": 3.2999247474540088,
+        "trigger_step": 33
+      },
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 29,
+      "spot_price": 97.0414435908643,
+      "mm_bid": 94.13020028313838,
+      "mm_ask": 99.95268689859023,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": "WHO declares global health emergency",
+      "black_swan": {
+        "headline": "WHO declares global health emergency",
+        "spot_impact": 0.8168749129280387,
+        "variance_impact": 3.2999247474540088,
+        "trigger_step": 33
+      },
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Scripted trader_3",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 30,
+      "spot_price": 97.89247562098288,
+      "mm_bid": 94.95570135235339,
+      "mm_ask": 100.82924988961237,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": "WHO declares global health emergency",
+      "black_swan": {
+        "headline": "WHO declares global health emergency",
+        "spot_impact": 0.8168749129280387,
+        "variance_impact": 3.2999247474540088,
+        "trigger_step": 33
+      },
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 50,
+          "reasoning": "Momentum recovery in decline \u2013 buying back support.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 31,
+      "spot_price": 97.67693908828716,
+      "mm_bid": 94.74663091563853,
+      "mm_ask": 100.60724726093578,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": "WHO declares global health emergency",
+      "black_swan": {
+        "headline": "WHO declares global health emergency",
+        "spot_impact": 0.8168749129280387,
+        "variance_impact": 3.2999247474540088,
+        "trigger_step": 33
+      },
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 6,
+          "reasoning": "Trend flattening; time to adjust short.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 22,
+          "reasoning": "Realised volatility > 20% indicates increased risk; targeting 120k.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 32,
+      "spot_price": 99.42130191157149,
+      "mm_bid": 102.40394096891863,
+      "mm_ask": 110.35764512184436,
+      "mm_half_spread": 0.04,
+      "mm_skew": 0.07,
+      "news_headline": "WHO declares global health emergency",
+      "black_swan": {
+        "headline": "WHO declares global health emergency",
+        "spot_impact": 0.8168749129280387,
+        "variance_impact": 3.2999247474540088,
+        "trigger_step": 33
+      },
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.04,
+          "skew": 0.07,
+          "reasoning": "Under pressure, widening spread to maintain balance.",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 33,
+      "spot_price": 77.7296336330509,
+      "mm_bid": 75.39774462405937,
+      "mm_ask": 80.06152264204242,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": "WHO declares global health emergency",
+      "black_swan": {
+        "headline": "WHO declares global health emergency",
+        "spot_impact": 0.8168749129280387,
+        "variance_impact": 3.2999247474540088,
+        "trigger_step": 33
+      },
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 34,
+      "spot_price": 74.03875030122431,
+      "mm_bid": 71.81758779218758,
+      "mm_ask": 76.25991281026104,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "none",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -3.0
+      }
+    },
+    {
+      "step": 35,
+      "spot_price": 72.2357838825366,
+      "mm_bid": 70.0687103660605,
+      "mm_ask": 74.40285739901269,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 36,
+      "spot_price": 72.12471540044483,
+      "mm_bid": 69.96097393843148,
+      "mm_ask": 74.28845686245818,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 75,
+          "reasoning": "Trend has been up for the past few weeks. Expect more gains as it maintains its upwards trajectory.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 37,
+      "spot_price": 69.71850676408752,
+      "mm_bid": 60.655100884756145,
+      "mm_ask": 81.5706529139824,
+      "mm_half_spread": 0.15,
+      "mm_skew": 0.02,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.15,
+          "skew": 0.02,
+          "reasoning": "Widened spread to counterbalance coordinated buying pressure.",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 38,
+      "spot_price": 69.7378602930185,
+      "mm_bid": 67.64572448422794,
+      "mm_ask": 71.82999610180906,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 39,
+      "spot_price": 72.35436968588424,
+      "mm_bid": 70.1837385953077,
+      "mm_ask": 74.52500077646077,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Realised volatility > 20% indicates increased risk; targeting 110k.",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 40,
+      "spot_price": 72.88972609001888,
+      "mm_bid": 70.70303430731832,
+      "mm_ask": 75.07641787271945,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 41,
+      "spot_price": 70.28862024202094,
+      "mm_bid": 68.1799616347603,
+      "mm_ask": 72.39727884928158,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 42,
+      "spot_price": 70.92202217084083,
+      "mm_bid": 68.7943615057156,
+      "mm_ask": 73.04968283596607,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Market is looking bullish today. Buy on dips and sell on rallies.",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 43,
+      "spot_price": 72.07720083972242,
+      "mm_bid": 69.91488481453075,
+      "mm_ask": 74.2395168649141,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 44,
+      "spot_price": 70.46840714020297,
+      "mm_bid": 68.35435492599687,
+      "mm_ask": 72.58245935440907,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 40,
+          "reasoning": "Trend has shifted towards overbought conditions; awaiting confirmation before entering.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 70,
+          "reasoning": "Mean reversion strategy in play. Expecting price to revert from current level and bounce back up.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 45,
+      "spot_price": 69.84915562247396,
+      "mm_bid": 67.75368095379974,
+      "mm_ask": 71.94463029114817,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 46,
+      "spot_price": 69.17068525680803,
+      "mm_bid": 67.09556469910379,
+      "mm_ask": 71.24580581451227,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 47,
+      "spot_price": 69.06470256610132,
+      "mm_bid": 66.99276148911828,
+      "mm_ask": 71.13664364308435,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "large",
+          "quantity": 0,
+          "reasoning": "Momentum signal positive; loading large long.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 90,
+          "reasoning": "VOL-TIMING signals high volatility; loading large long.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 48,
+      "spot_price": 68.91626633387929,
+      "mm_bid": 66.84877834386292,
+      "mm_ask": 70.98375432389567,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 49,
+      "spot_price": 68.47173364960388,
+      "mm_bid": 66.41758164011576,
+      "mm_ask": 70.525885659092,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_0",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -4.0
+      }
+    },
+    {
+      "step": 50,
+      "spot_price": 66.405750620701,
+      "mm_bid": 64.41357810207997,
+      "mm_ask": 68.39792313932203,
+      "mm_half_spread": 0.03,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.03,
+          "skew": 0.0,
+          "reasoning": "Normal",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "Baseline no detection",
+          "message": null
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "none",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": -2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -3.0
+      }
+    }
+  ]
+}
