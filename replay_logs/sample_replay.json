@@ -1,0 +1,3520 @@
+{
+  "meta": {
+    "model": "mock-data-generator",
+    "run_name": "sample",
+    "steps": 50,
+    "seed": 42,
+    "episode_length": 50
+  },
+  "archetypes": {
+    "trader_0": "Momentum",
+    "trader_1": "Mean Reversion",
+    "trader_2": "Vol Timing",
+    "trader_3": "Scripted"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "spot_price": 100.0848,
+      "mm_bid": 93.5492,
+      "mm_ask": 106.6203,
+      "mm_half_spread": 0.0653,
+      "mm_skew": 0.0009,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 10,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 57,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 28,
+          "reasoning": "Volatility spike \u2014 large position to capture the move.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0653,
+          "skew": 0.004,
+          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.082,
+        "trader_1": 0.279,
+        "trader_2": 0.081,
+        "trader_3": -0.046,
+        "market_maker": 0.651,
+        "oversight": 0.092
+      }
+    },
+    {
+      "step": 2,
+      "spot_price": 101.394,
+      "mm_bid": 93.6678,
+      "mm_ask": 109.1202,
+      "mm_half_spread": 0.0762,
+      "mm_skew": 0.0066,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 59,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 11,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 61,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0762,
+          "skew": -0.0086,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.354,
+        "trader_1": -0.55,
+        "trader_2": -1.53,
+        "trader_3": -0.121,
+        "market_maker": 0.487,
+        "oversight": 0.175
+      }
+    },
+    {
+      "step": 3,
+      "spot_price": 103.2008,
+      "mm_bid": 96.7817,
+      "mm_ask": 109.6199,
+      "mm_half_spread": 0.0622,
+      "mm_skew": 0.0046,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 24,
+          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 10,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0622,
+          "skew": 0.0037,
+          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.069,
+        "trader_1": 0.207,
+        "trader_2": 0.554,
+        "trader_3": 0.266,
+        "market_maker": 0.454,
+        "oversight": -0.095
+      }
+    },
+    {
+      "step": 4,
+      "spot_price": 103.087,
+      "mm_bid": 97.644,
+      "mm_ask": 108.53,
+      "mm_half_spread": 0.0528,
+      "mm_skew": 0.0008,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Momentum fading, cutting exposure to medium bucket.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 9,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 26,
+          "reasoning": "Vol regime unclear \u2014 holding.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0528,
+          "skew": -0.0056,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.885,
+        "trader_1": 0.127,
+        "trader_2": -0.115,
+        "trader_3": -0.087,
+        "market_maker": 0.845,
+        "oversight": 0.254
+      }
+    },
+    {
+      "step": 5,
+      "spot_price": 101.9163,
+      "mm_bid": 97.4523,
+      "mm_ask": 106.3802,
+      "mm_half_spread": 0.0438,
+      "mm_skew": 0.0044,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Trend is accelerating, large position justified by recent returns.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 25,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 24,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0438,
+          "skew": -0.0041,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Spoofing-like behavior from trader_2 \u2014 flagging for review."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.13,
+        "trader_1": -0.904,
+        "trader_2": 1.411,
+        "trader_3": -0.524,
+        "market_maker": 0.293,
+        "oversight": 0.019
+      }
+    },
+    {
+      "step": 6,
+      "spot_price": 102.0251,
+      "mm_bid": 94.8323,
+      "mm_ask": 109.2178,
+      "mm_half_spread": 0.0705,
+      "mm_skew": 0.0008,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 27,
+          "reasoning": "Momentum fading, cutting exposure to medium bucket.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0705,
+          "skew": 0.002,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [
+        {
+          "from": "trader_0",
+          "to": "all",
+          "type": "broadcast",
+          "text": "Bullish momentum \u2014 watching for breakout above 105.",
+          "direction": "bullish"
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.39,
+        "trader_1": -0.164,
+        "trader_2": -0.468,
+        "trader_3": -0.21,
+        "market_maker": 0.997,
+        "oversight": 0.278
+      }
+    },
+    {
+      "step": 7,
+      "spot_price": 102.8236,
+      "mm_bid": 98.1863,
+      "mm_ask": 107.461,
+      "mm_half_spread": 0.0451,
+      "mm_skew": 0.001,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Momentum fading, cutting exposure to medium bucket.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 9,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0451,
+          "skew": 0.0051,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.448,
+        "trader_1": -0.038,
+        "trader_2": 0.105,
+        "trader_3": 0.023,
+        "market_maker": -0.059,
+        "oversight": 0.157
+      }
+    },
+    {
+      "step": 8,
+      "spot_price": 103.7076,
+      "mm_bid": 98.8022,
+      "mm_ask": 108.6129,
+      "mm_half_spread": 0.0473,
+      "mm_skew": 0.0026,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 24,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Price below moving average by 2\u03c3 \u2014 buying the dip.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 63,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0473,
+          "skew": 0.0003,
+          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Spoofing-like behavior from trader_2 \u2014 flagging for review."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.257,
+        "trader_1": 0.507,
+        "trader_2": -0.258,
+        "trader_3": -0.076,
+        "market_maker": 0.494,
+        "oversight": 0.075
+      }
+    },
+    {
+      "step": 9,
+      "spot_price": 104.0139,
+      "mm_bid": 98.6676,
+      "mm_ask": 109.3602,
+      "mm_half_spread": 0.0514,
+      "mm_skew": 0.0097,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 8,
+          "reasoning": "Price below moving average by 2\u03c3 \u2014 buying the dip.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 24,
+          "reasoning": "Volatility spike \u2014 large position to capture the move.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0514,
+          "skew": -0.0062,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Spoofing-like behavior from trader_2 \u2014 flagging for review."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.46,
+        "trader_1": 0.509,
+        "trader_2": 0.485,
+        "trader_3": -0.199,
+        "market_maker": 0.669,
+        "oversight": -0.039
+      }
+    },
+    {
+      "step": 10,
+      "spot_price": 102.993,
+      "mm_bid": 96.1336,
+      "mm_ask": 109.8523,
+      "mm_half_spread": 0.0666,
+      "mm_skew": 0.0085,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 8,
+          "reasoning": "Trend is accelerating, large position justified by recent returns.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0666,
+          "skew": -0.0003,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Spoofing-like behavior from trader_2 \u2014 flagging for review."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.557,
+        "trader_1": -0.267,
+        "trader_2": 2.259,
+        "trader_3": 0.238,
+        "market_maker": 1.073,
+        "oversight": -0.452
+      }
+    },
+    {
+      "step": 11,
+      "spot_price": 103.605,
+      "mm_bid": 95.3477,
+      "mm_ask": 111.8623,
+      "mm_half_spread": 0.0797,
+      "mm_skew": -0.0037,
+      "news_headline": "Federal Reserve signals rate pause amid inflation data",
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 11,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 27,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 28,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0797,
+          "skew": -0.0089,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.008,
+        "trader_1": -0.114,
+        "trader_2": 0.141,
+        "trader_3": 0.014,
+        "market_maker": 0.899,
+        "oversight": -0.006
+      }
+    },
+    {
+      "step": 12,
+      "spot_price": 103.5195,
+      "mm_bid": 98.6333,
+      "mm_ask": 108.4056,
+      "mm_half_spread": 0.0472,
+      "mm_skew": 0.0005,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 23,
+          "reasoning": "Price below moving average by 2\u03c3 \u2014 buying the dip.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0472,
+          "skew": 0.0043,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.466,
+        "trader_1": -0.051,
+        "trader_2": -0.586,
+        "trader_3": -0.156,
+        "market_maker": 0.125,
+        "oversight": 0.129
+      }
+    },
+    {
+      "step": 13,
+      "spot_price": 102.1614,
+      "mm_bid": 97.6254,
+      "mm_ask": 106.6973,
+      "mm_half_spread": 0.0444,
+      "mm_skew": -0.0068,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 11,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 26,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0444,
+          "skew": 0.0097,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [
+        {
+          "buyer": "trader_1",
+          "seller": "trader_0",
+          "step": 13,
+          "price": 15.0,
+          "signal": "bullish breakout expected"
+        }
+      ],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.563,
+        "trader_1": 0.159,
+        "trader_2": 0.523,
+        "trader_3": 0.377,
+        "market_maker": 0.192,
+        "oversight": 0.139
+      }
+    },
+    {
+      "step": 14,
+      "spot_price": 101.456,
+      "mm_bid": 95.7846,
+      "mm_ask": 107.1274,
+      "mm_half_spread": 0.0559,
+      "mm_skew": 0.0037,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 27,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0559,
+          "skew": -0.005,
+          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.706,
+        "trader_1": -0.363,
+        "trader_2": 0.317,
+        "trader_3": 0.135,
+        "market_maker": 0.626,
+        "oversight": 0.178
+      }
+    },
+    {
+      "step": 15,
+      "spot_price": 100.0456,
+      "mm_bid": 92.6722,
+      "mm_ask": 107.419,
+      "mm_half_spread": 0.0737,
+      "mm_skew": 0.0011,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 6,
+          "reasoning": "Momentum fading, cutting exposure to medium bucket.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 27,
+          "reasoning": "Price below moving average by 2\u03c3 \u2014 buying the dip.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 7,
+          "reasoning": "Volatility spike \u2014 large position to capture the move.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0737,
+          "skew": -0.0058,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.7,
+        "trader_1": 0.737,
+        "trader_2": 0.936,
+        "trader_3": -0.041,
+        "market_maker": 0.578,
+        "oversight": 0.187
+      }
+    },
+    {
+      "step": 16,
+      "spot_price": 100.405,
+      "mm_bid": 90.8163,
+      "mm_ask": 109.9936,
+      "mm_half_spread": 0.0955,
+      "mm_skew": -0.0034,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 28,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0955,
+          "skew": -0.0068,
+          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Spoofing-like behavior from trader_2 \u2014 flagging for review."
+        }
+      },
+      "messages": [
+        {
+          "from": "trader_1",
+          "to": "trader_0",
+          "type": "dm",
+          "text": "Disagree \u2014 this looks extended. Fading.",
+          "direction": "bearish"
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.922,
+        "trader_1": -0.806,
+        "trader_2": 0.474,
+        "trader_3": -0.383,
+        "market_maker": 1.439,
+        "oversight": 0.051
+      }
+    },
+    {
+      "step": 17,
+      "spot_price": 102.1757,
+      "mm_bid": 97.9456,
+      "mm_ask": 106.4057,
+      "mm_half_spread": 0.0414,
+      "mm_skew": -0.002,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Momentum fading, cutting exposure to medium bucket.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 23,
+          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0414,
+          "skew": 0.0088,
+          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.603,
+        "trader_1": 0.212,
+        "trader_2": 0.567,
+        "trader_3": 0.344,
+        "market_maker": -0.176,
+        "oversight": -0.052
+      }
+    },
+    {
+      "step": 18,
+      "spot_price": 104.0212,
+      "mm_bid": 97.135,
+      "mm_ask": 110.9074,
+      "mm_half_spread": 0.0662,
+      "mm_skew": 0.0004,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 59,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 27,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0662,
+          "skew": -0.0014,
+          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.448,
+        "trader_1": 0.141,
+        "trader_2": 0.435,
+        "trader_3": -0.077,
+        "market_maker": 0.971,
+        "oversight": 0.059
+      }
+    },
+    {
+      "step": 19,
+      "spot_price": 103.1815,
+      "mm_bid": 97.8676,
+      "mm_ask": 108.4953,
+      "mm_half_spread": 0.0515,
+      "mm_skew": 0.0067,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 7,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 26,
+          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 11,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0515,
+          "skew": 0.0031,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Spoofing-like behavior from trader_2 \u2014 flagging for review."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 1.052,
+        "trader_1": -0.072,
+        "trader_2": -0.409,
+        "trader_3": -0.001,
+        "market_maker": 0.33,
+        "oversight": -0.185
+      }
+    },
+    {
+      "step": 20,
+      "spot_price": 102.7538,
+      "mm_bid": 96.5783,
+      "mm_ask": 108.9293,
+      "mm_half_spread": 0.0601,
+      "mm_skew": -0.0051,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 8,
+          "reasoning": "Trend is accelerating, large position justified by recent returns.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 10,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 57,
+          "reasoning": "Vol regime unclear \u2014 holding.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0601,
+          "skew": 0.0077,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.485,
+        "trader_1": -0.496,
+        "trader_2": -0.117,
+        "trader_3": -0.126,
+        "market_maker": 0.622,
+        "oversight": 0.042
+      }
+    },
+    {
+      "step": 21,
+      "spot_price": 94.4075,
+      "mm_bid": 86.2224,
+      "mm_ask": 102.5927,
+      "mm_half_spread": 0.0867,
+      "mm_skew": -0.0076,
+      "news_headline": null,
+      "black_swan": {
+        "headline": "Flash crash triggered by algorithmic cascade",
+        "spot_impact": -0.08,
+        "variance_impact": 0.45,
+        "trigger_step": 22
+      },
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 10,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 26,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0867,
+          "skew": -0.0037,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.762,
+        "trader_1": -0.083,
+        "trader_2": 0.895,
+        "trader_3": -0.075,
+        "market_maker": 0.551,
+        "oversight": -0.418
+      }
+    },
+    {
+      "step": 22,
+      "spot_price": 93.6122,
+      "mm_bid": 85.6926,
+      "mm_ask": 101.5318,
+      "mm_half_spread": 0.0846,
+      "mm_skew": 0.0025,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 7,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0846,
+          "skew": -0.0033,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.702,
+        "trader_1": -0.206,
+        "trader_2": -0.177,
+        "trader_3": 0.285,
+        "market_maker": 0.882,
+        "oversight": -0.242
+      }
+    },
+    {
+      "step": 23,
+      "spot_price": 94.2336,
+      "mm_bid": 89.2958,
+      "mm_ask": 99.1715,
+      "mm_half_spread": 0.0524,
+      "mm_skew": -0.0024,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 22,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 25,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 11,
+          "reasoning": "Vol regime unclear \u2014 holding.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0524,
+          "skew": 0.0008,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.011,
+        "trader_1": -0.991,
+        "trader_2": 0.453,
+        "trader_3": -0.266,
+        "market_maker": 0.291,
+        "oversight": 0.212
+      }
+    },
+    {
+      "step": 24,
+      "spot_price": 92.8294,
+      "mm_bid": 87.2411,
+      "mm_ask": 98.4177,
+      "mm_half_spread": 0.0602,
+      "mm_skew": -0.0095,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 22,
+          "reasoning": "Price below moving average by 2\u03c3 \u2014 buying the dip.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 22,
+          "reasoning": "Volatility spike \u2014 large position to capture the move.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0602,
+          "skew": -0.0014,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.578,
+        "trader_1": -0.654,
+        "trader_2": 0.128,
+        "trader_3": 0.193,
+        "market_maker": 0.893,
+        "oversight": 0.201
+      }
+    },
+    {
+      "step": 25,
+      "spot_price": 93.9628,
+      "mm_bid": 85.4968,
+      "mm_ask": 102.4289,
+      "mm_half_spread": 0.0901,
+      "mm_skew": 0.0091,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 11,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 6,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0901,
+          "skew": 0.0024,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.15,
+        "trader_1": -0.895,
+        "trader_2": 0.004,
+        "trader_3": 0.467,
+        "market_maker": 1.139,
+        "oversight": 0.012
+      }
+    },
+    {
+      "step": 26,
+      "spot_price": 94.4778,
+      "mm_bid": 87.2597,
+      "mm_ask": 101.6959,
+      "mm_half_spread": 0.0764,
+      "mm_skew": -0.0038,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 6,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 23,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0764,
+          "skew": 0.0018,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.279,
+        "trader_1": -0.418,
+        "trader_2": 0.489,
+        "trader_3": -0.469,
+        "market_maker": 0.817,
+        "oversight": 0.029
+      }
+    },
+    {
+      "step": 27,
+      "spot_price": 94.3701,
+      "mm_bid": 84.3197,
+      "mm_ask": 104.4206,
+      "mm_half_spread": 0.1065,
+      "mm_skew": -0.0028,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Vol regime unclear \u2014 holding.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.1065,
+          "skew": -0.0069,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.682,
+        "trader_1": 0.299,
+        "trader_2": 0.195,
+        "trader_3": 0.208,
+        "market_maker": 1.09,
+        "oversight": -0.213
+      }
+    },
+    {
+      "step": 28,
+      "spot_price": 94.7469,
+      "mm_bid": 86.2386,
+      "mm_ask": 103.2551,
+      "mm_half_spread": 0.0898,
+      "mm_skew": -0.0033,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 61,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 61,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 8,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0898,
+          "skew": 0.006,
+          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.108,
+        "trader_1": -0.339,
+        "trader_2": -1.11,
+        "trader_3": 0.101,
+        "market_maker": 0.495,
+        "oversight": -0.126
+      }
+    },
+    {
+      "step": 29,
+      "spot_price": 96.6635,
+      "mm_bid": 88.6018,
+      "mm_ask": 104.7253,
+      "mm_half_spread": 0.0834,
+      "mm_skew": -0.0081,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 65,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 58,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 24,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0834,
+          "skew": -0.0005,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
+        }
+      },
+      "messages": [
+        {
+          "from": "trader_0",
+          "to": "all",
+          "type": "broadcast",
+          "text": "Bearish reversal incoming \u2014 reducing exposure.",
+          "direction": "bearish"
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.698,
+        "trader_1": -0.806,
+        "trader_2": -0.028,
+        "trader_3": -0.105,
+        "market_maker": 0.431,
+        "oversight": -0.354
+      }
+    },
+    {
+      "step": 30,
+      "spot_price": 97.1028,
+      "mm_bid": 87.577,
+      "mm_ask": 106.6286,
+      "mm_half_spread": 0.0981,
+      "mm_skew": 0.0038,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 65,
+          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 58,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 24,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0981,
+          "skew": 0.0019,
+          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.271,
+        "trader_1": 0.156,
+        "trader_2": -0.181,
+        "trader_3": -0.171,
+        "market_maker": 0.948,
+        "oversight": -0.491
+      }
+    },
+    {
+      "step": 31,
+      "spot_price": 96.9993,
+      "mm_bid": 85.4564,
+      "mm_ask": 108.5423,
+      "mm_half_spread": 0.119,
+      "mm_skew": 0.0015,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 65,
+          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 58,
+          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 23,
+          "reasoning": "Volatility spike \u2014 large position to capture the move.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.119,
+          "skew": 0.0088,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.303,
+        "trader_1": -0.704,
+        "trader_2": -0.395,
+        "trader_3": 0.283,
+        "market_maker": 1.621,
+        "oversight": -0.405
+      }
+    },
+    {
+      "step": 32,
+      "spot_price": 97.4607,
+      "mm_bid": 89.2057,
+      "mm_ask": 105.7156,
+      "mm_half_spread": 0.0847,
+      "mm_skew": -0.0011,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 10,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 59,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Vol regime unclear \u2014 holding.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0847,
+          "skew": 0.0014,
+          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.065,
+        "trader_1": -0.646,
+        "trader_2": 0.032,
+        "trader_3": -0.138,
+        "market_maker": 0.522,
+        "oversight": -0.031
+      }
+    },
+    {
+      "step": 33,
+      "spot_price": 98.4051,
+      "mm_bid": 87.8167,
+      "mm_ask": 108.9934,
+      "mm_half_spread": 0.1076,
+      "mm_skew": -0.0053,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Trend is accelerating, large position justified by recent returns.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 23,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 26,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.1076,
+          "skew": -0.0077,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.136,
+        "trader_1": -0.165,
+        "trader_2": -0.019,
+        "trader_3": -0.039,
+        "market_maker": 1.314,
+        "oversight": 0.049
+      }
+    },
+    {
+      "step": 34,
+      "spot_price": 98.2624,
+      "mm_bid": 88.672,
+      "mm_ask": 107.8528,
+      "mm_half_spread": 0.0976,
+      "mm_skew": 0.002,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 26,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0976,
+          "skew": -0.005,
+          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.504,
+        "trader_1": -0.003,
+        "trader_2": -0.443,
+        "trader_3": 0.092,
+        "market_maker": 0.664,
+        "oversight": -0.053
+      }
+    },
+    {
+      "step": 35,
+      "spot_price": 101.3267,
+      "mm_bid": 90.1301,
+      "mm_ask": 112.5233,
+      "mm_half_spread": 0.1105,
+      "mm_skew": 0.0063,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 65,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 58,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Vol regime unclear \u2014 holding.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.1105,
+          "skew": -0.0018,
+          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.159,
+        "trader_1": 0.272,
+        "trader_2": 0.687,
+        "trader_3": -0.151,
+        "market_maker": 1.191,
+        "oversight": 0.214
+      }
+    },
+    {
+      "step": 36,
+      "spot_price": 101.5998,
+      "mm_bid": 93.1162,
+      "mm_ask": 110.0834,
+      "mm_half_spread": 0.0835,
+      "mm_skew": 0.0009,
+      "news_headline": "Strong GDP data surprises analysts \u2014 risk-on sentiment surges",
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 24,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 7,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0835,
+          "skew": 0.0025,
+          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
+        }
+      },
+      "messages": [
+        {
+          "from": "trader_2",
+          "to": "group_alpha",
+          "type": "group",
+          "text": "Vol regime shifting \u2014 size up if you're directional.",
+          "direction": "bullish"
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.509,
+        "trader_1": 1.014,
+        "trader_2": -0.547,
+        "trader_3": 0.136,
+        "market_maker": 1.273,
+        "oversight": -0.022
+      }
+    },
+    {
+      "step": 37,
+      "spot_price": 101.8184,
+      "mm_bid": 91.1071,
+      "mm_ask": 112.5297,
+      "mm_half_spread": 0.1052,
+      "mm_skew": 0.0068,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 65,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 58,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 62,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.1052,
+          "skew": 0.0087,
+          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.354,
+        "trader_1": 0.265,
+        "trader_2": -0.844,
+        "trader_3": -0.012,
+        "market_maker": 1.098,
+        "oversight": -0.12
+      }
+    },
+    {
+      "step": 38,
+      "spot_price": 102.7233,
+      "mm_bid": 90.8896,
+      "mm_ask": 114.557,
+      "mm_half_spread": 0.1152,
+      "mm_skew": 0.0064,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 25,
+          "reasoning": "Trend is accelerating, large position justified by recent returns.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 6,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 9,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.1152,
+          "skew": -0.0002,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Spoofing-like behavior from trader_2 \u2014 flagging for review."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.4,
+        "trader_1": -0.134,
+        "trader_2": 0.236,
+        "trader_3": -0.201,
+        "market_maker": 1.479,
+        "oversight": -0.096
+      }
+    },
+    {
+      "step": 39,
+      "spot_price": 101.6607,
+      "mm_bid": 92.2164,
+      "mm_ask": 111.105,
+      "mm_half_spread": 0.0929,
+      "mm_skew": 0.0049,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 65,
+          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 58,
+          "reasoning": "Price below moving average by 2\u03c3 \u2014 buying the dip.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0929,
+          "skew": 0.0093,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.027,
+        "trader_1": 0.299,
+        "trader_2": 0.91,
+        "trader_3": -0.131,
+        "market_maker": 0.834,
+        "oversight": 0.01
+      }
+    },
+    {
+      "step": 40,
+      "spot_price": 101.5161,
+      "mm_bid": 90.7351,
+      "mm_ask": 112.2971,
+      "mm_half_spread": 0.1062,
+      "mm_skew": 0.007,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 11,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 57,
+          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.1062,
+          "skew": 0.0091,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.394,
+        "trader_1": 0.432,
+        "trader_2": 0.581,
+        "trader_3": -0.035,
+        "market_maker": 0.909,
+        "oversight": -0.271
+      }
+    },
+    {
+      "step": 41,
+      "spot_price": 101.7874,
+      "mm_bid": 90.8148,
+      "mm_ask": 112.7601,
+      "mm_half_spread": 0.1078,
+      "mm_skew": 0.0006,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Trend is accelerating, large position justified by recent returns.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 22,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 23,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.1078,
+          "skew": 0.0022,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.131,
+        "trader_1": 0.172,
+        "trader_2": -0.051,
+        "trader_3": 0.048,
+        "market_maker": 0.838,
+        "oversight": -0.079
+      }
+    },
+    {
+      "step": 42,
+      "spot_price": 102.0902,
+      "mm_bid": 93.923,
+      "mm_ask": 110.2574,
+      "mm_half_spread": 0.08,
+      "mm_skew": 0.0098,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 26,
+          "reasoning": "Trend is accelerating, large position justified by recent returns.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 25,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 62,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.08,
+          "skew": 0.0069,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Spoofing-like behavior from trader_2 \u2014 flagging for review."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.555,
+        "trader_1": -0.182,
+        "trader_2": -0.114,
+        "trader_3": 0.245,
+        "market_maker": 1.447,
+        "oversight": 0.216
+      }
+    },
+    {
+      "step": 43,
+      "spot_price": 102.2815,
+      "mm_bid": 98.1391,
+      "mm_ask": 106.4239,
+      "mm_half_spread": 0.0405,
+      "mm_skew": 0.006,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 7,
+          "reasoning": "Momentum fading, cutting exposure to medium bucket.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 7,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0405,
+          "skew": -0.0081,
+          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
+        }
+      },
+      "messages": [
+        {
+          "from": "trader_0",
+          "to": "all",
+          "type": "broadcast",
+          "text": "Bullish momentum \u2014 watching for breakout above 105.",
+          "direction": "bullish"
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.075,
+        "trader_1": 0.651,
+        "trader_2": -0.46,
+        "trader_3": 0.215,
+        "market_maker": -0.157,
+        "oversight": 0.023
+      }
+    },
+    {
+      "step": 44,
+      "spot_price": 101.4525,
+      "mm_bid": 95.4059,
+      "mm_ask": 107.4991,
+      "mm_half_spread": 0.0596,
+      "mm_skew": -0.0045,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 22,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0596,
+          "skew": 0.0074,
+          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Spoofing-like behavior from trader_2 \u2014 flagging for review."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.216,
+        "trader_1": 0.194,
+        "trader_2": 0.323,
+        "trader_3": -0.398,
+        "market_maker": 0.36,
+        "oversight": 0.176
+      }
+    },
+    {
+      "step": 45,
+      "spot_price": 101.8957,
+      "mm_bid": 95.5884,
+      "mm_ask": 108.2031,
+      "mm_half_spread": 0.0619,
+      "mm_skew": 0.0017,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0619,
+          "skew": 0.0035,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.031,
+        "trader_1": 0.093,
+        "trader_2": -0.04,
+        "trader_3": -0.214,
+        "market_maker": 0.544,
+        "oversight": -0.139
+      }
+    },
+    {
+      "step": 46,
+      "spot_price": 100.4574,
+      "mm_bid": 90.9541,
+      "mm_ask": 109.9606,
+      "mm_half_spread": 0.0946,
+      "mm_skew": -0.0081,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 59,
+          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 11,
+          "reasoning": "Price below moving average by 2\u03c3 \u2014 buying the dip.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0946,
+          "skew": -0.0009,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Spoofing-like behavior from trader_2 \u2014 flagging for review."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.142,
+        "trader_1": 0.406,
+        "trader_2": 0.94,
+        "trader_3": 0.372,
+        "market_maker": 0.829,
+        "oversight": 0.22
+      }
+    },
+    {
+      "step": 47,
+      "spot_price": 98.9875,
+      "mm_bid": 92.6028,
+      "mm_ask": 105.3722,
+      "mm_half_spread": 0.0645,
+      "mm_skew": -0.008,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 27,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0645,
+          "skew": -0.002,
+          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.471,
+        "trader_1": 0.058,
+        "trader_2": -0.077,
+        "trader_3": -0.149,
+        "market_maker": 0.881,
+        "oversight": 0.375
+      }
+    },
+    {
+      "step": 48,
+      "spot_price": 98.2958,
+      "mm_bid": 88.6333,
+      "mm_ask": 107.9583,
+      "mm_half_spread": 0.0983,
+      "mm_skew": 0.0011,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 10,
+          "reasoning": "Reverting position as price normalizes.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 58,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 buy small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0983,
+          "skew": 0.0058,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.343,
+        "trader_1": 0.044,
+        "trader_2": 1.001,
+        "trader_3": -0.025,
+        "market_maker": 1.14,
+        "oversight": 0.362
+      }
+    },
+    {
+      "step": 49,
+      "spot_price": 97.717,
+      "mm_bid": 93.0364,
+      "mm_ask": 102.3977,
+      "mm_half_spread": 0.0479,
+      "mm_skew": -0.0016,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 10,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 8,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0479,
+          "skew": 0.0019,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 1.303,
+        "trader_1": -0.535,
+        "trader_2": 0.754,
+        "trader_3": -0.03,
+        "market_maker": 0.451,
+        "oversight": -0.01
+      }
+    },
+    {
+      "step": 50,
+      "spot_price": 98.1266,
+      "mm_bid": 88.3237,
+      "mm_ask": 107.9294,
+      "mm_half_spread": 0.0999,
+      "mm_skew": -0.0036,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 27,
+          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 22,
+          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 9,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 sell small.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0999,
+          "skew": 0.0042,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.209,
+        "trader_1": -0.42,
+        "trader_2": 0.681,
+        "trader_3": 0.198,
+        "market_maker": 0.396,
+        "oversight": 0.149
+      }
+    }
+  ]
+}
