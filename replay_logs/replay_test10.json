@@ -1,0 +1,1305 @@
+{
+  "meta": {
+    "model": "us.meta.llama4-maverick-17b-instruct-v1:0",
+    "run_name": "test10",
+    "steps": 10,
+    "seed": 42,
+    "episode_length": 10
+  },
+  "archetypes": {
+    "trader_0": "Momentum",
+    "trader_1": "Mean Reversion",
+    "trader_2": "Vol Timing",
+    "trader_3": "Scripted"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "spot_price": 98.55181477039102,
+      "mm_bid": 88.69663329335192,
+      "mm_ask": 108.40699624743013,
+      "mm_half_spread": 0.1,
+      "mm_skew": 0.0,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "No recent returns to base decision on.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "No recent returns to base a mean reversion trade on.",
+          "send_message": {
+            "to": "all",
+            "message": "Waiting for initial market movement to establish a trade."
+          },
+          "message": {
+            "to": "all",
+            "message": "Waiting for initial market movement to establish a trade."
+          }
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Realised vol is below threshold; maintaining minimal position.",
+          "send_message": {
+            "to": "all",
+            "message": "Low vol environment; waiting for volatility spike."
+          },
+          "message": {
+            "to": "all",
+            "message": "Low vol environment; waiting for volatility spike."
+          }
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.1,
+          "skew": 0.0,
+          "reasoning": "Full defensive mode activated, widening spread to protect inventory and balance PnL.",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [],
+          "flag_type": "none",
+          "fine_amount": 0.0,
+          "confidence": 0.0,
+          "intervention_type": "none",
+          "reasoning": "No suspicious activity detected; all traders' intents and market data indicate normal trading behavior.",
+          "message": null
+        }
+      },
+      "messages": [
+        {
+          "type": "broadcast",
+          "sender": "trader_1",
+          "recipient": "all",
+          "message": "Waiting for initial market movement to establish a trade.",
+          "step": 1
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_2",
+          "recipient": "all",
+          "message": "Low vol environment; waiting for volatility spike.",
+          "step": 1
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.0,
+        "trader_1": 0.0,
+        "trader_2": 0.0,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -1.6638090702072812,
+        "oversight": 0.5
+      }
+    },
+    {
+      "step": 2,
+      "spot_price": 99.13941494913391,
+      "mm_bid": 94.18244420167721,
+      "mm_ask": 114.010327191504,
+      "mm_half_spread": 0.1,
+      "mm_skew": 0.05,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Recent returns are negative, not following the trend.",
+          "send_message": {
+            "to": "all",
+            "message": "Waiting for a clear trend to emerge."
+          },
+          "message": {
+            "to": "all",
+            "message": "Waiting for a clear trend to emerge."
+          }
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Recent drop suggests potential mean reversion opportunity.",
+          "send_message": {
+            "to": "all",
+            "message": "Buying into the dip."
+          },
+          "message": {
+            "to": "all",
+            "message": "Buying into the dip."
+          }
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Realized volatility is extremely low, so staying flat.",
+          "send_message": {
+            "to": "all",
+            "message": "Waiting for volatility to pick up before making a move."
+          },
+          "message": {
+            "to": "all",
+            "message": "Waiting for volatility to pick up before making a move."
+          }
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.1,
+          "skew": 0.05,
+          "reasoning": "Widening spread and leaning ask to protect long inventory and lock in PnL.",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_3"
+          ],
+          "flag_type": "spoofing_like_pressure",
+          "fine_amount": 50.0,
+          "confidence": 0.9,
+          "intervention_type": "fine",
+          "reasoning": "Trader_3 executed a sell order with quantity 5, despite having a spot price at fill (100.0) significantly higher than the execution price (90.0), sugg",
+          "message": null
+        }
+      },
+      "messages": [
+        {
+          "type": "broadcast",
+          "sender": "trader_0",
+          "recipient": "all",
+          "message": "Waiting for a clear trend to emerge.",
+          "step": 2
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_1",
+          "recipient": "all",
+          "message": "Buying into the dip.",
+          "step": 2
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_2",
+          "recipient": "all",
+          "message": "Waiting for volatility to pick up before making a move.",
+          "step": 2
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "wash_trading",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.0,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 0.0,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": -1.7
+      }
+    },
+    {
+      "step": 3,
+      "spot_price": 98.05724905811135,
+      "mm_bid": 95.11553158636802,
+      "mm_ask": 110.80469143566584,
+      "mm_half_spread": 0.08,
+      "mm_skew": 0.05,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 50.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Recent return turned positive, indicating a potential uptrend.",
+          "send_message": {
+            "to": "all",
+            "message": "Following the trend, initiating a long position."
+          },
+          "message": {
+            "to": "all",
+            "message": "Following the trend, initiating a long position."
+          }
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Recent drop and current spot price near MM Bid suggests mean-reversion opportunity.",
+          "send_message": {
+            "to": "all",
+            "message": "Buying the dip; expecting reversion."
+          },
+          "message": {
+            "to": "all",
+            "message": "Buying the dip; expecting reversion."
+          }
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Realized volatility is low, so staying flat.",
+          "send_message": {
+            "to": "all",
+            "message": "Observing low volatility; waiting for a clear signal."
+          },
+          "message": {
+            "to": "all",
+            "message": "Observing low volatility; waiting for a clear signal."
+          }
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.08,
+          "skew": 0.05,
+          "reasoning": "Short inventory and full defensive mode, widening spread and leaning ask up to protect against furth",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_1",
+            "trader_3"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "confidence": 0.9,
+          "intervention_type": "fine",
+          "reasoning": "Trader_1 and trader_3 both submitted buy orders in step 2 with matching direction and different size buckets (small and medium), indicating potential ",
+          "message": null
+        }
+      },
+      "messages": [
+        {
+          "type": "broadcast",
+          "sender": "trader_0",
+          "recipient": "all",
+          "message": "Following the trend, initiating a long position.",
+          "step": 3
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_1",
+          "recipient": "all",
+          "message": "Buying the dip; expecting reversion.",
+          "step": 3
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_2",
+          "recipient": "all",
+          "message": "Observing low volatility; waiting for a clear signal.",
+          "step": 3
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 3,
+          "agent_id": "trader_1",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "wash_trading",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": 1.05
+      }
+    },
+    {
+      "step": 4,
+      "spot_price": 97.24436050289505,
+      "mm_bid": 93.35458608277925,
+      "mm_ask": 116.69323260347407,
+      "mm_half_spread": 0.12,
+      "mm_skew": 0.08,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 100.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Recent returns indicate negative momentum; closing long position.",
+          "send_message": {
+            "to": "all",
+            "message": "Bearish \u2014 selling into weakness."
+          },
+          "message": {
+            "to": "all",
+            "message": "Bearish \u2014 selling into weakness."
+          }
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Recent returns indicate a potential mean reversion opportunity after a drop.",
+          "send_message": {
+            "to": "all",
+            "message": "Fading the recent down move; anticipating a bounce."
+          },
+          "message": {
+            "to": "all",
+            "message": "Fading the recent down move; anticipating a bounce."
+          }
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Realized volatility is low, so staying flat.",
+          "send_message": {
+            "to": "all",
+            "message": "Waiting for volatility to pick up before making a move."
+          },
+          "message": {
+            "to": "all",
+            "message": "Waiting for volatility to pick up before making a move."
+          }
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.12,
+          "skew": 0.08,
+          "reasoning": "Widening spread and leaning ask to protect long inventory from coordinated buying pressure.",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_1",
+            "trader_0"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "confidence": 0.9,
+          "intervention_type": "fine",
+          "reasoning": "Trader_1 and trader_0 both submitted buy orders in the same direction and size_bucket ('medium') at step 3, indicating potential collusion.",
+          "message": null
+        }
+      },
+      "messages": [
+        {
+          "type": "broadcast",
+          "sender": "trader_0",
+          "recipient": "all",
+          "message": "Bearish \u2014 selling into weakness.",
+          "step": 4
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_1",
+          "recipient": "all",
+          "message": "Fading the recent down move; anticipating a bounce.",
+          "step": 4
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_2",
+          "recipient": "all",
+          "message": "Waiting for volatility to pick up before making a move.",
+          "step": 4
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 4,
+          "agent_id": "trader_1",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        },
+        {
+          "step": 4,
+          "agent_id": "trader_0",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": 1.0
+      }
+    },
+    {
+      "step": 5,
+      "spot_price": 94.23240075294383,
+      "mm_bid": 91.40542873035552,
+      "mm_ask": 106.48261285082654,
+      "mm_half_spread": 0.08,
+      "mm_skew": 0.05,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 100.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 30,
+          "reasoning": "Fading recent down move as per trader_1's sentiment; anticipating a bounce.",
+          "send_message": {
+            "to": "all",
+            "message": "Following trader_1's lead; buying into the dip."
+          },
+          "message": {
+            "to": "all",
+            "message": "Following trader_1's lead; buying into the dip."
+          }
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Recent returns indicate oversold conditions, presenting a buying opportunity.",
+          "send_message": {
+            "to": "all",
+            "message": "Fading recent weakness; initiating a small long position."
+          },
+          "message": {
+            "to": "all",
+            "message": "Fading recent weakness; initiating a small long position."
+          }
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Realised vol is low, so staying flat.",
+          "send_message": {
+            "to": "all",
+            "message": "Waiting for vol to pick up before making a move."
+          },
+          "message": {
+            "to": "all",
+            "message": "Waiting for vol to pick up before making a move."
+          }
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.08,
+          "skew": 0.05,
+          "reasoning": "Widening spread and leaning ask to protect long inventory and lock in PnL.",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_1",
+            "trader_3"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "confidence": 0.9,
+          "intervention_type": "fine",
+          "reasoning": "Trader_1 and trader_3 both submitted trades in the same direction and size_bucket in step 2 (buy, medium/small) and step 4 (buy, small), indicating po",
+          "message": null
+        }
+      },
+      "messages": [
+        {
+          "type": "broadcast",
+          "sender": "trader_0",
+          "recipient": "all",
+          "message": "Following trader_1's lead; buying into the dip.",
+          "step": 5
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_1",
+          "recipient": "all",
+          "message": "Fading recent weakness; initiating a small long position.",
+          "step": 5
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_2",
+          "recipient": "all",
+          "message": "Waiting for vol to pick up before making a move.",
+          "step": 5
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 5,
+          "agent_id": "trader_1",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        },
+        {
+          "step": 5,
+          "agent_id": "trader_3",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": 0.7999999999999999
+      }
+    },
+    {
+      "step": 6,
+      "spot_price": 95.44373352312067,
+      "mm_bid": 91.62598418219584,
+      "mm_ask": 114.53248022774483,
+      "mm_half_spread": 0.12,
+      "mm_skew": 0.08,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 100.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 30,
+          "reasoning": "Recent returns are predominantly negative, indicating a downtrend.",
+          "send_message": {
+            "to": "all",
+            "message": "Bearish \u2014 selling into weakness."
+          },
+          "message": {
+            "to": "all",
+            "message": "Bearish \u2014 selling into weakness."
+          }
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Mean reversion expected after recent negative returns; trimming long position.",
+          "send_message": {
+            "to": "all",
+            "message": "Fading recent weakness; selling into the dip."
+          },
+          "message": {
+            "to": "all",
+            "message": "Fading recent weakness; selling into the dip."
+          }
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Realised vol is below the threshold for going large; maintaining a neutral position.",
+          "send_message": {
+            "to": "all",
+            "message": "Staying cautious due to low realised volatility."
+          },
+          "message": {
+            "to": "all",
+            "message": "Staying cautious due to low realised volatility."
+          }
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.12,
+          "skew": 0.08,
+          "reasoning": "Coordinated buying pressure detected, widening spread and leaning ask up to protect against further ",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_0",
+            "trader_1"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "confidence": 0.9,
+          "intervention_type": "fine",
+          "reasoning": "Traders 'trader_0' and 'trader_1' consistently matched direction and size_bucket in multiple steps (steps 3 and 5), indicating coordinated trading act",
+          "message": null
+        }
+      },
+      "messages": [
+        {
+          "type": "broadcast",
+          "sender": "trader_0",
+          "recipient": "all",
+          "message": "Bearish \u2014 selling into weakness.",
+          "step": 6
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_1",
+          "recipient": "all",
+          "message": "Fading recent weakness; selling into the dip.",
+          "step": 6
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_2",
+          "recipient": "all",
+          "message": "Staying cautious due to low realised volatility.",
+          "step": 6
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 6,
+          "agent_id": "trader_0",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        },
+        {
+          "step": 6,
+          "agent_id": "trader_1",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": 0.7999999999999999
+      }
+    },
+    {
+      "step": 7,
+      "spot_price": 95.21096394934052,
+      "mm_bid": 92.35463503086032,
+      "mm_ask": 107.5883892627548,
+      "mm_half_spread": 0.08,
+      "mm_skew": 0.05,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 100.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 30,
+          "reasoning": "Recent returns show a slight positive trend after a series of negative returns, indicating a potential reversal.",
+          "send_message": {
+            "to": "all",
+            "message": "Anticipating a bounce; initiating a long position."
+          },
+          "message": {
+            "to": "all",
+            "message": "Anticipating a bounce; initiating a long position."
+          }
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Recent returns indicate a potential mean reversion opportunity as the spot price is below the MM mid-point.",
+          "send_message": {
+            "to": "all",
+            "message": "Bullish \u2014 buying into the dip."
+          },
+          "message": {
+            "to": "all",
+            "message": "Bullish \u2014 buying into the dip."
+          }
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Realised vol is below threshold; maintaining a neutral position.",
+          "send_message": {
+            "to": "all",
+            "message": "Neutral \u2014 holding due to low realised vol."
+          },
+          "message": {
+            "to": "all",
+            "message": "Neutral \u2014 holding due to low realised vol."
+          }
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.08,
+          "skew": 0.05,
+          "reasoning": "Short inventory and full defensive mode, widening spread and leaning ask up to protect against furth",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_0",
+            "trader_1"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "confidence": 0.9,
+          "intervention_type": "fine",
+          "reasoning": "Traders 'trader_0' and 'trader_1' consistently matched direction and size_bucket in multiple steps (steps 3, 5, 6), indicating coordinated trading act",
+          "message": null
+        }
+      },
+      "messages": [
+        {
+          "type": "broadcast",
+          "sender": "trader_0",
+          "recipient": "all",
+          "message": "Anticipating a bounce; initiating a long position.",
+          "step": 7
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_1",
+          "recipient": "all",
+          "message": "Bullish \u2014 buying into the dip.",
+          "step": 7
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_2",
+          "recipient": "all",
+          "message": "Neutral \u2014 holding due to low realised vol.",
+          "step": 7
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 7,
+          "agent_id": "trader_0",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        },
+        {
+          "step": 7,
+          "agent_id": "trader_1",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": 0.7999999999999999
+      }
+    },
+    {
+      "step": 8,
+      "spot_price": 94.23173903460244,
+      "mm_bid": 90.46246947321833,
+      "mm_ask": 113.07808684152295,
+      "mm_half_spread": 0.12,
+      "mm_skew": 0.08,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 100.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 30,
+          "reasoning": "Recent returns are negative; unwinding long position.",
+          "send_message": {
+            "to": "all",
+            "message": "Bearish \u2014 selling into weakness."
+          },
+          "message": {
+            "to": "all",
+            "message": "Bearish \u2014 selling into weakness."
+          }
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Recent returns indicate a potential mean reversion opportunity as the stock has been trending downwards.",
+          "send_message": {
+            "to": "all",
+            "message": "Fading the recent weakness; selling into the dip."
+          },
+          "message": {
+            "to": "all",
+            "message": "Fading the recent weakness; selling into the dip."
+          }
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Realised vol is below threshold; maintaining a neutral position.",
+          "send_message": {
+            "to": "all",
+            "message": "Low vol environment; no strong directional bias."
+          },
+          "message": {
+            "to": "all",
+            "message": "Low vol environment; no strong directional bias."
+          }
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.12,
+          "skew": 0.08,
+          "reasoning": "Widening spread and leaning ask to cover short position and mitigate potential losses due to coordin",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_0",
+            "trader_1"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "confidence": 0.9,
+          "intervention_type": "fine",
+          "reasoning": "Traders 'trader_0' and 'trader_1' consistently matched direction and size_bucket in multiple steps (steps 5 and 7), indicating coordinated trading act",
+          "message": null
+        }
+      },
+      "messages": [
+        {
+          "type": "broadcast",
+          "sender": "trader_0",
+          "recipient": "all",
+          "message": "Bearish \u2014 selling into weakness.",
+          "step": 8
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_1",
+          "recipient": "all",
+          "message": "Fading the recent weakness; selling into the dip.",
+          "step": 8
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_2",
+          "recipient": "all",
+          "message": "Low vol environment; no strong directional bias.",
+          "step": 8
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 8,
+          "agent_id": "trader_0",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        },
+        {
+          "step": 8,
+          "agent_id": "trader_1",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": 0.7999999999999999
+      }
+    },
+    {
+      "step": 9,
+      "spot_price": 92.84932868754035,
+      "mm_bid": 89.13535554003873,
+      "mm_ask": 111.41919442504843,
+      "mm_half_spread": 0.12,
+      "mm_skew": 0.08,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 50.0,
+      "actions": {
+        "trader_0": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 30,
+          "reasoning": "Recent returns are predominantly negative, indicating a downtrend.",
+          "send_message": {
+            "to": "all",
+            "message": "Fading recent weakness; selling into the dip."
+          },
+          "message": {
+            "to": "all",
+            "message": "Fading recent weakness; selling into the dip."
+          }
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Recent returns indicate oversold conditions, prompting a mean-reversion buy.",
+          "send_message": {
+            "to": "all",
+            "message": "Anticipating a bounce; buying into weakness."
+          },
+          "message": {
+            "to": "all",
+            "message": "Anticipating a bounce; buying into weakness."
+          }
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Realized volatility is below the threshold for large positions.",
+          "send_message": {
+            "to": "all",
+            "message": "Observing low volatility; maintaining neutral stance."
+          },
+          "message": {
+            "to": "all",
+            "message": "Observing low volatility; maintaining neutral stance."
+          }
+        },
+        "trader_3": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 60,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.12,
+          "skew": 0.08,
+          "reasoning": "Widening spread and leaning ask to protect against further buying pressure and reduce short inventor",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_1",
+            "trader_3"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "confidence": 0.9,
+          "intervention_type": "fine",
+          "reasoning": "Trader_1 and trader_3 exhibited coordinated pressure with matching direction and size_bucket in multiple steps (e.g., step 5 and step 7 for buying, st",
+          "message": null
+        }
+      },
+      "messages": [
+        {
+          "type": "broadcast",
+          "sender": "trader_0",
+          "recipient": "all",
+          "message": "Fading recent weakness; selling into the dip.",
+          "step": 9
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_1",
+          "recipient": "all",
+          "message": "Anticipating a bounce; buying into weakness.",
+          "step": 9
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_2",
+          "recipient": "all",
+          "message": "Observing low volatility; maintaining neutral stance.",
+          "step": 9
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 9,
+          "agent_id": "trader_3",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "none",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": 2.6094379124341005,
+        "trader_1": -2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": 2.6094379124341005,
+        "market_maker": -2.6094379124341005,
+        "oversight": -0.9499999999999998
+      }
+    },
+    {
+      "step": 10,
+      "spot_price": 95.95545172002848,
+      "mm_bid": 92.11723365122734,
+      "mm_ask": 115.1465420640342,
+      "mm_half_spread": 0.12,
+      "mm_skew": 0.08,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 100.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "medium",
+          "quantity": 30,
+          "reasoning": "Recent return is negative, but trader_1 is anticipating a bounce, so covering short position.",
+          "send_message": {
+            "to": "all",
+            "message": "Fading the short; expecting a reversal."
+          },
+          "message": {
+            "to": "all",
+            "message": "Fading the short; expecting a reversal."
+          }
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "medium",
+          "quantity": 20,
+          "reasoning": "Recent returns indicate oversold conditions are easing; fading weakness.",
+          "send_message": {
+            "to": "all",
+            "message": "Fading recent weakness; selling into the bounce."
+          },
+          "message": {
+            "to": "all",
+            "message": "Fading recent weakness; selling into the bounce."
+          }
+        },
+        "trader_2": {
+          "direction": "hold",
+          "size_bucket": "small",
+          "quantity": 0,
+          "reasoning": "Realized volatility is below the threshold for large positions.",
+          "send_message": {
+            "to": "all",
+            "message": "Staying neutral due to low volatility."
+          },
+          "message": {
+            "to": "all",
+            "message": "Staying neutral due to low volatility."
+          }
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted trader_3",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.12,
+          "skew": 0.08,
+          "reasoning": "Coordinated short pressure detected, widening spread and leaning ask up to protect inventory and lim",
+          "message": null
+        },
+        "oversight": {
+          "flagged_agents": [
+            "trader_0",
+            "trader_1"
+          ],
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "confidence": 0.9,
+          "intervention_type": "fine",
+          "reasoning": "Traders 'trader_0' and 'trader_1' consistently matched direction and size_bucket in multiple steps (steps 6, 7, 8, 9), indicating coordinated trading ",
+          "message": null
+        }
+      },
+      "messages": [
+        {
+          "type": "broadcast",
+          "sender": "trader_0",
+          "recipient": "all",
+          "message": "Fading the short; expecting a reversal.",
+          "step": 10
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_1",
+          "recipient": "all",
+          "message": "Fading recent weakness; selling into the bounce.",
+          "step": 10
+        },
+        {
+          "type": "broadcast",
+          "sender": "trader_2",
+          "recipient": "all",
+          "message": "Staying neutral due to low volatility.",
+          "step": 10
+        }
+      ],
+      "intel_transactions": [],
+      "sec_interventions": [
+        {
+          "step": 10,
+          "agent_id": "trader_0",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        },
+        {
+          "step": 10,
+          "agent_id": "trader_1",
+          "flag_type": "collusion",
+          "fine_amount": 50.0,
+          "intervention_type": "fine"
+        }
+      ],
+      "detected_manipulations": {
+        "trader_0": "wash_trading",
+        "trader_1": "wash_trading",
+        "trader_2": "wash_trading",
+        "trader_3": "wash_trading"
+      },
+      "rewards": {
+        "trader_0": -2.6094379124341005,
+        "trader_1": 2.6094379124341005,
+        "trader_2": 2.6094379124341005,
+        "trader_3": -2.6094379124341005,
+        "market_maker": 2.6094379124341005,
+        "oversight": 0.7999999999999999
+      }
+    }
+  ]
+}

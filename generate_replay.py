@@ -1,19 +1,21 @@
 """Generate a rich per-step replay log for the Chaos Economy HF Space frontend.
 
-Runs one episode (default 50 steps) using AWS Bedrock for inference, capturing
-all per-step detail: spot price, agent actions + reasoning, messages, news,
-black swan events, SEC interventions, intel transactions, and rewards.
+Runs one episode (default 50 steps) using either a local trained LoRA model
+or AWS Bedrock for inference, capturing all per-step detail: spot price,
+agent actions + reasoning, messages, news, black swan events, SEC
+interventions, intel transactions, and rewards.
 
 Usage:
-    python generate_replay.py --run_name demo --episode_length 50
-
-    # with custom Bedrock model
+    # Local trained model (ROCm / no AWS needed)
     python generate_replay.py \\
-        --bedrock_model meta.llama3-1-70b-instruct-v1:0 \\
-        --aws_region us-east-1 \\
-        --episode_length 50 \\
-        --seed 42 \\
-        --run_name demo
+        --local_model meta-llama/Llama-3.2-1B-Instruct \\
+        --lora_path ./checkpoints/chaos_1b_200steps \\
+        --episode_length 50 --seed 42 --run_name local_demo
+
+    # AWS Bedrock
+    python generate_replay.py \\
+        --bedrock_model us.meta.llama4-maverick-17b-instruct-v1:0 \\
+        --episode_length 50 --seed 42 --run_name bedrock_demo
 """
 
 import argparse
@@ -21,7 +23,6 @@ import json
 import os
 from pathlib import Path
 
-import boto3
 import numpy as np
 
 from multi_agent.environment import MultiAgentVSREnvironment
@@ -59,6 +60,44 @@ def generate_bedrock(client, model_id: str, prompt: str, max_tokens: int = 140, 
         return ""
 
 
+def load_local_model(base_model: str, lora_path: str | None):
+    """Load base model + optional LoRA adapter for local inference."""
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    from peft import PeftModel
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    dtype = torch.bfloat16 if device == "cuda" else torch.float32
+    print(f"[Local] Loading {base_model}  device={device}  dtype={dtype}")
+    tokenizer = AutoTokenizer.from_pretrained(base_model)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    model = AutoModelForCausalLM.from_pretrained(base_model, device_map=device, torch_dtype=dtype)
+    if lora_path:
+        print(f"[Local] Loading LoRA adapter: {lora_path}")
+        model = PeftModel.from_pretrained(model, lora_path)
+    model.eval()
+    print("[Local] Model ready")
+    return model, tokenizer, device
+
+
+def generate_local(model, tokenizer, device: str, prompt: str, max_tokens: int = 140, temperature: float = 0.7) -> str:
+    import torch
+    tokenizer.padding_side = "left"
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=1500).to(device)
+    with torch.no_grad():
+        out = model.generate(
+            **inputs,
+            max_new_tokens=max_tokens,
+            do_sample=temperature > 0,
+            temperature=temperature if temperature > 0 else 1.0,
+            pad_token_id=tokenizer.pad_token_id,
+            repetition_penalty=1.1,
+        )
+    in_len = inputs["input_ids"].shape[1]
+    return tokenizer.decode(out[0][in_len:], skip_special_tokens=True).strip()
+
+
 def _active_event_info(env, step: int) -> dict | None:
     """Return black swan event dict if one is active this step, else None."""
     for event in env.black_swan_gen.events:
@@ -80,7 +119,8 @@ def _active_headline(env, step: int) -> str | None:
     return None
 
 
-def run_episode(client, model_id: str, episode_length: int, seed: int, verbose: bool) -> list[dict]:
+def run_episode(generate_fn, episode_length: int, seed: int, verbose: bool) -> list[dict]:
+    """generate_fn(prompt, max_tokens, temperature) -> str"""
     env = MultiAgentVSREnvironment(episode_length=episode_length)
     obs = env.reset(seed=seed)
 
@@ -89,7 +129,7 @@ def run_episode(client, model_id: str, episode_length: int, seed: int, verbose: 
     for step in range(episode_length):
         actions = {}
 
-        # --- Traders + MM via Bedrock ---
+        # --- Traders + MM ---
         prompts, meta = [], []
         for archetype, cfg in TRADER_CONFIGS.items():
             for tid in cfg["trader_ids"]:
@@ -103,7 +143,7 @@ def run_episode(client, model_id: str, episode_length: int, seed: int, verbose: 
         meta.append(("market_maker", "market_maker", 0.3))
 
         for prompt, (aid, role, temp) in zip(prompts, meta):
-            raw = generate_bedrock(client, model_id, prompt, max_tokens=140, temperature=temp)
+            raw = generate_fn(prompt, max_tokens=140, temperature=temp)
             parsed, info = parse_json(raw, role=role)
             if info.get("valid"):
                 actions[aid] = parsed
@@ -113,11 +153,11 @@ def run_episode(client, model_id: str, episode_length: int, seed: int, verbose: 
         # trader_3 always scripted
         actions["trader_3"] = scripted_trader(3, step)
 
-        # --- Oversight via Bedrock ---
+        # --- Oversight ---
         heatmap = get_position_heatmap(env.agent_states) if hasattr(env, "agent_states") else {}
         agent_thoughts = {aid: actions[aid].get("reasoning", "") for aid in actions if aid != "oversight"}
         ov_prompt = format_oversight_prompt(obs["oversight"], heatmap, coord, agent_thoughts)
-        ov_raw = generate_bedrock(client, model_id, ov_prompt, max_tokens=160, temperature=0.5)
+        ov_raw = generate_fn(ov_prompt, max_tokens=160, temperature=0.5)
         ov_parsed, ov_info = parse_json(ov_raw, role="oversight")
         actions["oversight"] = ov_parsed if ov_info.get("valid") else scripted_oversight()
 
@@ -185,9 +225,16 @@ def run_episode(client, model_id: str, episode_length: int, seed: int, verbose: 
 
 
 def main():
-    p = argparse.ArgumentParser(description="Generate Chaos Economy replay log via Bedrock")
+    p = argparse.ArgumentParser(description="Generate Chaos Economy replay log")
+    # Local model flags
+    p.add_argument("--local_model", default=None,
+                   help="HF model ID or path for local inference (skips Bedrock entirely)")
+    p.add_argument("--lora_path", default=None,
+                   help="Path to trained LoRA adapter (used with --local_model)")
+    # Bedrock flags (only used when --local_model is not set)
     p.add_argument("--bedrock_model", default="meta.llama3-1-70b-instruct-v1:0")
     p.add_argument("--aws_region", default="us-east-1")
+    # Common flags
     p.add_argument("--episode_length", type=int, default=50)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--run_name", default="replay")
@@ -195,15 +242,25 @@ def main():
     p.add_argument("--verbose", action="store_true")
     args = p.parse_args()
 
-    print(f"[Bedrock] region={args.aws_region}  model={args.bedrock_model}")
-    client = boto3.client("bedrock-runtime", region_name=args.aws_region)
+    if args.local_model:
+        model, tokenizer, device = load_local_model(args.local_model, args.lora_path)
+        def generate_fn(prompt, max_tokens=140, temperature=0.7):
+            return generate_local(model, tokenizer, device, prompt, max_tokens, temperature)
+        model_label = args.local_model + (f" + {args.lora_path}" if args.lora_path else "")
+    else:
+        import boto3
+        print(f"[Bedrock] region={args.aws_region}  model={args.bedrock_model}")
+        client = boto3.client("bedrock-runtime", region_name=args.aws_region)
+        def generate_fn(prompt, max_tokens=140, temperature=0.7):
+            return generate_bedrock(client, args.bedrock_model, prompt, max_tokens, temperature)
+        model_label = args.bedrock_model
 
     print(f"[Episode] length={args.episode_length}  seed={args.seed}")
-    steps = run_episode(client, args.bedrock_model, args.episode_length, args.seed, args.verbose)
+    steps = run_episode(generate_fn, args.episode_length, args.seed, args.verbose)
 
     out = {
         "meta": {
-            "model": args.bedrock_model,
+            "model": model_label,
             "run_name": args.run_name,
             "steps": len(steps),
             "seed": args.seed,

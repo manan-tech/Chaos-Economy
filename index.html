@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Chaos Economy — Replay</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f6fa;
+      --surface: #ffffff;
+      --surface2: #f0f2f8;
+      --border: #e2e6f0;
+      --text: #1a1d2e;
+      --text2: #6b7280;
+      --accent: #4f46e5;
+      --accent-light: #eef2ff;
+      --buy: #16a34a;
+      --buy-bg: #dcfce7;
+      --sell: #dc2626;
+      --sell-bg: #fee2e2;
+      --hold: #6b7280;
+      --hold-bg: #f3f4f6;
+      --sec: #b45309;
+      --sec-bg: #fef3c7;
+      --mm: #1d4ed8;
+      --mm-bg: #dbeafe;
+      --act1: rgba(239,68,68,0.08);
+      --act2: rgba(234,179,8,0.08);
+      --act3: rgba(168,85,247,0.08);
+      --act4: rgba(59,130,246,0.08);
+      --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────── */
+    .header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .header-brand { font-size: 16px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+    .header-price { font-size: 20px; font-weight: 700; }
+    .header-delta { font-size: 13px; font-weight: 600; }
+    .header-delta.up { color: var(--buy); }
+    .header-delta.down { color: var(--sell); }
+    .header-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+    .hbadge {
+      padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .hbadge-sec { background: var(--sec-bg); color: var(--sec); }
+    .hbadge-collusion { background: #fce7f3; color: #be185d; }
+    .hbadge-neutral { background: var(--surface2); color: var(--text2); }
+
+    /* ── TIMELINE ───────────────────────────────────────── */
+    .timeline {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .step-label { font-weight: 700; color: var(--accent); white-space: nowrap; min-width: 60px; }
+    .scrubber {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      outline: none;
+      cursor: pointer;
+    }
+    .scrubber::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.2);
+    }
+    .play-btn {
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 6px;
+      padding: 6px 14px; font-size: 13px; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+    }
+    .play-btn:hover { background: #4338ca; }
+    .act-label {
+      padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* ── MAIN GRID ──────────────────────────────────────── */
+    .main {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 12px;
+      padding: 12px 16px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    @media (max-width: 900px) { .main { grid-template-columns: 1fr; } }
+
+    /* ── CHART PANEL ────────────────────────────────────── */
+    .chart-panel {
+      background: var(--surface);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      position: sticky;
+      top: 96px;
+      height: fit-content;
+    }
+    .panel-title { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+    .chart-wrap { position: relative; height: 220px; }
+
+    /* ── RIGHT COLUMN ───────────────────────────────────── */
+    .right-col { display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── CARD ───────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 12px 14px;
+    }
+
+    /* ── TRADERS ────────────────────────────────────────── */
+    .traders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media (max-width: 600px) { .traders-grid { grid-template-columns: 1fr; } }
+
+    .trader-card {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      border-left: 3px solid var(--border);
+      position: relative;
+    }
+    .trader-card.buy { border-left-color: var(--buy); }
+    .trader-card.sell { border-left-color: var(--sell); }
+    .trader-card.hold { border-left-color: var(--hold); }
+
+    .trader-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .trader-name { font-weight: 700; font-size: 12px; }
+    .archetype-tag { font-size: 10px; color: var(--text2); background: var(--surface); border-radius: 4px; padding: 1px 5px; }
+    .dir-badge {
+      margin-left: auto; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700;
+    }
+    .dir-badge.buy { background: var(--buy-bg); color: var(--buy); }
+    .dir-badge.sell { background: var(--sell-bg); color: var(--sell); }
+    .dir-badge.hold { background: var(--hold-bg); color: var(--hold); }
+
+    .trade-detail { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+    .trade-detail strong { color: var(--text); }
+    .reasoning { font-size: 11px; color: var(--text2); font-style: italic; line-height: 1.4; }
+    .manip-flag {
+      margin-top: 4px; font-size: 10px; font-weight: 600;
+      color: #b45309; background: var(--sec-bg); padding: 1px 6px; border-radius: 4px; display: inline-block;
+    }
+
+    /* ── MARKET MAKER ───────────────────────────────────── */
+    .mm-row { display: flex; gap: 16px; align-items: flex-start; }
+    .mm-stat { text-align: center; }
+    .mm-stat .val { font-size: 18px; font-weight: 800; color: var(--mm); }
+    .mm-stat .lbl { font-size: 10px; color: var(--text2); text-transform: uppercase; }
+    .mm-reasoning { flex: 1; font-size: 11px; color: var(--text2); font-style: italic; line-height: 1.5; padding-left: 12px; border-left: 2px solid var(--mm-bg); }
+
+    /* ── SEC OVERSIGHT ──────────────────────────────────── */
+    .sec-card { border-top: 3px solid var(--sec); }
+    .sec-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .sec-badge { background: var(--sec-bg); color: var(--sec); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .flagged-agent { display: inline-flex; align-items: center; gap: 4px; background: var(--sell-bg); color: var(--sell); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; margin: 2px; }
+    .fine-amount { font-size: 16px; font-weight: 800; color: var(--sec); }
+    .sec-reasoning { font-size: 11px; color: var(--text2); font-style: italic; line-height: 1.4; margin-top: 6px; }
+    .intervention-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; }
+    .intervention-item { background: var(--sec-bg); border-radius: 6px; padding: 6px 10px; }
+    .intervention-item .agent { font-weight: 700; font-size: 12px; color: var(--sec); }
+    .intervention-item .type { font-size: 10px; color: var(--text2); }
+    .intervention-item .fine { font-size: 14px; font-weight: 800; color: var(--sell); }
+
+    /* ── BOTTOM TRAY ────────────────────────────────────── */
+    .bottom-tray {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      padding: 0 16px 16px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    @media (max-width: 900px) { .bottom-tray { grid-template-columns: 1fr; } }
+
+    /* ── CHAT PANELS ────────────────────────────────────── */
+    .chat-panel {
+      background: var(--surface);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      height: 320px;
+    }
+    .chat-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .5px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .chat-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .chat-dot.green { background: #22c55e; }
+    .chat-dot.blue { background: var(--accent); }
+    .chat-dot.amber { background: #f59e0b; }
+    .chat-body { flex: 1; overflow-y: auto; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+    .chat-body::-webkit-scrollbar { width: 4px; }
+    .chat-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .chat-msg {
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .chat-msg .meta { display: flex; align-items: center; gap: 6px; }
+    .chat-msg .sender {
+      font-size: 11px; font-weight: 700;
+      padding: 1px 6px; border-radius: 4px;
+    }
+    .sender-trader_0 { background: #e0e7ff; color: #3730a3; }
+    .sender-trader_1 { background: #d1fae5; color: #065f46; }
+    .sender-trader_2 { background: #fce7f3; color: #9d174d; }
+    .sender-trader_3 { background: #fef3c7; color: #92400e; }
+    .sender-market_maker { background: var(--mm-bg); color: var(--mm); }
+    .sender-oversight { background: var(--sec-bg); color: var(--sec); }
+    .chat-msg .to-lbl { font-size: 10px; color: var(--text2); }
+    .chat-msg .step-num { font-size: 10px; color: var(--text2); margin-left: auto; }
+    .chat-msg .body { font-size: 12px; color: var(--text); line-height: 1.4; padding-left: 4px; }
+    .chat-msg .intel-tag { font-size: 10px; font-weight: 600; background: #f0fdf4; color: #16a34a; border-radius: 4px; padding: 1px 5px; }
+
+    .empty-state { text-align: center; color: var(--text2); font-size: 12px; padding: 40px 0; }
+
+    /* ── NEWS / EVENT PANEL ─────────────────────────────── */
+    .news-panel {
+      background: var(--surface);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      height: 320px;
+      overflow-y: auto;
+    }
+    .news-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .news-item:last-child { border-bottom: none; }
+    .news-step { font-size: 10px; color: var(--text2); margin-bottom: 3px; }
+    .news-text { font-size: 13px; font-weight: 600; line-height: 1.4; }
+    .news-text.headline { color: var(--text); }
+    .news-text.swan { color: var(--sell); }
+
+    /* ── UTILS ──────────────────────────────────────────── */
+    .no-intervention { text-align: center; color: var(--text2); font-size: 12px; padding: 12px 0; }
+    .rewards-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .reward-chip {
+      font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+    }
+    .reward-chip.pos { background: var(--buy-bg); color: var(--buy); }
+    .reward-chip.neg { background: var(--sell-bg); color: var(--sell); }
+    .reward-chip.zero { background: var(--hold-bg); color: var(--hold); }
+
+    .divider { height: 1px; background: var(--border); margin: 8px 0; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-brand">🦈 The Chaos Economy</div>
+  <div>
+    <div class="header-price" id="hdr-price">—</div>
+  </div>
+  <div class="header-delta" id="hdr-delta">—</div>
+  <div class="header-badges" id="hdr-badges"></div>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline">
+  <div class="step-label" id="step-label">Step 1</div>
+  <input type="range" class="scrubber" id="scrubber" min="0" max="0" value="0">
+  <span class="act-label" id="act-label"></span>
+  <button class="play-btn" id="play-btn">▶ Play</button>
+</div>
+
+<!-- MAIN GRID -->
+<div class="main">
+
+  <!-- LEFT: PRICE CHART -->
+  <div class="chart-panel">
+    <div class="panel-title">Price History</div>
+    <div class="chart-wrap">
+      <canvas id="priceChart"></canvas>
+    </div>
+
+    <!-- Rewards summary -->
+    <div style="margin-top:14px;">
+      <div class="panel-title">Rewards This Step</div>
+      <div class="rewards-row" id="rewards-row"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+
+    <!-- TRADERS -->
+    <div class="card">
+      <div class="panel-title">Traders</div>
+      <div class="traders-grid" id="traders-grid"></div>
+    </div>
+
+    <!-- MARKET MAKER -->
+    <div class="card">
+      <div class="panel-title">Market Maker</div>
+      <div class="mm-row" id="mm-row"></div>
+    </div>
+
+    <!-- SEC OVERSIGHT -->
+    <div class="card sec-card" id="sec-card">
+      <div class="panel-title">SEC Oversight</div>
+      <div id="sec-body"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOTTOM TRAY -->
+<div class="bottom-tray">
+
+  <!-- NEWS + EVENTS -->
+  <div class="news-panel">
+    <div class="panel-title" style="margin-bottom:8px;">📰 News &amp; Events</div>
+    <div id="news-body"></div>
+  </div>
+
+  <!-- CHAT: CURRENT STEP -->
+  <div class="chat-panel">
+    <div class="chat-header">
+      <div class="chat-dot green"></div>
+      Live Chat — Step Messages
+    </div>
+    <div class="chat-body" id="chat-now"></div>
+  </div>
+
+  <!-- CHAT: EPISODE HISTORY -->
+  <div class="chat-panel">
+    <div class="chat-header">
+      <div class="chat-dot blue"></div>
+      Episode Chat Log (all steps)
+    </div>
+    <div class="chat-body" id="chat-all"></div>
+  </div>
+
+</div>
+
+<!-- INLINE REPLAY DATA — replaced by embed_replay.py -->
+<script id="replay-data-script">
+const REPLAY_DATA = /* EMBED_REPLAY_JSON */ null;
+</script>
+
+<script>
+// ── LOAD DATA ──────────────────────────────────────────────────────────────
+let DATA = null;
+
+function loadData() {
+  // Inline embedded data takes priority
+  if (typeof REPLAY_DATA !== 'undefined' && REPLAY_DATA !== null) {
+    DATA = REPLAY_DATA;
+    return;
+  }
+  // Fallback: fetch sample_replay.json (works when served locally)
+  fetch('replay_logs/sample_replay.json')
+    .then(r => r.json())
+    .then(d => { DATA = d; init(); })
+    .catch(() => {
+      document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#dc2626;font-size:18px;">No replay data found.<br>Run <code>python embed_replay.py</code> or serve with a replay JSON.</div>';
+    });
+}
+
+// ── CHART SETUP ────────────────────────────────────────────────────────────
+let chart = null;
+let cursorPlugin = null;
+let currentIdx = 0;
+let playTimer = null;
+
+function getAct(stepIdx, totalSteps) {
+  const pct = stepIdx / totalSteps;
+  if (pct < 0.24) return { name: 'Act I: Slaughter', color: 'rgba(239,68,68,0.12)', labelBg: '#fef2f2', labelColor: '#b91c1c' };
+  if (pct < 0.52) return { name: 'Act II: Adaptation', color: 'rgba(234,179,8,0.12)', labelBg: '#fefce8', labelColor: '#a16207' };
+  if (pct < 0.80) return { name: 'Act III: Collusion', color: 'rgba(168,85,247,0.12)', labelBg: '#faf5ff', labelColor: '#7e22ce' };
+  return { name: 'Act IV: Oversight', color: 'rgba(59,130,246,0.12)', labelBg: '#eff6ff', labelColor: '#1d4ed8' };
+}
+
+const actBandPlugin = {
+  id: 'actBandPlugin',
+  beforeDatasetsDraw(chart) {
+    const { ctx, chartArea: { left, right, top, bottom }, scales: { x } } = chart;
+    const n = DATA.steps.length;
+    const bands = [
+      { from: 0, to: Math.floor(n * 0.24) - 1, color: 'rgba(239,68,68,0.07)' },
+      { from: Math.floor(n * 0.24), to: Math.floor(n * 0.52) - 1, color: 'rgba(234,179,8,0.07)' },
+      { from: Math.floor(n * 0.52), to: Math.floor(n * 0.80) - 1, color: 'rgba(168,85,247,0.07)' },
+      { from: Math.floor(n * 0.80), to: n - 1, color: 'rgba(59,130,246,0.07)' },
+    ];
+    ctx.save();
+    for (const b of bands) {
+      const x0 = x.getPixelForValue(b.from);
+      const x1 = x.getPixelForValue(Math.min(b.to, n - 1));
+      ctx.fillStyle = b.color;
+      ctx.fillRect(x0, top, x1 - x0, bottom - top);
+    }
+    ctx.restore();
+  }
+};
+
+const cursorLinePlugin = {
+  id: 'cursorLinePlugin',
+  afterDatasetsDraw(chart) {
+    const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
+    const xPos = x.getPixelForValue(currentIdx);
+    ctx.save();
+    ctx.strokeStyle = '#4f46e5';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(xPos, top);
+    ctx.lineTo(xPos, bottom);
+    ctx.stroke();
+    ctx.restore();
+  }
+};
+
+function buildChart() {
+  const steps = DATA.steps;
+  const labels = steps.map(s => `S${s.step}`);
+  const prices = steps.map(s => s.spot_price);
+
+  const ctx = document.getElementById('priceChart').getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'line',
+    plugins: [actBandPlugin, cursorLinePlugin],
+    data: {
+      labels,
+      datasets: [{
+        data: prices,
+        borderColor: '#4f46e5',
+        borderWidth: 2,
+        pointRadius: 3,
+        pointBackgroundColor: prices.map((_, i) => i === currentIdx ? '#4f46e5' : '#c7d2fe'),
+        tension: 0.3,
+        fill: {
+          target: 'origin',
+          above: 'rgba(79,70,229,0.05)',
+        }
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => `$${ctx.parsed.y.toFixed(2)}` }
+      }},
+      scales: {
+        x: { grid: { color: '#f0f0f0' }, ticks: { font: { size: 10 }, color: '#9ca3af', maxTicksLimit: 12 } },
+        y: {
+          grid: { color: '#f0f0f0' }, ticks: { font: { size: 10 }, color: '#9ca3af',
+          callback: v => '$' + v.toFixed(1) }
+        }
+      }
+    }
+  });
+}
+
+function updateChart() {
+  if (!chart) return;
+  chart.data.datasets[0].pointBackgroundColor = DATA.steps.map((_, i) =>
+    i === currentIdx ? '#4f46e5' : '#c7d2fe'
+  );
+  chart.update('none');
+}
+
+// ── RENDER STEP ────────────────────────────────────────────────────────────
+function render(idx) {
+  currentIdx = idx;
+  const step = DATA.steps[idx];
+  const totalSteps = DATA.steps.length;
+  const act = getAct(idx, totalSteps);
+
+  // Header
+  const spot = step.spot_price;
+  const spot0 = DATA.steps[0].spot_price;
+  const delta = ((spot - spot0) / spot0) * 100;
+  document.getElementById('hdr-price').textContent = '$' + spot.toFixed(2);
+  const deltaEl = document.getElementById('hdr-delta');
+  deltaEl.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(2) + '% from start';
+  deltaEl.className = 'header-delta ' + (delta >= 0 ? 'up' : 'down');
+
+  // Header badges
+  const badges = document.getElementById('hdr-badges');
+  let bHtml = '';
+  if (step.news_headline) bHtml += `<span class="hbadge hbadge-neutral">📰 News</span>`;
+  if (step.black_swan) bHtml += `<span class="hbadge hbadge-sec">⚡ Black Swan</span>`;
+  if (step.collusion_events > 0) bHtml += `<span class="hbadge hbadge-collusion">⚠ Collusion ×${step.collusion_events}</span>`;
+  if (step.sec_fines > 0) bHtml += `<span class="hbadge hbadge-sec">💰 Fines $${step.sec_fines.toFixed(0)}</span>`;
+  badges.innerHTML = bHtml;
+
+  // Timeline
+  document.getElementById('step-label').textContent = `Step ${step.step} / ${totalSteps}`;
+  const actLabel = document.getElementById('act-label');
+  actLabel.textContent = act.name;
+  actLabel.style.background = act.labelBg;
+  actLabel.style.color = act.labelColor;
+
+  // Chart
+  updateChart();
+
+  // Rewards
+  const rr = document.getElementById('rewards-row');
+  rr.innerHTML = Object.entries(step.rewards).map(([agent, r]) => {
+    const cls = r > 0.01 ? 'pos' : r < -0.01 ? 'neg' : 'zero';
+    return `<span class="reward-chip ${cls}">${agent}: ${r > 0 ? '+' : ''}${r.toFixed(2)}</span>`;
+  }).join('');
+
+  // Traders
+  const traders = ['trader_0', 'trader_1', 'trader_2', 'trader_3'];
+  const tGrid = document.getElementById('traders-grid');
+  tGrid.innerHTML = traders.map(tid => {
+    const a = step.actions[tid];
+    const dir = a.direction || 'hold';
+    const arch = (DATA.archetypes && DATA.archetypes[tid]) || tid;
+    const manip = step.detected_manipulations && step.detected_manipulations[tid];
+    const manipHtml = manip && manip !== 'none'
+      ? `<div class="manip-flag">⚑ ${manip.replace(/_/g, ' ')}</div>` : '';
+    const tradeDetail = dir !== 'hold'
+      ? `<div class="trade-detail"><strong>${dir.toUpperCase()}</strong> ${a.quantity || 0} shares &nbsp;•&nbsp; ${a.size_bucket || '—'}</div>`
+      : `<div class="trade-detail" style="color:var(--hold)">HOLD</div>`;
+    return `
+      <div class="trader-card ${dir}">
+        <div class="trader-header">
+          <span class="trader-name">${tid}</span>
+          <span class="archetype-tag">${arch}</span>
+          <span class="dir-badge ${dir}">${dir.toUpperCase()}</span>
+        </div>
+        ${tradeDetail}
+        <div class="reasoning">"${a.reasoning || '—'}"</div>
+        ${manipHtml}
+      </div>`;
+  }).join('');
+
+  // Market Maker
+  const mm = step.actions.market_maker;
+  document.getElementById('mm-row').innerHTML = `
+    <div class="mm-stat"><div class="val">${(mm.half_spread * 100).toFixed(1)}%</div><div class="lbl">Half Spread</div></div>
+    <div class="mm-stat"><div class="val">${mm.skew !== undefined ? mm.skew.toFixed(2) : '—'}</div><div class="lbl">Skew</div></div>
+    <div class="mm-stat"><div class="val">$${step.mm_bid.toFixed(2)}</div><div class="lbl">Bid</div></div>
+    <div class="mm-stat"><div class="val">$${step.mm_ask.toFixed(2)}</div><div class="lbl">Ask</div></div>
+    <div class="mm-reasoning">"${mm.reasoning || '—'}"</div>`;
+
+  // SEC
+  const ov = step.actions.oversight;
+  const secCard = document.getElementById('sec-card');
+  const secBody = document.getElementById('sec-body');
+  if (ov.intervention_type && ov.intervention_type !== 'none') {
+    secCard.style.display = '';
+    const flagged = Array.isArray(ov.flagged_agents) ? ov.flagged_agents : [];
+    const interventions = step.sec_interventions || [];
+    const iHtml = interventions.length > 0
+      ? `<div class="intervention-grid">${interventions.map(iv =>
+          `<div class="intervention-item">
+            <div class="agent">${iv.agent_id}</div>
+            <div class="type">${iv.flag_type.replace(/_/g,' ')}</div>
+            <div class="fine">-$${iv.fine_amount.toFixed(0)}</div>
+          </div>`).join('')}</div>`
+      : '';
+    secBody.innerHTML = `
+      <div class="sec-header">
+        <span class="sec-badge">${ov.intervention_type.toUpperCase()}</span>
+        ${flagged.map(f => `<span class="flagged-agent">⚑ ${f}</span>`).join('')}
+        ${ov.fine_amount ? `<span class="fine-amount" style="margin-left:auto;">-$${ov.fine_amount.toFixed(0)}</span>` : ''}
+      </div>
+      ${iHtml}
+      <div class="sec-reasoning">"${ov.reasoning || '—'}"</div>`;
+  } else {
+    secCard.style.display = '';
+    secBody.innerHTML = `<div class="no-intervention" style="color:var(--buy)">✓ No intervention this step</div>
+      <div class="sec-reasoning" style="text-align:center;">"${ov.reasoning || '—'}"</div>`;
+  }
+
+  // News panel — show all news/events up to this step
+  const newsBody = document.getElementById('news-body');
+  const newsItems = DATA.steps.slice(0, idx + 1).filter(s => s.news_headline || s.black_swan);
+  if (newsItems.length === 0) {
+    newsBody.innerHTML = `<div class="empty-state">No news or events yet</div>`;
+  } else {
+    newsBody.innerHTML = newsItems.reverse().map(s => {
+      let html = '';
+      if (s.black_swan) {
+        html += `<div class="news-item"><div class="news-step">Step ${s.step} — BLACK SWAN ⚡</div><div class="news-text swan">${typeof s.black_swan === 'object' ? JSON.stringify(s.black_swan) : s.black_swan}</div></div>`;
+      }
+      if (s.news_headline) {
+        html += `<div class="news-item"><div class="news-step">Step ${s.step}</div><div class="news-text headline">${s.news_headline}</div></div>`;
+      }
+      return html;
+    }).join('');
+  }
+
+  // Chat: current step
+  renderChat('chat-now', step.messages || [], false);
+
+  // Chat: all messages up to this step
+  const allMsgs = DATA.steps.slice(0, idx + 1).flatMap(s =>
+    (s.messages || []).map(m => ({ ...m, _stepNum: s.step }))
+  );
+  const intelMsgs = DATA.steps.slice(0, idx + 1).flatMap(s =>
+    (s.intel_transactions || []).map(t => ({
+      type: 'intel', sender: t.seller, recipient: t.buyer,
+      message: `Intel sold: "${t.signal}" for $${t.price?.toFixed(2) || '—'}`,
+      _stepNum: s.step, _intel: true
+    }))
+  );
+  renderChat('chat-all', [...allMsgs, ...intelMsgs].sort((a, b) => (a._stepNum || 0) - (b._stepNum || 0)), true);
+}
+
+function renderChat(containerId, messages, showStep) {
+  const el = document.getElementById(containerId);
+  if (!messages.length) {
+    el.innerHTML = `<div class="empty-state">No messages</div>`;
+    return;
+  }
+  el.innerHTML = messages.map(m => {
+    const sender = m.sender || m.from || '?';
+    const senderClass = 'sender-' + sender.replace(/\s+/g, '_');
+    const recipientText = m.recipient === 'all' ? '→ everyone' : `→ ${m.recipient}`;
+    const stepBadge = showStep ? `<span class="step-num">step ${m._stepNum || m.step || ''}</span>` : '';
+    const intelTag = m._intel ? `<span class="intel-tag">💡 intel</span>` : '';
+    const typeIcon = m.type === 'intel' ? '💡' : m.type === 'broadcast' ? '📢' : m.type === 'group' ? '👥' : '💬';
+    return `<div class="chat-msg">
+      <div class="meta">
+        <span class="sender ${senderClass}">${sender}</span>
+        <span class="to-lbl">${typeIcon} ${recipientText}</span>
+        ${intelTag}
+        ${stepBadge}
+      </div>
+      <div class="body">${m.message || m.text || '—'}</div>
+    </div>`;
+  }).join('');
+  if (showStep) el.scrollTop = el.scrollHeight;
+}
+
+// ── CONTROLS ───────────────────────────────────────────────────────────────
+function init() {
+  if (!DATA) return;
+  const n = DATA.steps.length;
+  const scrubber = document.getElementById('scrubber');
+  scrubber.max = n - 1;
+  scrubber.value = 0;
+  scrubber.addEventListener('input', () => render(parseInt(scrubber.value)));
+
+  document.getElementById('play-btn').addEventListener('click', togglePlay);
+
+  buildChart();
+  render(0);
+}
+
+function togglePlay() {
+  const btn = document.getElementById('play-btn');
+  if (playTimer) {
+    clearInterval(playTimer);
+    playTimer = null;
+    btn.textContent = '▶ Play';
+    return;
+  }
+  btn.textContent = '⏸ Pause';
+  playTimer = setInterval(() => {
+    const scrubber = document.getElementById('scrubber');
+    const next = parseInt(scrubber.value) + 1;
+    if (next >= DATA.steps.length) {
+      clearInterval(playTimer);
+      playTimer = null;
+      btn.textContent = '▶ Play';
+      return;
+    }
+    scrubber.value = next;
+    render(next);
+  }, 1000);
+}
+
+// ── BOOT ───────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  if (DATA) init();
+});
+</script>
+
+</body>
+</html>
