@@ -1336,7 +1336,7 @@ def train_unified_model(args):
         per_device_train_batch_size=2,
         num_generations=2,
         max_completion_length=512,
-        logging_steps=1,
+        logging_steps=args.logging_steps,
         save_steps=100,
         save_total_limit=2,
         learning_rate=args.learning_rate,
@@ -1733,6 +1733,12 @@ def main():
         type=str,
         default=None,
         help="W&B project name for experiment tracking. If not set, W&B is disabled.",
+    )
+    parser.add_argument(
+        "--logging_steps",
+        type=int,
+        default=1,
+        help="Log loss/reward metrics every N training steps (default 1).",
     )
     args = parser.parse_args()
 
