@@ -1615,6 +1615,10 @@ def train_unified_model(args):
     if storytelling_cb:
         callbacks.append(storytelling_cb)
 
+    # TRL GRPOTrainer accesses model.warnings_issued but PEFT doesn't proxy it
+    if not hasattr(model, "warnings_issued"):
+        model.warnings_issued = {}
+
     trainer = GRPOTrainer(
         model=model, args=training_args, reward_funcs=[
             format_reward_fn,
