@@ -47,12 +47,16 @@ AGENT_ARCHETYPES = {
 
 
 def generate_bedrock(client, model_id: str, prompt: str, max_tokens: int = 140, temperature: float = 0.7) -> str:
-    response = client.converse(
-        modelId=model_id,
-        messages=[{"role": "user", "content": [{"text": prompt}]}],
-        inferenceConfig={"maxTokens": max_tokens, "temperature": temperature},
-    )
-    return response["output"]["message"]["content"][0]["text"]
+    try:
+        response = client.converse(
+            modelId=model_id,
+            messages=[{"role": "user", "content": [{"text": prompt}]}],
+            inferenceConfig={"maxTokens": max_tokens, "temperature": temperature},
+        )
+        return response["output"]["message"]["content"][0]["text"]
+    except Exception as e:
+        print(f"[Bedrock] API error: {e}")
+        return ""
 
 
 def _active_event_info(env, step: int) -> dict | None:
@@ -174,6 +178,7 @@ def run_episode(client, model_id: str, episode_length: int, seed: int, verbose: 
                   f"msgs={len(step_record['messages'])}")
 
         if done:
+            print(f"[Episode] terminated early at step {step + 1}")
             break
 
     return steps_log

@@ -414,7 +414,7 @@
           "from": "trader_0",
           "to": "all",
           "type": "broadcast",
-          "text": "Bullish momentum \u2014 watching for breakout above 105.",
+          "text": "Bullish momentum \u2014 watching for breakout.",
           "direction": "bullish"
         }
       ],
@@ -1117,11 +1117,11 @@
       },
       "messages": [
         {
-          "from": "trader_1",
-          "to": "trader_0",
-          "type": "dm",
-          "text": "Disagree \u2014 this looks extended. Fading.",
-          "direction": "bearish"
+          "from": "trader_0",
+          "to": "all",
+          "type": "broadcast",
+          "text": "Bullish momentum \u2014 watching for breakout.",
+          "direction": "bullish"
         }
       ],
       "intel_transactions": [],
@@ -1980,7 +1980,7 @@
       "mm_bid": 88.6018,
       "mm_ask": 104.7253,
       "mm_half_spread": 0.0834,
-      "mm_skew": -0.0081,
+      "mm_skew": -0.0097,
       "news_headline": null,
       "black_swan": null,
       "collusion_events": 1,
@@ -2003,35 +2003,35 @@
         "trader_2": {
           "direction": "buy",
           "size_bucket": "medium",
-          "quantity": 24,
-          "reasoning": "High vol + directional bias = large sell.",
+          "quantity": 23,
+          "reasoning": "Vol expanding, increasing to medium.",
           "message": null
         },
         "trader_3": {
           "direction": "buy",
           "size_bucket": "small",
           "quantity": 5,
-          "reasoning": "Scripted baseline \u2014 hold.",
+          "reasoning": "Scripted baseline \u2014 sell small.",
           "message": null
         },
         "market_maker": {
           "half_spread": 0.0834,
-          "skew": -0.0005,
-          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+          "skew": 0.0016,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
         },
         "oversight": {
           "intervention_type": "none",
           "flagged_agents": [],
-          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
+          "reasoning": "Market stable. No intervention required."
         }
       },
       "messages": [
         {
-          "from": "trader_0",
-          "to": "all",
-          "type": "broadcast",
-          "text": "Bearish reversal incoming \u2014 reducing exposure.",
-          "direction": "bearish"
+          "from": "trader_2",
+          "to": "group_alpha",
+          "type": "group",
+          "text": "Vol regime shifting \u2014 size up.",
+          "direction": "bullish"
         }
       ],
       "intel_transactions": [],
@@ -2044,20 +2044,20 @@
       },
       "rewards": {
         "trader_0": -0.698,
-        "trader_1": -0.806,
-        "trader_2": -0.028,
-        "trader_3": -0.105,
-        "market_maker": 0.431,
-        "oversight": -0.354
+        "trader_1": -0.557,
+        "trader_2": 0.323,
+        "trader_3": 0.014,
+        "market_maker": 1.174,
+        "oversight": -0.052
       }
     },
     {
       "step": 30,
-      "spot_price": 97.1028,
-      "mm_bid": 87.577,
-      "mm_ask": 106.6286,
-      "mm_half_spread": 0.0981,
-      "mm_skew": 0.0038,
+      "spot_price": 95.4257,
+      "mm_bid": 85.1102,
+      "mm_ask": 105.7412,
+      "mm_half_spread": 0.1081,
+      "mm_skew": 0.0052,
       "news_headline": null,
       "black_swan": null,
       "collusion_events": 1,
@@ -2067,21 +2067,21 @@
           "direction": "buy",
           "size_bucket": "large",
           "quantity": 65,
-          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
           "message": null
         },
         "trader_1": {
           "direction": "buy",
           "size_bucket": "large",
           "quantity": 58,
-          "reasoning": "Holding \u2014 price within fair value band.",
+          "reasoning": "Reverting position as price normalizes.",
           "message": null
         },
         "trader_2": {
           "direction": "buy",
-          "size_bucket": "medium",
-          "quantity": 24,
-          "reasoning": "High vol + directional bias = large sell.",
+          "size_bucket": "small",
+          "quantity": 8,
+          "reasoning": "Vol expanding, increasing to medium.",
           "message": null
         },
         "trader_3": {
@@ -2092,9 +2092,78 @@
           "message": null
         },
         "market_maker": {
-          "half_spread": 0.0981,
-          "skew": 0.0019,
-          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+          "half_spread": 0.1081,
+          "skew": 0.0018,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "Market stable. No intervention required."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": -0.279,
+        "trader_1": 0.119,
+        "trader_2": 0.148,
+        "trader_3": 0.09,
+        "market_maker": 1.353,
+        "oversight": 0.169
+      }
+    },
+    {
+      "step": 31,
+      "spot_price": 95.5764,
+      "mm_bid": 87.873,
+      "mm_ask": 103.2799,
+      "mm_half_spread": 0.0806,
+      "mm_skew": 0.0074,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 1,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 65,
+          "reasoning": "Trend is accelerating, large position justified by recent returns.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 58,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 61,
+          "reasoning": "Vol expanding, increasing to medium.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0806,
+          "skew": -0.0004,
+          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
         },
         "oversight": {
           "intervention_type": "none",
@@ -2112,106 +2181,37 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -0.271,
-        "trader_1": 0.156,
-        "trader_2": -0.181,
-        "trader_3": -0.171,
-        "market_maker": 0.948,
-        "oversight": -0.491
-      }
-    },
-    {
-      "step": 31,
-      "spot_price": 96.9993,
-      "mm_bid": 85.4564,
-      "mm_ask": 108.5423,
-      "mm_half_spread": 0.119,
-      "mm_skew": 0.0015,
-      "news_headline": null,
-      "black_swan": null,
-      "collusion_events": 1,
-      "sec_fines": 0.0,
-      "actions": {
-        "trader_0": {
-          "direction": "buy",
-          "size_bucket": "large",
-          "quantity": 65,
-          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
-          "message": null
-        },
-        "trader_1": {
-          "direction": "buy",
-          "size_bucket": "large",
-          "quantity": 58,
-          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
-          "message": null
-        },
-        "trader_2": {
-          "direction": "sell",
-          "size_bucket": "medium",
-          "quantity": 23,
-          "reasoning": "Volatility spike \u2014 large position to capture the move.",
-          "message": null
-        },
-        "trader_3": {
-          "direction": "buy",
-          "size_bucket": "small",
-          "quantity": 5,
-          "reasoning": "Scripted baseline \u2014 hold.",
-          "message": null
-        },
-        "market_maker": {
-          "half_spread": 0.119,
-          "skew": 0.0088,
-          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
-        },
-        "oversight": {
-          "intervention_type": "none",
-          "flagged_agents": [],
-          "reasoning": "No unusual activity detected. All traders within normal parameters."
-        }
-      },
-      "messages": [],
-      "intel_transactions": [],
-      "sec_interventions": [],
-      "detected_manipulations": {
-        "trader_0": "none",
-        "trader_1": "none",
-        "trader_2": "none",
-        "trader_3": "none"
-      },
-      "rewards": {
-        "trader_0": 0.303,
-        "trader_1": -0.704,
-        "trader_2": -0.395,
-        "trader_3": 0.283,
-        "market_maker": 1.621,
-        "oversight": -0.405
+        "trader_0": 0.004,
+        "trader_1": -0.49,
+        "trader_2": -0.235,
+        "trader_3": 0.251,
+        "market_maker": 0.745,
+        "oversight": -0.034
       }
     },
     {
       "step": 32,
-      "spot_price": 97.4607,
-      "mm_bid": 89.2057,
-      "mm_ask": 105.7156,
-      "mm_half_spread": 0.0847,
-      "mm_skew": -0.0011,
+      "spot_price": 95.1594,
+      "mm_bid": 84.4635,
+      "mm_ask": 105.8553,
+      "mm_half_spread": 0.1124,
+      "mm_skew": 0.0024,
       "news_headline": null,
       "black_swan": null,
       "collusion_events": 0,
       "sec_fines": 0.0,
       "actions": {
         "trader_0": {
-          "direction": "sell",
-          "size_bucket": "small",
-          "quantity": 10,
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 57,
           "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
           "message": null
         },
         "trader_1": {
-          "direction": "buy",
-          "size_bucket": "large",
-          "quantity": 59,
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 10,
           "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
           "message": null
         },
@@ -2230,9 +2230,9 @@
           "message": null
         },
         "market_maker": {
-          "half_spread": 0.0847,
-          "skew": 0.0014,
-          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+          "half_spread": 0.1124,
+          "skew": 0.0082,
+          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
         },
         "oversight": {
           "intervention_type": "none",
@@ -2250,21 +2250,21 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -0.065,
-        "trader_1": -0.646,
-        "trader_2": 0.032,
-        "trader_3": -0.138,
-        "market_maker": 0.522,
-        "oversight": -0.031
+        "trader_0": -0.042,
+        "trader_1": -0.247,
+        "trader_2": -0.137,
+        "trader_3": 0.256,
+        "market_maker": 0.775,
+        "oversight": 0.135
       }
     },
     {
       "step": 33,
-      "spot_price": 98.4051,
-      "mm_bid": 87.8167,
-      "mm_ask": 108.9934,
-      "mm_half_spread": 0.1076,
-      "mm_skew": -0.0053,
+      "spot_price": 96.673,
+      "mm_bid": 86.8027,
+      "mm_ask": 106.5433,
+      "mm_half_spread": 0.1021,
+      "mm_skew": -0.0043,
       "news_headline": null,
       "black_swan": null,
       "collusion_events": 0,
@@ -2272,92 +2272,23 @@
       "actions": {
         "trader_0": {
           "direction": "sell",
-          "size_bucket": "small",
-          "quantity": 5,
+          "size_bucket": "medium",
+          "quantity": 28,
           "reasoning": "Trend is accelerating, large position justified by recent returns.",
           "message": null
         },
         "trader_1": {
-          "direction": "buy",
-          "size_bucket": "medium",
-          "quantity": 23,
-          "reasoning": "Price extended \u2014 mean reversion trade, fading this move.",
-          "message": null
-        },
-        "trader_2": {
-          "direction": "buy",
-          "size_bucket": "medium",
-          "quantity": 26,
-          "reasoning": "Low vol environment \u2014 reducing size to small.",
-          "message": null
-        },
-        "trader_3": {
-          "direction": "buy",
+          "direction": "sell",
           "size_bucket": "small",
           "quantity": 5,
-          "reasoning": "Scripted baseline \u2014 hold.",
-          "message": null
-        },
-        "market_maker": {
-          "half_spread": 0.1076,
-          "skew": -0.0077,
-          "reasoning": "Long inventory bias \u2014 widening slightly to attract sellers."
-        },
-        "oversight": {
-          "intervention_type": "none",
-          "flagged_agents": [],
-          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
-        }
-      },
-      "messages": [],
-      "intel_transactions": [],
-      "sec_interventions": [],
-      "detected_manipulations": {
-        "trader_0": "none",
-        "trader_1": "none",
-        "trader_2": "none",
-        "trader_3": "none"
-      },
-      "rewards": {
-        "trader_0": -0.136,
-        "trader_1": -0.165,
-        "trader_2": -0.019,
-        "trader_3": -0.039,
-        "market_maker": 1.314,
-        "oversight": 0.049
-      }
-    },
-    {
-      "step": 34,
-      "spot_price": 98.2624,
-      "mm_bid": 88.672,
-      "mm_ask": 107.8528,
-      "mm_half_spread": 0.0976,
-      "mm_skew": 0.002,
-      "news_headline": null,
-      "black_swan": null,
-      "collusion_events": 0,
-      "sec_fines": 0.0,
-      "actions": {
-        "trader_0": {
-          "direction": "hold",
-          "size_bucket": null,
-          "quantity": 0,
-          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
-          "message": null
-        },
-        "trader_1": {
-          "direction": "buy",
-          "size_bucket": "medium",
-          "quantity": 26,
-          "reasoning": "Reverting position as price normalizes.",
+          "reasoning": "RSI-equivalent overbought, selling small into the rally.",
           "message": null
         },
         "trader_2": {
           "direction": "hold",
           "size_bucket": null,
           "quantity": 0,
-          "reasoning": "Vol expanding, increasing to medium.",
+          "reasoning": "Volatility spike \u2014 large position to capture the move.",
           "message": null
         },
         "trader_3": {
@@ -2368,14 +2299,14 @@
           "message": null
         },
         "market_maker": {
-          "half_spread": 0.0976,
-          "skew": -0.005,
-          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+          "half_spread": 0.1021,
+          "skew": -0.0053,
+          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
         },
         "oversight": {
           "intervention_type": "none",
           "flagged_agents": [],
-          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
+          "reasoning": "Market stable. No intervention required."
         }
       },
       "messages": [],
@@ -2388,37 +2319,106 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -0.504,
-        "trader_1": -0.003,
-        "trader_2": -0.443,
-        "trader_3": 0.092,
-        "market_maker": 0.664,
-        "oversight": -0.053
+        "trader_0": -0.193,
+        "trader_1": 0.094,
+        "trader_2": 0.412,
+        "trader_3": -0.084,
+        "market_maker": 0.707,
+        "oversight": 0.161
       }
     },
     {
-      "step": 35,
-      "spot_price": 101.3267,
-      "mm_bid": 90.1301,
-      "mm_ask": 112.5233,
-      "mm_half_spread": 0.1105,
-      "mm_skew": 0.0063,
+      "step": 34,
+      "spot_price": 97.2079,
+      "mm_bid": 89.1494,
+      "mm_ask": 105.2665,
+      "mm_half_spread": 0.0829,
+      "mm_skew": 0.0038,
       "news_headline": null,
       "black_swan": null,
-      "collusion_events": 1,
+      "collusion_events": 0,
       "sec_fines": 0.0,
       "actions": {
         "trader_0": {
-          "direction": "buy",
-          "size_bucket": "large",
-          "quantity": 65,
-          "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
+          "reasoning": "Holding \u2014 no clear directional signal this step.",
           "message": null
         },
         "trader_1": {
           "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 6,
+          "reasoning": "Holding \u2014 price within fair value band.",
+          "message": null
+        },
+        "trader_2": {
+          "direction": "sell",
           "size_bucket": "large",
-          "quantity": 58,
+          "quantity": 61,
+          "reasoning": "High vol + directional bias = large sell.",
+          "message": null
+        },
+        "trader_3": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 5,
+          "reasoning": "Scripted baseline \u2014 hold.",
+          "message": null
+        },
+        "market_maker": {
+          "half_spread": 0.0829,
+          "skew": -0.0012,
+          "reasoning": "Stable conditions \u2014 tightening spread to capture flow."
+        },
+        "oversight": {
+          "intervention_type": "none",
+          "flagged_agents": [],
+          "reasoning": "No unusual activity detected. All traders within normal parameters."
+        }
+      },
+      "messages": [],
+      "intel_transactions": [],
+      "sec_interventions": [],
+      "detected_manipulations": {
+        "trader_0": "none",
+        "trader_1": "none",
+        "trader_2": "none",
+        "trader_3": "none"
+      },
+      "rewards": {
+        "trader_0": 0.076,
+        "trader_1": 0.185,
+        "trader_2": -0.089,
+        "trader_3": -0.26,
+        "market_maker": 0.792,
+        "oversight": 0.1
+      }
+    },
+    {
+      "step": 35,
+      "spot_price": 99.347,
+      "mm_bid": 88.3692,
+      "mm_ask": 110.3249,
+      "mm_half_spread": 0.1105,
+      "mm_skew": 0.0063,
+      "news_headline": null,
+      "black_swan": null,
+      "collusion_events": 0,
+      "sec_fines": 0.0,
+      "actions": {
+        "trader_0": {
+          "direction": "buy",
+          "size_bucket": "small",
+          "quantity": 10,
+          "reasoning": "Sell signal triggered \u2014 downward momentum confirmed by volume.",
+          "message": null
+        },
+        "trader_1": {
+          "direction": "sell",
+          "size_bucket": "small",
+          "quantity": 11,
           "reasoning": "Holding \u2014 price within fair value band.",
           "message": null
         },
@@ -2457,9 +2457,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -0.159,
-        "trader_1": 0.272,
-        "trader_2": 0.687,
+        "trader_0": -0.554,
+        "trader_1": 0.193,
+        "trader_2": 0.628,
         "trader_3": -0.151,
         "market_maker": 1.191,
         "oversight": 0.214
@@ -2467,9 +2467,9 @@
     },
     {
       "step": 36,
-      "spot_price": 101.5998,
-      "mm_bid": 93.1162,
-      "mm_ask": 110.0834,
+      "spot_price": 99.6148,
+      "mm_bid": 91.297,
+      "mm_ask": 107.9327,
       "mm_half_spread": 0.0835,
       "mm_skew": 0.0009,
       "news_headline": "Strong GDP data surprises analysts \u2014 risk-on sentiment surges",
@@ -2518,11 +2518,11 @@
       },
       "messages": [
         {
-          "from": "trader_2",
-          "to": "group_alpha",
-          "type": "group",
-          "text": "Vol regime shifting \u2014 size up if you're directional.",
-          "direction": "bullish"
+          "from": "trader_1",
+          "to": "trader_0",
+          "type": "dm",
+          "text": "Disagree \u2014 this looks extended.",
+          "direction": "bearish"
         }
       ],
       "intel_transactions": [],
@@ -2534,9 +2534,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -0.509,
-        "trader_1": 1.014,
-        "trader_2": -0.547,
+        "trader_0": -0.608,
+        "trader_1": 0.934,
+        "trader_2": -0.606,
         "trader_3": 0.136,
         "market_maker": 1.273,
         "oversight": -0.022
@@ -2544,9 +2544,9 @@
     },
     {
       "step": 37,
-      "spot_price": 101.8184,
-      "mm_bid": 91.1071,
-      "mm_ask": 112.5297,
+      "spot_price": 99.8292,
+      "mm_bid": 89.3272,
+      "mm_ask": 110.3312,
       "mm_half_spread": 0.1052,
       "mm_skew": 0.0068,
       "news_headline": null,
@@ -2603,9 +2603,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": 0.354,
-        "trader_1": 0.265,
-        "trader_2": -0.844,
+        "trader_0": 0.255,
+        "trader_1": 0.185,
+        "trader_2": -0.904,
         "trader_3": -0.012,
         "market_maker": 1.098,
         "oversight": -0.12
@@ -2613,9 +2613,9 @@
     },
     {
       "step": 38,
-      "spot_price": 102.7233,
-      "mm_bid": 90.8896,
-      "mm_ask": 114.557,
+      "spot_price": 100.7164,
+      "mm_bid": 89.1139,
+      "mm_ask": 112.3189,
       "mm_half_spread": 0.1152,
       "mm_skew": 0.0064,
       "news_headline": null,
@@ -2672,9 +2672,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": 0.4,
-        "trader_1": -0.134,
-        "trader_2": 0.236,
+        "trader_0": 0.3,
+        "trader_1": -0.214,
+        "trader_2": 0.176,
         "trader_3": -0.201,
         "market_maker": 1.479,
         "oversight": -0.096
@@ -2682,9 +2682,9 @@
     },
     {
       "step": 39,
-      "spot_price": 101.6607,
-      "mm_bid": 92.2164,
-      "mm_ask": 111.105,
+      "spot_price": 99.6746,
+      "mm_bid": 90.4148,
+      "mm_ask": 108.9343,
       "mm_half_spread": 0.0929,
       "mm_skew": 0.0049,
       "news_headline": null,
@@ -2741,9 +2741,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -0.027,
-        "trader_1": 0.299,
-        "trader_2": 0.91,
+        "trader_0": -0.127,
+        "trader_1": 0.22,
+        "trader_2": 0.85,
         "trader_3": -0.131,
         "market_maker": 0.834,
         "oversight": 0.01
@@ -2751,9 +2751,9 @@
     },
     {
       "step": 40,
-      "spot_price": 101.5161,
-      "mm_bid": 90.7351,
-      "mm_ask": 112.2971,
+      "spot_price": 99.5327,
+      "mm_bid": 88.9624,
+      "mm_ask": 110.1031,
       "mm_half_spread": 0.1062,
       "mm_skew": 0.007,
       "news_headline": null,
@@ -2810,9 +2810,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": 0.394,
-        "trader_1": 0.432,
-        "trader_2": 0.581,
+        "trader_0": 0.295,
+        "trader_1": 0.353,
+        "trader_2": 0.521,
         "trader_3": -0.035,
         "market_maker": 0.909,
         "oversight": -0.271
@@ -2820,9 +2820,9 @@
     },
     {
       "step": 41,
-      "spot_price": 101.7874,
-      "mm_bid": 90.8148,
-      "mm_ask": 112.7601,
+      "spot_price": 99.7988,
+      "mm_bid": 89.0405,
+      "mm_ask": 110.5571,
       "mm_half_spread": 0.1078,
       "mm_skew": 0.0013,
       "news_headline": null,
@@ -2879,9 +2879,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": 0.131,
-        "trader_1": 0.755,
-        "trader_2": 0.359,
+        "trader_0": 0.032,
+        "trader_1": 0.676,
+        "trader_2": 0.299,
         "trader_3": -0.052,
         "market_maker": 1.358,
         "oversight": 0.15
@@ -2889,9 +2889,9 @@
     },
     {
       "step": 42,
-      "spot_price": 102.6823,
-      "mm_bid": 94.4677,
-      "mm_ask": 110.8968,
+      "spot_price": 100.6761,
+      "mm_bid": 92.6221,
+      "mm_ask": 108.7302,
       "mm_half_spread": 0.08,
       "mm_skew": -0.004,
       "news_headline": null,
@@ -2948,9 +2948,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -0.268,
-        "trader_1": 0.179,
-        "trader_2": -0.145,
+        "trader_0": -0.368,
+        "trader_1": 0.098,
+        "trader_2": -0.205,
         "trader_3": -0.023,
         "market_maker": 1.637,
         "oversight": -0.2
@@ -2958,11 +2958,11 @@
     },
     {
       "step": 43,
-      "spot_price": 102.8746,
-      "mm_bid": 98.7082,
-      "mm_ask": 107.041,
+      "spot_price": 100.8647,
+      "mm_bid": 96.7797,
+      "mm_ask": 104.9498,
       "mm_half_spread": 0.0405,
-      "mm_skew": 0.006,
+      "mm_skew": -0.0054,
       "news_headline": null,
       "black_swan": null,
       "collusion_events": 0,
@@ -2983,9 +2983,9 @@
           "message": null
         },
         "trader_2": {
-          "direction": "buy",
-          "size_bucket": "small",
-          "quantity": 7,
+          "direction": "hold",
+          "size_bucket": null,
+          "quantity": 0,
           "reasoning": "Low vol environment \u2014 reducing size to small.",
           "message": null
         },
@@ -2998,21 +2998,21 @@
         },
         "market_maker": {
           "half_spread": 0.0405,
-          "skew": -0.0081,
-          "reasoning": "Balanced inventory \u2014 maintaining tight spread."
+          "skew": -0.0062,
+          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
         },
         "oversight": {
           "intervention_type": "none",
           "flagged_agents": [],
-          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
+          "reasoning": "Monitoring coordinated buy pressure \u2014 threshold not yet met."
         }
       },
       "messages": [
         {
-          "from": "trader_0",
-          "to": "all",
-          "type": "broadcast",
-          "text": "Bullish momentum \u2014 watching for breakout above 105.",
+          "from": "trader_2",
+          "to": "group_alpha",
+          "type": "group",
+          "text": "Vol regime shifting \u2014 size up.",
           "direction": "bullish"
         }
       ],
@@ -3025,37 +3025,37 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -0.045,
-        "trader_1": 0.675,
-        "trader_2": -0.442,
-        "trader_3": 0.215,
-        "market_maker": -0.157,
-        "oversight": 0.023
+        "trader_0": -0.146,
+        "trader_1": 0.902,
+        "trader_2": -0.192,
+        "trader_3": -0.011,
+        "market_maker": -0.162,
+        "oversight": 0.283
       }
     },
     {
       "step": 44,
-      "spot_price": 102.0408,
-      "mm_bid": 95.9592,
-      "mm_ask": 108.1225,
-      "mm_half_spread": 0.0596,
-      "mm_skew": -0.0067,
+      "spot_price": 99.7709,
+      "mm_bid": 91.4001,
+      "mm_ask": 108.1417,
+      "mm_half_spread": 0.0839,
+      "mm_skew": 0.0006,
       "news_headline": null,
       "black_swan": null,
       "collusion_events": 0,
       "sec_fines": 100.0,
       "actions": {
         "trader_0": {
-          "direction": "hold",
-          "size_bucket": null,
-          "quantity": 0,
+          "direction": "sell",
+          "size_bucket": "large",
+          "quantity": 62,
           "reasoning": "Strong momentum signal \u2014 price breaking above resistance, buying to capture the move.",
           "message": null
         },
         "trader_1": {
-          "direction": "sell",
+          "direction": "buy",
           "size_bucket": "medium",
-          "quantity": 22,
+          "quantity": 26,
           "reasoning": "Holding \u2014 price within fair value band.",
           "message": null
         },
@@ -3063,7 +3063,7 @@
           "direction": "hold",
           "size_bucket": null,
           "quantity": 0,
-          "reasoning": "Vol regime unclear \u2014 holding.",
+          "reasoning": "Low vol environment \u2014 reducing size to small.",
           "message": null
         },
         "trader_3": {
@@ -3074,9 +3074,9 @@
           "message": null
         },
         "market_maker": {
-          "half_spread": 0.0596,
-          "skew": 0.0049,
-          "reasoning": "Short inventory \u2014 skewing ask lower to balance."
+          "half_spread": 0.0839,
+          "skew": 0.0083,
+          "reasoning": "High vol \u2014 widening spread to protect against adverse selection."
         },
         "oversight": {
           "intervention_type": "fine",
@@ -3084,7 +3084,7 @@
             "trader_0",
             "trader_1"
           ],
-          "reasoning": "No unusual activity detected. All traders within normal parameters."
+          "reasoning": "Wash trading pattern detected in trader_1 \u2014 issuing fine."
         }
       },
       "messages": [],
@@ -3112,19 +3112,19 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -4.631,
-        "trader_1": -4.249,
-        "trader_2": 0.47,
-        "trader_3": -0.134,
-        "market_maker": 0.357,
-        "oversight": 0.998
+        "trader_0": -5.243,
+        "trader_1": -4.372,
+        "trader_2": 0.137,
+        "trader_3": 0.095,
+        "market_maker": 0.063,
+        "oversight": 0.869
       }
     },
     {
       "step": 45,
-      "spot_price": 101.5442,
-      "mm_bid": 91.5929,
-      "mm_ask": 111.4955,
+      "spot_price": 99.6516,
+      "mm_bid": 89.8857,
+      "mm_ask": 109.4174,
       "mm_half_spread": 0.098,
       "mm_skew": 0.0034,
       "news_headline": null,
@@ -3133,9 +3133,9 @@
       "sec_fines": 0.0,
       "actions": {
         "trader_0": {
-          "direction": "hold",
-          "size_bucket": null,
-          "quantity": 0,
+          "direction": "buy",
+          "size_bucket": "large",
+          "quantity": 58,
           "reasoning": "Trend is accelerating, large position justified by recent returns.",
           "message": null
         },
@@ -3181,9 +3181,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": 0.116,
-        "trader_1": -0.409,
-        "trader_2": 0.839,
+        "trader_0": -0.472,
+        "trader_1": -0.484,
+        "trader_2": 0.782,
         "trader_3": 0.247,
         "market_maker": 1.012,
         "oversight": -0.287
@@ -3191,9 +3191,9 @@
     },
     {
       "step": 46,
-      "spot_price": 101.8686,
-      "mm_bid": 93.9127,
-      "mm_ask": 109.8246,
+      "spot_price": 99.97,
+      "mm_bid": 92.1623,
+      "mm_ask": 107.7776,
       "mm_half_spread": 0.0781,
       "mm_skew": -0.0077,
       "news_headline": null,
@@ -3268,9 +3268,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -5.126,
-        "trader_1": -5.477,
-        "trader_2": 0.192,
+        "trader_0": -5.22,
+        "trader_1": -5.553,
+        "trader_2": 0.135,
         "trader_3": 0.041,
         "market_maker": 1.749,
         "oversight": 1.154
@@ -3278,9 +3278,9 @@
     },
     {
       "step": 47,
-      "spot_price": 100.3781,
-      "mm_bid": 93.9037,
-      "mm_ask": 106.8525,
+      "spot_price": 98.5072,
+      "mm_bid": 92.1535,
+      "mm_ask": 104.8609,
       "mm_half_spread": 0.0645,
       "mm_skew": 0.0037,
       "news_headline": null,
@@ -3337,9 +3337,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -0.401,
-        "trader_1": 0.392,
-        "trader_2": 0.129,
+        "trader_0": -0.495,
+        "trader_1": 0.317,
+        "trader_2": 0.073,
         "trader_3": -0.46,
         "market_maker": 0.901,
         "oversight": 0.056
@@ -3347,9 +3347,9 @@
     },
     {
       "step": 48,
-      "spot_price": 99.9167,
-      "mm_bid": 91.204,
-      "mm_ask": 108.6295,
+      "spot_price": 98.0544,
+      "mm_bid": 89.5041,
+      "mm_ask": 106.6048,
       "mm_half_spread": 0.0872,
       "mm_skew": 0.0074,
       "news_headline": null,
@@ -3424,9 +3424,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -4.551,
-        "trader_1": -4.636,
-        "trader_2": 0.925,
+        "trader_0": -4.644,
+        "trader_1": -4.711,
+        "trader_2": 0.87,
         "trader_3": 0.142,
         "market_maker": 0.928,
         "oversight": 1.134
@@ -3434,9 +3434,9 @@
     },
     {
       "step": 49,
-      "spot_price": 98.1018,
-      "mm_bid": 94.0894,
-      "mm_ask": 102.1142,
+      "spot_price": 96.2733,
+      "mm_bid": 92.3357,
+      "mm_ask": 100.2109,
       "mm_half_spread": 0.0409,
       "mm_skew": 0.0019,
       "news_headline": null,
@@ -3511,9 +3511,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -5.319,
-        "trader_1": -4.784,
-        "trader_2": 0.391,
+        "trader_0": -5.41,
+        "trader_1": -4.857,
+        "trader_2": 0.337,
         "trader_3": 0.055,
         "market_maker": 0.48,
         "oversight": 0.82
@@ -3521,9 +3521,9 @@
     },
     {
       "step": 50,
-      "spot_price": 98.3009,
-      "mm_bid": 90.3189,
-      "mm_ask": 106.2829,
+      "spot_price": 96.4687,
+      "mm_bid": 88.6355,
+      "mm_ask": 104.302,
       "mm_half_spread": 0.0812,
       "mm_skew": 0.0027,
       "news_headline": null,
@@ -3598,9 +3598,9 @@
         "trader_3": "none"
       },
       "rewards": {
-        "trader_0": -4.92,
-        "trader_1": -5.152,
-        "trader_2": 0.667,
+        "trader_0": -5.012,
+        "trader_1": -5.225,
+        "trader_2": 0.612,
         "trader_3": 0.133,
         "market_maker": 1.032,
         "oversight": 1.064

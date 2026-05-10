@@ -68,20 +68,10 @@ HEADLINES = [
     "Strong GDP data surprises analysts — risk-on sentiment surges",
 ]
 
-MESSAGES = [
-    {"from": "trader_0", "to": "all", "type": "broadcast", "text": "Bullish momentum — watching for breakout above 105.", "direction": "bullish"},
-    {"from": "trader_1", "to": "trader_0", "type": "dm", "text": "Disagree — this looks extended. Fading.", "direction": "bearish"},
-    {"from": "trader_2", "to": "group_alpha", "type": "group", "text": "Vol regime shifting — size up if you're directional.", "direction": "bullish"},
-    {"from": "trader_0", "to": "all", "type": "broadcast", "text": "Bearish reversal incoming — reducing exposure.", "direction": "bearish"},
-    {"from": "trader_1", "to": "trader_2", "type": "dm", "text": "Have intel on news flow — sell at current levels.", "direction": "bearish"},
-]
-
 INTEL_TXNS = [
     {"buyer": "trader_1", "seller": "trader_0", "step": 0, "price": 15.0, "signal": "bullish breakout expected"},
     {"buyer": "trader_2", "seller": "trader_1", "step": 0, "price": 10.0, "signal": "bearish reversal within 3 steps"},
 ]
-
-random.seed(42)
 
 def mock_episode(n=50):
     spot = 100.0
@@ -91,7 +81,7 @@ def mock_episode(n=50):
     bucket_qty = {"small": 8, "medium": 25, "large": 60}
 
     for i in range(n):
-        pct = i / 50
+        pct = i / n
         # Act-based volatility
         if pct < 0.24:
             drift, vol = 0.002, 0.008
@@ -168,7 +158,12 @@ def mock_episode(n=50):
         # Messages — sparse
         msgs = []
         if i in [5, 15, 28, 35, 42]:
-            msgs = [random.choice(MESSAGES)]
+            msg_options = [
+                {"from": "trader_0", "to": "all", "type": "broadcast", "text": "Bullish momentum — watching for breakout.", "direction": "bullish"},
+                {"from": "trader_1", "to": "trader_0", "type": "dm", "text": "Disagree — this looks extended.", "direction": "bearish"},
+                {"from": "trader_2", "to": "group_alpha", "type": "group", "text": "Vol regime shifting — size up.", "direction": "bullish"},
+            ]
+            msgs = [random.choice(msg_options)]
 
         # Intel — very sparse
         intel = []
@@ -180,8 +175,8 @@ def mock_episode(n=50):
         # Rewards
         base_r = (spot - 100) / 100 * 5
         rewards = {
-            "trader_0": round(base_r + random.gauss(0, 0.5) - (50.0 if "trader_0" in flagged else 0) / 10, 3),
-            "trader_1": round(base_r * 0.8 + random.gauss(0, 0.4) - (50.0 if "trader_1" in flagged else 0) / 10, 3),
+            "trader_0": round(base_r + random.gauss(0, 0.5) - (5.0 if "trader_0" in flagged else 0), 3),
+            "trader_1": round(base_r * 0.8 + random.gauss(0, 0.4) - (5.0 if "trader_1" in flagged else 0), 3),
             "trader_2": round(base_r * 0.6 + random.gauss(0, 0.6), 3),
             "trader_3": round(random.gauss(0, 0.2), 3),
             "market_maker": round(hs * 10 + random.gauss(0, 0.3), 3),
@@ -233,6 +228,7 @@ def mock_episode(n=50):
 
 
 def main():
+    random.seed(42)
     Path("replay_logs").mkdir(parents=True, exist_ok=True)
     steps = mock_episode(50)
     out = {
