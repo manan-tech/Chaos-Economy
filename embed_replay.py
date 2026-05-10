@@ -1,8 +1,14 @@
-"""Embed a replay JSON file into index.html as an inline REPLAY_DATA variable.
+"""Embed replay JSON files into index.html as inline data variables.
 
 Usage:
-    python embed_replay.py replay_logs/replay_test10.json
-    python embed_replay.py replay_logs/replay_demo.json --out my_replay.html
+    # Embed both datasets at once (recommended)
+    python embed_replay.py \
+        --replay_3b  replay_logs/replay_trained_3b.json \
+        --replay_17b replay_logs/replay_replay.json \
+        --out index_embedded.html
+
+    # Embed only one (the other stays null)
+    python embed_replay.py --replay_3b replay_logs/replay_trained_3b.json
 """
 
 import argparse
@@ -11,40 +17,50 @@ import sys
 from pathlib import Path
 
 
-def embed(replay_path: Path, html_path: Path, out_path: Path) -> None:
-    data = json.loads(replay_path.read_text())
-    html = html_path.read_text(encoding="utf-8")
+PLACEHOLDER_3B  = "/* EMBED_REPLAY_3B  */ null"
+PLACEHOLDER_17B = "/* EMBED_REPLAY_17B */ null"
 
-    placeholder = "/* EMBED_REPLAY_JSON */ null"
-    if placeholder not in html:
-        print(f"[embed] Placeholder '{placeholder}' not found in {html_path}.")
+
+def embed(html: str, replay_path: Path | None, placeholder: str, label: str) -> tuple[str, int]:
+    if replay_path is None:
+        return html, 0
+    if not replay_path.exists():
+        print(f"[embed] {label} replay not found: {replay_path}")
         sys.exit(1)
-
-    injected = html.replace(placeholder, json.dumps(data, separators=(",", ":")))
-    out_path.write_text(injected, encoding="utf-8")
+    data = json.loads(replay_path.read_text())
+    if placeholder not in html:
+        print(f"[embed] Placeholder '{placeholder}' not found in HTML — skipping {label}.")
+        return html, 0
     steps = len(data.get("steps", []))
-    print(f"[embed] {replay_path.name} ({steps} steps) → {out_path}")
+    return html.replace(placeholder, json.dumps(data, separators=(",", ":"))), steps
 
 
 def main():
-    p = argparse.ArgumentParser(description="Embed replay JSON into index.html")
-    p.add_argument("replay", help="Path to replay JSON file")
+    p = argparse.ArgumentParser(description="Embed replay JSON(s) into index.html")
+    p.add_argument("--replay_3b",  default=None, help="3B LoRA ablation replay JSON")
+    p.add_argument("--replay_17b", default=None, help="Maverick 17B replay JSON")
     p.add_argument("--html", default="index.html", help="Source HTML template")
     p.add_argument("--out", default=None, help="Output HTML path (default: overwrites --html)")
     args = p.parse_args()
 
-    replay_path = Path(args.replay)
-    html_path = Path(args.html)
-    out_path = Path(args.out) if args.out else html_path
+    if not args.replay_3b and not args.replay_17b:
+        p.error("Provide at least one of --replay_3b or --replay_17b")
 
-    if not replay_path.exists():
-        print(f"[embed] Replay file not found: {replay_path}")
-        sys.exit(1)
+    html_path = Path(args.html)
+    out_path  = Path(args.out) if args.out else html_path
+
     if not html_path.exists():
         print(f"[embed] HTML template not found: {html_path}")
         sys.exit(1)
 
-    embed(replay_path, html_path, out_path)
+    html = html_path.read_text(encoding="utf-8")
+
+    html, s3b  = embed(html, Path(args.replay_3b)  if args.replay_3b  else None, PLACEHOLDER_3B,  "3B")
+    html, s17b = embed(html, Path(args.replay_17b) if args.replay_17b else None, PLACEHOLDER_17B, "17B")
+
+    out_path.write_text(html, encoding="utf-8")
+    if s3b:  print(f"[embed] 3B  replay ({s3b}  steps) → {out_path}")
+    if s17b: print(f"[embed] 17B replay ({s17b} steps) → {out_path}")
 
 
 if __name__ == "__main__":

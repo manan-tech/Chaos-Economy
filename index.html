@@ -289,6 +289,10 @@
     <div class="header-price" id="hdr-price">—</div>
   </div>
   <div class="header-delta" id="hdr-delta">—</div>
+  <select id="model-select" style="margin-left:12px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--text);cursor:pointer;">
+    <option value="3b">3B LoRA Ablation (no coord bonus)</option>
+    <option value="17b">Maverick 17B (Bedrock)</option>
+  </select>
   <div class="header-badges" id="hdr-badges"></div>
 </div>
 
@@ -372,26 +376,62 @@
 
 <!-- INLINE REPLAY DATA — replaced by embed_replay.py -->
 <script id="replay-data-script">
-const REPLAY_DATA = /* EMBED_REPLAY_JSON */ null;
+const REPLAY_DATA_3B  = /* EMBED_REPLAY_3B  */ null;
+const REPLAY_DATA_17B = /* EMBED_REPLAY_17B */ null;
 </script>
 
 <script>
 // ── LOAD DATA ──────────────────────────────────────────────────────────────
 let DATA = null;
+const DATASETS = {};
 
 function loadData() {
-  // Inline embedded data takes priority
-  if (typeof REPLAY_DATA !== 'undefined' && REPLAY_DATA !== null) {
-    DATA = REPLAY_DATA;
+  // Collect embedded datasets
+  if (typeof REPLAY_DATA_3B  !== 'undefined' && REPLAY_DATA_3B  !== null) DATASETS['3b']  = REPLAY_DATA_3B;
+  if (typeof REPLAY_DATA_17B !== 'undefined' && REPLAY_DATA_17B !== null) DATASETS['17b'] = REPLAY_DATA_17B;
+
+  const sel = document.getElementById('model-select');
+
+  // Hide options that have no data
+  for (const opt of sel.options) {
+    opt.disabled = !DATASETS[opt.value];
+    opt.text = opt.text.replace(' (no data)', '');
+    if (opt.disabled) opt.text += ' (no data)';
+  }
+
+  // Pick best available default (3b preferred)
+  const defaultKey = DATASETS['3b'] ? '3b' : DATASETS['17b'] ? '17b' : null;
+
+  if (defaultKey) {
+    sel.value = defaultKey;
+    DATA = DATASETS[defaultKey];
     return;
   }
-  // Fallback: fetch sample_replay.json (works when served locally)
-  fetch('replay_logs/sample_replay.json')
+
+  // Fallback: fetch from disk (local dev)
+  fetch('replay_logs/replay_trained_3b.json')
     .then(r => r.json())
-    .then(d => { DATA = d; init(); })
+    .then(d => { DATASETS['3b'] = d; DATA = d; sel.value = '3b'; init(); })
     .catch(() => {
-      document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#dc2626;font-size:18px;">No replay data found.<br>Run <code>python embed_replay.py</code> or serve with a replay JSON.</div>';
+      fetch('replay_logs/replay_replay.json')
+        .then(r => r.json())
+        .then(d => { DATASETS['17b'] = d; DATA = d; sel.value = '17b'; init(); })
+        .catch(() => {
+          document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#dc2626;font-size:18px;">No replay data found.<br>Run <code>python embed_replay.py</code> or serve with a replay JSON.</div>';
+        });
     });
+}
+
+function switchDataset(key) {
+  if (!DATASETS[key]) return;
+  if (playTimer) { clearInterval(playTimer); playTimer = null; document.getElementById('play-btn').textContent = '▶ Play'; }
+  DATA = DATASETS[key];
+  if (chart) { chart.destroy(); chart = null; }
+  buildChart();
+  const scrubber = document.getElementById('scrubber');
+  scrubber.max = DATA.steps.length - 1;
+  scrubber.value = 0;
+  render(0);
 }
 
 // ── CHART SETUP ────────────────────────────────────────────────────────────
@@ -675,6 +715,7 @@ function init() {
   scrubber.addEventListener('input', () => render(parseInt(scrubber.value)));
 
   document.getElementById('play-btn').addEventListener('click', togglePlay);
+  document.getElementById('model-select').addEventListener('change', e => switchDataset(e.target.value));
 
   buildChart();
   render(0);
